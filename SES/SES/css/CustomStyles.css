@@ -1,0 +1,124 @@
+﻿/*Canhlv 20/09/2015*/
+  .jarviswidget > header {
+        height:25px !important;
+    }
+    header h2 {
+        margin-top: -5px !important;
+    }
+    .smart-form > fieldset{
+        padding-top:14px;
+    }
+    .smart-style-3 input[type=text], .smart-style-3 input[type=url], .smart-style-3 textarea {
+        box-shadow: none !important;
+    }
+    .jarviswidget > div {
+        border-width: 1px 1px 1px !important;
+    }
+    .jarviswidget > .row {
+        padding-left:0;padding-right:0;
+    }
+    .jarviswidget > .row > .col-sm-12{
+        padding-left:0;padding-right:0;
+    }
+    .k-widget, .k-button{border:none!important;}
+    .jarviswidget > .row{
+        padding-top:5px !important;
+    }
+    .k-grid-toolbar:first-child, .k-grouping-header+.k-grid-toolbar{background: none!important;padding-bottom:7px!important;padding-left:10px!important;}
+    .login-info{height:32px !important;}
+
+    .smart-form footer{
+        padding-bottom:7px;
+    }
+    
+    .smart-form fieldset section .divlabel{
+        float: left; width: 120px; margin-left:0;
+    }
+    .smart-form fieldset section .divfile{
+        float: left; width: 240px; margin-right: 0; margin-left: 10px;
+    }
+/*End*/
+.smart-style-3 #header {
+    background-color: #00b4c1;
+    background-image: linear-gradient(to bottom,#00b4c1,#00b4c1);
+}
+
+.smart-style-3 #logo img {
+    width: 232px;
+    height: auto;
+    padding-left: 3px;
+    margin-top: -3px;
+}
+
+.smart-form #logologin img {
+    width: 361px;
+    height: auto;
+    padding-left: 0;
+    margin-top: 0;
+}
+.smart-form .checkbox input, .smart-form .radio input {
+            position: absolute;
+            top: 3px;
+            left: 0;
+            display: block;
+            width: 17px;
+            height: 17px;
+            outline: 0;
+            border-width: 1px;
+            border-style: solid;
+            background: #FFF;
+        }
+
+ .smart-form .col-3search {
+        width: 18%;
+    }
+ .btn_custom{
+    background-color: #428bca;
+    color:white;
+    width: 126px;
+    height: 27px;
+}
+ .ui-tabs .ui-tabs-nav li a {
+    border-radius: 0;
+    -moz-border-radius: 0;
+    background-color: #6fb3e0;
+    border: 1px solid #F5F5F5;
+    border-bottom: 1px solid #ddd;
+    color: #FFF;
+}
+   .smart-form  .btn_customabc{
+    background-color: #428bca;
+    color:white;
+    width: 80;
+    height: 27px;
+}
+ 
+   .nav-tabs > li > a {
+    margin-right: 2px;
+    line-height: 1.42857143;
+    border: 1px solid transparent;
+    border-radius: 2px 2px 0 0;
+    background-color: #6fb3e0;
+    color:#fff;
+}
+
+   .nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-bottom-color: transparent;
+    cursor: default;
+    color:#6fb3e0;
+}
+  .k-window-title {
+    position: absolute;
+    left: .44em;
+    right: .44em;
+    overflow: hidden;
+    cursor: default;
+    text-overflow: ellipsis;
+    color: #6fb3e0;
+}
+  .k-grid-header th.k-header {
+    vertical-align: bottom;
+    text-align:center;
+}
