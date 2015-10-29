@@ -1,0 +1,62 @@
+﻿@using SES.Models;
+@{
+    ViewBag.Title = "Trang chủ";
+}
+@Scripts.Render("~/bundles/Home")
+
+@{
+    var listConfig_Announcement = ViewData.ContainsKey("listConfig_Announcement") ? (List<Master_Announcement>)ViewData["listConfig_Announcement"] : new List<Master_Announcement>();
+}
+<style>
+    .category_content {
+        border-bottom: 1px solid #DCDCDC;
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+        float: left;
+        width: 99%;
+    }
+
+    .title_news {
+        font: 700 16px arial;
+        color: #f37c2b;
+        text-decoration: none;
+        cursor: pointer;
+    }
+</style>
+<div id="ContentAnnouncement" style="overflow-y:scroll">
+    @foreach (Master_Announcement item in (List<Master_Announcement>)listConfig_Announcement)
+    {
+        <div class="span12">
+            <div class="category_content">
+                @if (item.isNewPost)
+                {
+                    <img alt="" src="http://www.huynhthinga.com/wp-content/uploads/2015/06/new-star.gif" style="width: 60px; height: 35px;">
+                }
+                <span style="font: 700 16px arial; color: #f37c2b; ">
+                @item.Title
+                </span>
+                <div style="color: #CCCCCC; font-style: italic; font-size:11px;">
+                    @item.UserName | @item.DateFormatString
+                </div>
+                <div style="float:left; width:100%; padding-top:15px;">
+                    @Html.Raw(HttpUtility.HtmlDecode(item.HTMLContent))
+                </div>
+            </div>
+        </div>
+    }
+
+</div>
+<div class="fixHeightContent"></div>
+
+<script>
+
+    $(document).ready(function () {
+        document.title = "Trang chủ";
+        hideLoading();
+
+        var headerH = $('#header').height();
+        $('#ContentAnnouncement').css({ 'height': $(window).height() - headerH - 20 });
+    });
+
+
+</script>

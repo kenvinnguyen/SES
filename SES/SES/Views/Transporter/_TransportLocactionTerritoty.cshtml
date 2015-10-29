@@ -1,0 +1,131 @@
+﻿@using DecaInsight.Models;
+@{
+
+    var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
+    var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
+    var listActiveStatus = dict.ContainsKey("activestatus") ? (List<ActiveStatus>)dict["activestatus"] : new List<ActiveStatus>();
+
+}
+<script src="@Url.Content("~/Scripts/app/Transporter.js")"></script>
+<script src="@Url.Content("~/Scripts/app/app.js")"></script>
+<div>
+    @if (Auth_Action.AssetResult(asset, "Search"))
+    {
+
+        <div class="jarviswidget" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-deletebutton="false">
+
+            <header>
+                @*<span class="widget-icon"> <i class="fa fa-search"></i> </span>*@
+                <h2 style="color:#6fb3e0">Tìm kiếm</h2>
+
+            </header>
+            <div class="widget-body no-padding" style="margin: 0">
+                <form class="smart-form">
+                    <fieldset>
+                        <div class="row divSearch">
+
+                            @if (Auth_Action.AssetResult(asset, "TransporterLocationID"))
+                            {
+                                <section class="col col-3">
+                                    <label class="input">
+                                        <input type="text" class="input-xs" id="txtTransporterIDTe" placeholder="Mã, Tên địa bàn VC">
+                                    </label>
+                                </section>
+                            }                            
+                            @if (Auth_Action.AssetResult(asset, "ProvinceID"))
+                            {
+                                <section class="col col-3">
+                                    <label class="input">
+                                        <input type="text" class="input-xs" id="txtProvince" placeholder="Mã, tên tỉnh/thành phố">
+                                    </label>
+                                </section>
+                            }
+                            @if (Auth_Action.AssetResult(asset, "DistrictID"))
+                            {
+                                <section class="col col-3">
+                                    <label class="input">
+                                        <input type="text" class="input-xs" id="txtDistrict" placeholder="Mã, tên quận/huyện">
+                                    </label>
+                                </section>
+                            }
+                            <section class="col col-3search">
+                                <a class="k-button k-button-icontext btn_customSearch" href="javascript:void(0);" onclick="doSearchLocationterritory()">Tìm kiếm</a>
+                            </section>
+                        </div>
+                    </fieldset>
+                </form>
+
+            </div>
+        </div>
+    }
+</div>
+<div class="jarviswidget">
+    <header>
+        <h2 style="color:#6fb3e0">Danh sách Địa bàn vận chuyển theo vùng miền </h2>
+    </header>
+
+    <div class="row">
+        <!-- NEW COL START -->
+        <article class="col-sm-12">
+            <div class="widget-body">
+                @(Html.Kendo().Grid<DecaInsight.Models.DC_LG_Transporter_Location_Territory>()
+                     .Name("gridLocationterritory")
+                    .Columns(columns =>
+                    {
+                        if (Auth_Action.AssetResult(asset, "TransporterLocationID"))
+                        {
+                            columns.Bound(p => p.TransporterLocationID).Title("Mã ĐBVC").Width(150);
+                        }
+                        if (Auth_Action.AssetResult(asset, "TransporterLocationName"))
+                        {
+                            columns.Bound(p => p.TransporterLocationName).Title("Tên ĐBVC").Width(150);
+                        }
+                        if (Auth_Action.AssetResult(asset, "ProvinceName"))
+                        {
+                            columns.Bound(p => p.ProvinceName).Title("Tỉnh/Thành phố").Width(150);
+                        }
+                        if (Auth_Action.AssetResult(asset, "DistrictName"))
+                        {
+                            columns.Bound(p => p.DistrictName).Title("Quận/Huyện").Width(150);
+                        }
+                        if (Auth_Action.AssetResult(asset, "Note"))
+                        {
+                            columns.Bound(p => p.Note).Title("Ghi chú").Width(180);      
+                        }          
+                    })
+                    .ToolBar(toolBar =>
+                        {
+
+                            if (asset.ContainsKey("Export") && asset["Export"])
+                            {
+                                toolBar.Custom()
+                                        .Text("Xuất Excel")
+                                        .HtmlAttributes(new { @class = "export", @style = "background-color:#6FB3e0; color:white;" }).Url(Url.Action("Export_TransporterLocation_Territory", "Transporter", new { filter = "~", sort = "~" }));
+                            }
+
+                        })
+                    .Events(events => { events.DataBound("onDataboundLocationTerritory"); })
+                    .Pageable(pager => pager.PageSizes(new[] { 20, 100, 200, 300 }))
+                    .Resizable(r => r.Columns(true))
+                    .Navigatable()
+                    .Scrollable()
+                    .Sortable()
+                    .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .Batch(true)
+                        .PageSize(100)
+                        .Model(model =>
+                        {
+                            model.Id(p => p.TransporterLocationID);
+                        })
+                       .Read(read => read.Action("Read_TransporterLocation_Territory", "Transporter"))
+                    )
+                )
+            </div>
+        </article>
+        <!-- END COL -->
+
+    </div>
+</div>
+
+

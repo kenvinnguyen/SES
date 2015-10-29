@@ -1,0 +1,265 @@
+﻿@using SES.Models;
+
+@{
+    ViewBag.Title = "Rule kiểm tra";
+}
+@Scripts.Render("~/Scripts/app/RuleCheck.js")
+@Scripts.Render("~/Scripts/app/app.js")
+@{
+    var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
+    var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
+    var listActiveStatus = dict.ContainsKey("activestatus") ? (List<ActiveStatus>)dict["activestatus"] : new List<ActiveStatus>();
+    
+}
+<style>
+    .ace-file-input {
+        position: relative;
+        height: 38px;
+        line-height: 38px;
+        margin-bottom: 9px;
+    }
+</style>
+<section>
+    @if (Auth_Action.AssetResult(asset, "Search"))
+    {
+        <div class="row divSearch">
+            <div class="col-sm-12">
+                <div class="jarviswidget" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-deletebutton="false">
+                    <header>
+                        @*<span class="widget-icon"> <i class="fa fa-search"></i> </span>*@
+                        <h2 style="color:#6fb3e0">Tìm kiếm</h2>
+                    </header>
+                    <div>
+                        <div class="widget-body no-padding">
+                            <form class="smart-form">
+                                <fieldset>
+                                    <div class="row">
+                                        @if (Auth_Action.AssetResult(asset, "RuleName"))
+                                        {
+                                            <section class="col col-3">
+                                                <label class="input">
+                                                    <input type="text" class="input-xs" id="txtRuleID" placeholder="Tên Rule">
+                                                </label>
+                                            </section>
+                                        }
+                                        @if (Auth_Action.AssetResult(asset, "Status"))
+                                        {
+                                            <section class="col col-3search">
+                                                <label class="select">
+                                                    @Html.DropDownList("selectStatus_search", new SelectList(listActiveStatus, "StatusValue", "StatusName"), "-- Chọn trạng thái --")
+                                                </label>
+                                            </section>
+                                        }
+                                        <section class="col col-3search">
+                                            <a class="k-button k-button-icontext btn_customSearch" href="javascript:void(0);" onclick="doSearch()">Tìm kiếm</a>
+                                        </section>
+                                    </div>
+                                </fieldset>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="row">
+        <div id="popupImport">
+            <div style="float:left;">
+                <form id="importform" action="@Url.Content("~/RuleCheck/ImportData")" method="post" enctype="multipart/form-data" style="margin-bottom:0px;">
+                    <input type="file" Name="FileUpload" class="FileUpload" />
+                </form>
+            </div>
+            <div style="float:right;">
+                <a class="k-button k-button-icontext btn_custom" href="javascript:void(0);" onclick="beginImport()">Nhập</a>
+            </div>
+            <div style="clear:both"></div>
+        </div>
+    </div>
+
+    <div class="jarviswidget">
+        <header>
+            <h2 style="color:#6fb3e0">Danh sách rule kiêm tra </h2>
+        </header>
+        <div class="row">
+            <article class="col-sm-12">
+                <div class="widget-body">
+                    @(Html.Kendo().Grid<SES.Models.DC_RuleCheck>()
+                    .Name("grid")
+                    .Columns(columns =>
+                    {
+                        if (asset.ContainsKey("Update") && asset["Update"])
+                        {
+                            columns.Bound(p => p.RuleID).HtmlAttributes(new { data_id = "#=RuleID#", onclick = "onOpenPopup(1,this)", @style = "color:\\#428bca;cursor:pointer;text-decoration:underline" }).Title("Mã Rule").Width(110);
+                        }
+                        else
+                        {
+                            columns.Bound(p => p.RuleName).Title("Tên rule").Width(100);
+                        }
+                        if (Auth_Action.AssetResult(asset, "RuleName"))
+                        {
+                            columns.Bound(p => p.RuleName).Title("Tên Rule").HtmlAttributes(new { data_column = "RuleName" }).Width(150);
+                        }
+                        if (Auth_Action.AssetResult(asset, "RuleType"))
+                        {
+                            columns.Bound(p => p.RuleType).Title("Loại rule").HtmlAttributes(new { data_column = "RuleType" }).Width(150);
+                        }
+                        if (Auth_Action.AssetResult(asset, "Value"))
+                        {
+                            columns.Bound(p => p.Value).Title("Giá trị")
+                                .HtmlAttributes(new { @Style = "text-align:right" }).Width(150)
+                               // .Format("{0:N0}")
+                                ;
+                        }
+                        if (Auth_Action.AssetResult(asset, "Status"))
+                        {
+                            columns.Bound(p => p.Status).Title("Trạng thái").HtmlAttributes(new { data_column = "IsActive" }).Width(130);
+                        }
+
+                        columns.Bound(p => p.FromDate).Width(110).Format("{0:dd/MM/yyyy}").HtmlAttributes(new { style = "text-align:right" }).Title("Ngày bắt đầu").Width(110);
+                        columns.Bound(p => p.EndDate).Width(110).Format("{0:dd/MM/yyyy}").HtmlAttributes(new { style = "text-align:right" }).Title("Ngày kết thúc ").Width(110);
+                       
+                        columns.Bound(p => p.CreatedBy).Title("Người tạo").Width(110);
+                        columns.Bound(p => p.CreatedAt).Width(110).Format("{0:dd/MM/yyyy}").HtmlAttributes(new { style = "text-align:right" }).Title("Ngày tạo").Width(110);
+                        columns.Bound(p => p.UpdatedBy).Title("Người cập nhật").Width(110).Hidden();
+                        columns.Bound(o => o.UpdatedAt).Title("Ngày cập nhật").Format("{0:dd/MM/yyyy}").Width(110).ClientTemplate("#if(kendo.toString(UpdatedAt,'dd/MM/yyyy') != '01/01/1900'){#" + "#= kendo.toString(UpdatedAt,'dd/MM/yyyy') #" + "#}#").Hidden();
+
+                    })
+                    .ToolBar(toolBar =>
+                        {
+                            if (asset.ContainsKey("Insert") && asset["Insert"])
+                            {
+                                toolBar.Custom()
+                                        .Text("Thêm mới")
+                                        .HtmlAttributes(new { id = "btnInsert", @class = "btn btn-success", @style = "background-color:#87b87f; color:white;", onclick = "onOpenPopup(0,this)", @href = "javascript:void(0)" });
+                            }
+                            //if (asset.ContainsKey("Export") && asset["Export"])
+                            //{
+                            //    toolBar.Custom()
+                            //            .Text("Xuất Excel")
+                            //            .HtmlAttributes(new { @class = "btn btn-primary export", @style = "background-color:#428bca; color:white;" }).Url(Url.Action("Export", "RuleCheck", new { filter = "~", sort = "~", RuleID = "~" }));
+                                        
+                            //}
+                            if (asset.ContainsKey("Import") && asset["Import"])
+                            {
+                                toolBar.Custom()
+                                        .Text("Nhập Excel")
+                                        .HtmlAttributes(new { @class = "btn btn-info", @style = "background-color:#9585bf; color:white;", onclick = "openImport()", @href = "javascript:void(0)" });
+                            }
+
+                        })
+                    .Events(events => { events.DataBound("onDatabound"); })
+                    .Pageable(pager => pager.PageSizes(new[] { 20, 100, 200, 300 }))
+                    .Resizable(r => r.Columns(true))
+                    .Navigatable()
+                    .Scrollable()
+                    .Sortable()
+                    .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .Batch(true)
+                        .PageSize(100)
+                        .Model(model =>
+                        {
+                            model.Id(p => p.RuleID);
+                        })
+                        //.Events(e => { e.RequestEnd("onRequestEnd"); e.RequestStart("onRequestStart"); })
+                        .Read(read => read.Action("Read", "RuleCheck"))
+                    )
+                    )
+                </div>
+            </article>
+        </div>
+    </div>
+    <div id="popup" class="row" style="margin:0 auto">
+        <div class="bordered">
+            @using (Html.BeginForm("Create", "RuleCheck", FormMethod.Post, new { @class = "smart-form", id = "formPopup", enctype = "multipart/form-data" }))
+            {
+                @Html.Hidden("CreatedAt");
+                @Html.Hidden("CreatedBy");
+                @Html.Hidden("RuleID");
+                <fieldset style="float: left; width: 370px; padding-left: 0px; padding-right: 0px;">
+                    <section style="display:none; float:left;"></section>
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right;">Tên Rule (*)</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="input" style="float:right;width:240px;">
+                                @Html.TextBox("RuleName", "", new { @class = "input-xs popup_text_right", placeholder = "Tên Rule" })
+                                <b class="tooltip tooltip-top-right">Tên Rule (*)</b>
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+
+                    <section style="float:left;">
+                        <div class=" divlabel">
+                            <label class="label" style="float:right">Loại Rule(*)</label>
+                        </div>
+                        <div class="divfile">
+                            <label class="select" style="float: right">
+                            @Html.DropDownList("RuleType", new SelectList(new List<object>
+                            {
+                                new { value ="Theo ngày tháng" , text = "Theo ngày tháng"  },
+                                new { value = "Theo giá trị" , text = "Theo giá trị" },
+                                new { value = "Khác" , text = "Khác" },
+
+                            }, "value", "text", 1))                        
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right">Giá trị</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="input" style="float:right;width:240px;">
+                                @Html.TextBox("Value", "", new { @class = "inputs-xs popup_text_right", placeholder = "Giá trị" })
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right">Trạng thái</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="select" style="float: right">
+                                @Html.DropDownList("Status", new SelectList(listActiveStatus, "StatusValue", "StatusName", 1))
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+
+                </fieldset>
+                 <fieldset id="popupContent" style="float:left;width:370px;padding-left:0;padding-right:0;padding-top:26px">
+                <section style=" float:left;">
+                    <div class=" divlabel">
+                        <label class="label" style="float:right">Từ ngày</label>
+                    </div>
+                    <div class="divfile">
+                        <input name="FromDate" id="FromDate" style="float: right; width: 240px;" />
+                        <div style="clear:both"></div>
+                    </div>
+                </section>
+                <section style="float:left;">
+                    <div class=" divlabel">
+                        <label class="label" style="float:right">Đến ngày</label>
+                    </div>
+                    <div class="divfile">
+                        <input name="EndDate" id="EndDate" style="float: right; width: 240px;" />
+                        <div style="clear:both"></div>
+                    </div>
+                </section>
+                 </fieldset>
+                <div style="clear:both"></div>
+                <footer>
+                    <button type="submit" class="k-button k-button-icontext btn_custom" style="float: left;">Lưu</button>
+                    <img src="@Url.Content("~/Content/Bootstrap/loading.gif")" class="hide" id="loading" style="margin-top: 17px;" />
+                </footer>
+            }
+        </div>
+    </div>
+</section>

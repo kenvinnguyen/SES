@@ -1,0 +1,201 @@
+﻿@using SES.Models;
+@{
+    ViewBag.Title = "Lịch";
+}
+<script src="@Url.Content("~/Scripts/app/AdminMasterHoliday.js")"></script>
+<script src="@Url.Content("~/Scripts/app/app.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery.blockUI.js")"></script>
+
+@{
+    var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
+    var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
+    var listActiveStatus = dict.ContainsKey("activestatus") ? (List<ActiveStatus>)dict["activestatus"] : new List<ActiveStatus>();
+    //var listRole = dict.ContainsKey("listrole") ? (List<Auth_Role>)dict["listrole"] : new List<Auth_Role>();
+    //var listDistributorGroup = dict.ContainsKey("distributorgroup") ? (List<Master_DistributorGroup>)dict["distributorgroup"] : new List<Master_DistributorGroup>();
+    //var listDistributor = dict.ContainsKey("distributor") ? (List<Master_Distributor>)dict["distributor"] : new List<Master_Distributor>();
+}
+
+<section id="widget-grid" class="">
+    @if (Auth_Action.AssetResult(asset, "Search"))
+    {
+        <div class="row divSearch">
+            <!-- NEW COL START -->
+            <article class="col-sm-12">
+
+                <!-- Widget ID (each widget will need unique ID)-->
+                <div class="jarviswidget" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-deletebutton="false">
+                    <!-- widget options:
+                    usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
+
+                    data-widget-colorbutton="false"
+                    data-widget-editbutton="false"
+                    data-widget-togglebutton="false"
+                    data-widget-deletebutton="false"
+                    data-widget-fullscreenbutton="false"
+                    data-widget-custombutton="false"
+                    data-widget-collapsed="true"
+                    data-widget-sortable="false"
+
+                    -->
+                    <header>
+                        @*<span class="widget-icon"> <i class="fa fa-search"></i> </span>*@
+                        <h2 style="color:#6fb3e0">Tìm kiếm</h2>
+
+                    </header>
+
+                    <!-- widget div-->
+                    <div>
+                        <!-- widget content -->
+                        <div class="widget-body no-padding">
+                            <form class="smart-form">
+                                <fieldset>
+                                    <div class="row">
+                                        @if (Auth_Action.AssetResult(asset, "Day"))
+                                        {
+                                            <section class="col col-3">
+                                                <label class="select">
+                                                    <input type="text" class="start_EndDate form-control" id="txtDateToDate" placeholder="Ngày" style="height: 22px;text-indent:4%">
+                                                </label>
+                                            </section>
+                                        }
+                                        @*@if (Auth_Action.AssetResult(asset, "Week")
+                                                && Auth_Action.AssetResult(asset, "Month")
+                                                && Auth_Action.AssetResult(asset, "Year")
+                                                )
+                                            {
+                                                <section class="col col-3">
+                                                    <label class="input">
+                                                        <input type="text" class="input-xs" id="txtDate" placeholder="Tuần, tháng, năm">
+                                                    </label>
+                                                </section>
+                                            }*@
+
+                                        <section class="col col-3search">
+                                            <a class="k-button k-button-icontext btn_customSearch" href="javascript:void(0);" onclick="doSearch()">Tìm kiếm</a>
+                                        </section>
+                                    </div>
+                                </fieldset>
+                            </form>
+
+                        </div>
+                        <!-- end widget content -->
+
+                    </div>
+                    <!-- end widget div -->
+
+                </div>
+                <!-- end widget -->
+
+            </article>
+            <!-- END COL -->
+        </div>
+    }
+
+    <div class="row">
+        <div id="popupImport">
+            <div style="float:left;">
+                <form id="importform" action="@Url.Content("~/AdminMasterHoliday/Import")" method="post" enctype="multipart/form-data" style="margin-bottom:0px;">
+                    <input type="file" name="FileUpload" />
+                </form>
+            </div>
+            <div style="float:right;">
+                <a class="btn btn-primary btn-sm" href="javascript:void(0);" onclick="beginImport()">Import</a>
+            </div>
+            <div style="clear:both"></div>
+            <div id="divImport" hidden>
+                <label>Success : <strong id="totalImport">0</strong></label>
+                <label>Error : <strong id="totalImportError">0</strong></label>
+                <div>
+                    <a class="btn btn-primary btn-sm" id="btnDownloadError" href="javascript:void(0);">Download Error</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="jarviswidget">
+        <header>
+            <h2 style="color:#6fb3e0">Lịch nghỉ</h2>
+        </header>
+        <div class="row">
+            <!-- NEW COL START -->
+            <article class="col-sm-12">
+                <div class="widget-body">
+                    @(Html.Kendo().Grid<SES.Models.Master_Calendar>()
+                    .Name("grid")
+                    .Columns(columns =>
+                    {
+
+                        if (Auth_Action.AssetResult(asset, "Date"))
+                        {
+                            columns.Bound(p => p.Date).Title("Ngày").Format("{0:dd/MM/yyyy}").Width(150).HtmlAttributes(new { @style = "text-align:right; " });
+                        }
+                        if (Auth_Action.AssetResult(asset, "Week"))
+                        {
+                            columns.Bound(p => p.Week).Title("Tuần").Width(150).HtmlAttributes(new { @style = "text-align:right; " });
+                        }
+                        if (Auth_Action.AssetResult(asset, "Month"))
+                        {
+                            columns.Bound(p => p.Month).Title("Tháng").Width(150).HtmlAttributes(new { @style = "text-align:right; " });
+                        }
+                        if (Auth_Action.AssetResult(asset, "Year"))
+                        {
+                            columns.Bound(p => p.Year).Title("Năm").Width(150);
+                        }
+                        if (Auth_Action.AssetResult(asset, "Holiday"))
+                        {
+                            columns.Bound(p => p.Holiday).Title("Ngày lễ").Width(300);
+                        }
+
+
+                    })
+                    .ToolBar(toolBar =>
+                        {
+                            if (asset.ContainsKey("Update") && asset["Update"])
+                            {
+                                toolBar.Save().CancelText("Hủy thay đổi").SaveText("Lưu lại");
+                            }
+                            if (asset.ContainsKey("Export") && asset["Export"])
+                            {
+                                toolBar.Custom()
+                                        .Text("Xuất Excel")
+                                        .HtmlAttributes(new { @class = "export", @style = "background-color:#6fb3e0; color:white;" }).Url(Url.Action("Export", "AdminMasterHoliday", new { filter = "~", sort = "~" }));
+                            }
+                            //if (asset.ContainsKey("Import") && asset["Import"])
+                            //{
+                            //    toolBar.Custom()
+                            //            .Text("Nhập Excel")
+                            //            .HtmlAttributes(new { @style = "background-color:#9585bf; color:white;", onclick = "openImport()", @href = "javascript:void(0)" });
+                            //}
+
+                        })
+                    .Editable(editable => editable.Mode(GridEditMode.InCell))
+                    .Events(events => { events.DataBound("onDatabound"); })
+                    .Pageable(pager => pager.PageSizes(new[] { 20, 100, 200, 300 }))
+                    .Resizable(r => r.Columns(true))
+                    .Navigatable()
+                    .Scrollable()
+                    .Sortable()
+                    .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .Batch(true)
+                        .PageSize(100)
+                        .Model(model =>
+                        {
+                            model.Id(p => p.Date);
+                            model.Field(p => p.Date).Editable(false);
+                            model.Field(p => p.Week).Editable(false);
+                            model.Field(p => p.Month).Editable(false);
+                            model.Field(p => p.Year).Editable(false);
+                        })
+                        .Events(e => { e.RequestEnd("onRequestEnd"); e.RequestStart("onRequestStart"); })
+                        .Read(read => read.Action("Read", "AdminMasterHoliday"))
+                        .Update(update => update.Action("Create", "AdminMasterHoliday"))
+                    )
+                    )
+                </div>
+            </article>
+            <!-- END COL -->
+
+        </div>
+    </div>
+
+</section>

@@ -1,0 +1,165 @@
+﻿@using SES.Models;
+@{
+
+    var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
+    var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
+    var listActiveStatus = dict.ContainsKey("activestatus") ? (List<ActiveStatus>)dict["activestatus"] : new List<ActiveStatus>();
+
+}
+<script src="@Url.Content("~/Scripts/app/DeliveryFee.js")"></script>
+<script src="@Url.Content("~/Scripts/app/app.js")"></script>
+<div>
+    @if (Auth_Action.AssetResult(asset, "Search"))
+    {
+
+        <div class="jarviswidget" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-deletebutton="false">
+
+            <header>
+                @*<span class="widget-icon"> <i class="fa fa-search"></i> </span>*@
+                <h2 style="color:#6fb3e0">Tìm kiếm</h2>
+
+            </header>
+                <!-- widget content -->
+                <div class="widget-body no-padding" style="margin: 0">
+                    <form class="smart-form">
+                        <fieldset>
+                            <div class="row">
+
+                                @if (Auth_Action.AssetResult(asset, "DeliveryFeeID"))
+                                {
+                                    <section class="col col-3">
+                                        <label class="input">
+                                            <input type="text" class="input-xs" id="txtDeliveryFeeID" placeholder="Mã, tên gói cước vận chuyển">
+                                        </label>
+                                    </section>
+                                }
+                                @if (Auth_Action.AssetResult(asset, "TransporterID"))
+                                {
+                                    <section class="col col-3">
+                                        <label class="input">
+                                            <input type="text" class="input-xs" id="txtDVVCID" placeholder="Mã, tên Đơn vị vận chuyển">
+                                        </label>
+                                    </section>
+                                }
+                                @if (Auth_Action.AssetResult(asset, "IsActive"))
+                                {
+                                    <section class="col col-3search">
+                                        <label class="select">
+                                            @Html.DropDownList("selectIsActive_search", new SelectList(listActiveStatus, "StatusValue", "StatusName"), "-- Chọn trạng thái --")
+                                        </label>
+                                    </section>
+                                }
+
+                                <section class="col col-3search">
+                                    <a class="k-button k-button-icontext btn_customSearch" href="javascript:void(0);" onclick="doSearchpackage()">Tìm kiếm</a>
+                                </section>
+                            </div>
+                        </fieldset>
+                    </form>
+
+                </div>
+        </div>
+    }
+</div>
+<div class="jarviswidget">
+    <header>
+        <h2 style="color:#6fb3e0">Danh sách gói cước</h2>
+    </header>
+
+    <div class="row">
+        <!-- NEW COL START -->
+        <article class="col-sm-12">
+            <div class="widget-body">
+                @(Html.Kendo().Grid<SES.Models.DC_LG_DeliveryFee>()
+                        .Name("gridpackage")
+                    .Columns(columns =>
+                    {
+                        if (Auth_Action.AssetResult(asset, "DeliveryFeeID"))
+                        {
+                            columns.Bound(p => p.DeliveryFeeID).Title("Mã").HtmlAttributes(new { @Style="text-align:right"}).Width(90);
+                        }
+                        if (Auth_Action.AssetResult(asset, "Name"))
+                        {
+                            columns.Bound(p => p.Name).Title("Tên").Width(130);
+                        }
+                       
+                        if (Auth_Action.AssetResult(asset, "DeliveryName"))
+                        {
+                            columns.Bound(p => p.DeliveryName).Title("Đơn vị vận chuyển").Width(130);
+                        }
+                        if (Auth_Action.AssetResult(asset, "Price"))
+                        {
+                            columns.Bound(p => p.Price).Title("Giá").HtmlAttributes(new { @Style = "text-align:right" }).Width(100).Format("{0:N0}");
+                        }
+                        if (Auth_Action.AssetResult(asset, "Status"))
+                        {
+                            columns.Bound(p => p.Status).Title("Trạng thái").HtmlAttributes(new { data_column = "IsActive" }).Width(115);
+                        }
+                        if (Auth_Action.AssetResult(asset, "Descr"))
+                        {
+                            columns.Bound(p => p.Descr).Title("Mô tả").Width(342);
+                        }
+                        if (Auth_Action.AssetResult(asset, "MinDay"))
+                        {
+                            columns.Bound(p => p.MinDay).Title("Min số ngày VC").HtmlAttributes(new { @Style="text-align:right"}).Width(110);
+                        }
+                        if (Auth_Action.AssetResult(asset, "MaxDay"))
+                        {
+                            columns.Bound(p => p.MaxDay).Title("Max số ngày VC").HtmlAttributes(new { @Style = "text-align:right" }).Width(110);
+                        }
+                        if (Auth_Action.AssetResult(asset, "MinTime"))
+                        {
+                            columns.Bound(p => p.MinTime).Title("Min số giờ VC").HtmlAttributes(new { @Style = "text-align:right" }).Width(110);
+                        }
+                        if (Auth_Action.AssetResult(asset, "MaxTime"))
+                        {
+                            columns.Bound(p => p.MaxTime).Title("Min số giờ VC").HtmlAttributes(new { @Style = "text-align:right" }).Width(110);
+                        }
+                        if (Auth_Action.AssetResult(asset, "MinWeight"))
+                        {
+                            columns.Bound(p => p.MinWeight).Title("Min Khối lượng").HtmlAttributes(new { @Style = "text-align:right" }).Width(110);
+                        }
+                        if (Auth_Action.AssetResult(asset, "MaxWeight"))
+                        {
+                            columns.Bound(p => p.MaxWeight).Title("Max Khối lượng").HtmlAttributes(new { @Style = "text-align:right" }).Width(110);
+                        }
+                        if (Auth_Action.AssetResult(asset, "Note"))
+                        {
+                            columns.Bound(p => p.Note).Title("Ghi chú").Width(150);
+                        }
+
+                    })
+                    .ToolBar(toolBar =>
+                        {
+
+                            if (asset.ContainsKey("Export") && asset["Export"])
+                            {
+                                toolBar.Custom()
+                                        .Text("Xuất Excel")
+                                        .HtmlAttributes(new { @class = "export", @style = "background-color:#6FB3e0; color:white;" }).Url(Url.Action("Export_DeliveryPackage", "DeliveryFee", new { filter = "~", sort = "~" }));
+                            }
+
+                        })
+                    .Events(events => { events.DataBound("onDataboundPackage"); })
+                    .Pageable(pager => pager.PageSizes(new[] { 20, 100, 200, 300 }))
+                    .Resizable(r => r.Columns(true))
+                    .Navigatable()
+                    .Scrollable()
+                    .Sortable()
+                    .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .Batch(true)
+                        .PageSize(100)
+                        .Model(model =>
+                        {
+                            model.Id(p => p.DeliveryFeeID);
+                        })
+                                        .Read(read => read.Action("Read_DeliveryPackage", "DeliveryFee"))
+                    )
+                )
+            </div>
+        </article>
+        <!-- END COL -->
+
+    </div>
+</div>

@@ -1,0 +1,295 @@
+﻿@using SES.Models;
+@{
+    ViewBag.Title = "Nhóm";
+}
+
+@Scripts.Render("~/bundles/appHOAdminAuthRole")
+
+@{
+    var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
+    var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
+    var listActiveStatus = dict.ContainsKey("activestatus") ? (List<ActiveStatus>)dict["activestatus"] : new List<ActiveStatus>();
+    var listUser = dict.ContainsKey("user") ? (List<Auth_User>)dict["user"] : new List<Auth_User>();
+}
+@{
+    var listAction = new List<SelectListItem>();
+    listAction.Add(new SelectListItem() { Value = "View", Text = "Xem" });
+    listAction.Add(new SelectListItem() { Value = "Insert", Text = "Thêm" });
+    listAction.Add(new SelectListItem() { Value = "Update", Text = "Cập nhật" });
+    listAction.Add(new SelectListItem() { Value = "Delete", Text = "Xóa" });
+    listAction.Add(new SelectListItem() { Value = "Export", Text = "Xuất Excel" });
+    listAction.Add(new SelectListItem() { Value = "Import", Text = "Nhập Excel" });
+}
+<section id="widget-grid" class="">
+    @if (Auth_Action.AssetResult(asset, "Search"))
+    {
+        <div class="row divSearch">
+            <!-- NEW COL START -->
+            <article class="col-sm-12">
+
+                <!-- Widget ID (each widget will need unique ID)-->
+                <div class="jarviswidget" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-deletebutton="false">
+                    <!-- widget options:
+                    usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
+
+                    data-widget-colorbutton="false"
+                    data-widget-editbutton="false"
+                    data-widget-togglebutton="false"
+                    data-widget-deletebutton="false"
+                    data-widget-fullscreenbutton="false"
+                    data-widget-custombutton="false"
+                    data-widget-collapsed="true"
+                    data-widget-sortable="false"
+
+                    -->
+                    <header>
+                        @*<span class="widget-icon"> <i class="fa fa-search"></i> </span>*@
+                        <h2 style="color:#6fb3e0">Tìm kiếm</h2>
+
+                    </header>
+
+                    <!-- widget div-->
+                    <div>
+                        <!-- widget content -->
+                        <div class="widget-body no-padding">
+                            <form class="smart-form">
+                                <fieldset>
+                                    <div class="row">
+                                        @if (Auth_Action.AssetResult(asset, "RoleID"))
+                                        {
+                                            <section class="col col-3">
+                                                <label class="input">
+                                                    <input type="text" class="input-xs" id="txtRoleID" placeholder="Mã, tên nhóm">
+                                                </label>
+                                            </section>
+                                        }
+                                        @if (Auth_Action.AssetResult(asset, "IsActive"))
+                                        {
+                                            <section class="col col-3">
+                                                <label class="select">
+                                                    @Html.DropDownList("selectIsActive_search", new SelectList(listActiveStatus, "StatusValue", "StatusName"), "-- Chọn trạng thái --")
+                                                </label>
+                                            </section>
+                                        }
+                                        <section class="col col-3search">
+                                            <a class="k-button k-button-icontext btn_customSearch" href="javascript:void(0);" onclick="doSearch()">Tìm kiếm</a>
+                                        </section>
+                                    </div>
+                                </fieldset>
+                            </form>
+
+                        </div>
+                        <!-- end widget content -->
+
+                    </div>
+                    <!-- end widget div -->
+
+                </div>
+                <!-- end widget -->
+
+            </article>
+            <!-- END COL -->
+        </div>
+    }
+    <div class="jarviswidget">
+        <header>
+            <h2 style="color:#6fb3e0">Danh sách nhóm quyền</h2>
+        </header>
+        <div class="row">
+            <!-- NEW COL START -->
+            <article class="col-sm-12">
+                <div class="widget-body">
+                    @(Html.Kendo().Grid<SES.Models.Auth_Role>()
+                    .Name("grid")
+                    .Columns(columns =>
+                    {
+                        if (asset.ContainsKey("Update") && asset["Update"])
+                        {
+                            columns.Bound(p => p.RoleID).HtmlAttributes(new { data_id = "#=RoleID#", onclick = "onOpenPopup(1,this)", @style = "color:\\#428bca;cursor:pointer" }).Title("Mã nhóm").Width(100);
+                        }
+                        else
+                        {
+                            columns.Bound(p => p.RoleID).Title("Mã nhóm").Width(100);
+                        }
+                        if (Auth_Action.AssetResult(asset, "RoleName"))
+                        {
+                            columns.Bound(p => p.RoleName).Title("Tên").Width(130);
+                        }
+                        if (Auth_Action.AssetResult(asset, "Note"))
+                        {
+                            columns.Bound(p => p.Note).Title("Ghi chú");
+                        }
+                        if (Auth_Action.AssetResult(asset, "IsActive"))
+                        {
+                            columns.Bound(p => p.IsActive).Title("Trạng thái").HtmlAttributes(new { data_column = "IsActive", @class = "label-success" }).Width(150);
+                        }
+                        columns.Bound(p => p.RowCreatedBy).Title("Người tạo").Width(130);
+                        columns.Bound(p => p.RowCreatedAt).Format("{0:dd/MM/yyyy}").HtmlAttributes(new { style = "text-align:right" }).Title("Ngày tạo");
+
+                        if (asset.ContainsKey("Insert") && asset["Insert"])
+                        {
+                            columns.Bound(p => p.RoleID).HeaderTemplate("Sao chép").ClientTemplate("<a data-id='#=RoleID#' class='k-button k-button-icontext btn_custom' onclick='onOpenPopup(2,this)'>Sao chép</a>").Width(100);
+                        }
+                    })
+                    .ToolBar(toolBar =>
+                        {
+                            if (asset.ContainsKey("Insert") && asset["Insert"])
+                            {
+                                toolBar.Custom()
+                                        .Text("Thêm mới")
+                                        .HtmlAttributes(new { id = "btnInsert", @class = "btn_custom", @style = "background-color:#87b87f; color:white;", onclick = "onOpenPopup(0,this)", @href = "javascript:void(0)" });
+                            }
+                        })
+                    .Events(events => { events.DataBound("onDatabound"); })
+                    .Pageable(pager => pager.PageSizes(new[] { 20, 100, 200, 300 }))
+                    .Resizable(r => r.Columns(true))
+                    .Navigatable()
+                    .Scrollable()
+                    .Sortable()
+                    .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .Batch(true)
+                        .PageSize(100)
+                        .Model(model =>
+                        {
+                            model.Id(p => p.RoleID);
+                        })
+                        .Events(e => { e.RequestEnd("onRequestEnd"); e.RequestStart("onRequestStart"); })
+                        .Read(read => read.Action("Read", "HOAdminAuthRole"))
+                    )
+                    )
+                </div>
+            </article>
+            <!-- END COL -->
+
+        </div>
+    </div>
+
+    <div id="popup" class="row" style="margin:0 auto">
+        <div class="nav nav-tabs bordered padding-12 tab-color-blue background-blue">
+            <ul id="tabUserAu" class="nav nav-tabs borded">
+                <li class="active" id="tab1">
+                    <a href="#s1" data-toggle="tab">Thông tin chung</a>
+                </li>
+                <li id="tab2">
+                    <a href="#s2" data-toggle="tab">Người dùng</a>
+                </li>
+                <li id="tab3">
+                    <a href="#s3" data-toggle="tab" id="btnRolse">Phân quyền chức năng</a>
+                </li>
+
+            </ul>
+            <div id="tabUser" class="tab-content">
+                <div class="tab-pane fade in active" id="s1">
+                    <div>
+                        @using (Html.BeginForm("Create", "HOAdminAuthRole", FormMethod.Post, new { @class = "smart-form", id = "formPopup", enctype = "multipart/form-data" }))
+                        {
+                            @Html.Hidden("RowCreatedAt")
+                            @Html.Hidden("RowCreatedBy")
+                            @*@Html.Hidden("RoleID")*@
+                            @Html.Hidden("IsCopy", 0)
+                            <fieldset style="float:left; width:370px;">
+                                <section style="float:left;">
+                                    <div class="divlabel">
+                                        <label class="label" style="float:right">Mã nhóm:</label>
+                                    </div>
+                                </section>
+                                <section style="float:left;">
+                                    <div class="divlabel">
+                                        <label class="label" style="float:right">Tên nhóm (*)</label>
+                                    </div>
+                                    <div class="divfile">
+                                        <label class="input" style="float:right;width:240px;">
+                                            @Html.TextBox("RoleName", "", new { @class = "input-xs popup_text_left", placeholder = "Tên nhóm" })
+                                            @*<b class="tooltip tooltip-top-right">Tên nhóm</b>*@
+                                        </label>
+                                        <div style="clear:both"></div>
+                                    </div>
+                                </section>
+                                <section style="float:left;">
+                                    <div class="divlabel">
+                                        <label class="label" style="float:right">Trạng thái</label>
+                                    </div>
+                                    <div class="divfile">
+                                        <label class="select" style="float: right">
+                                            @Html.DropDownList("IsActive", new SelectList(listActiveStatus, "StatusValue", "StatusName", 1))
+                                        </label>
+                                        <div style="clear:both"></div>
+                                    </div>
+                                </section>
+                                <section style="float:left;">
+                                    <div class="divlabel">
+                                        <label class="label" style="float:right">Ghi chú</label>
+                                    </div>
+                                    <div class="divfile">
+                                        <label class="textarea textarea-resizable" style="float:right;width:240px;">
+                                            @Html.TextArea("Note", new { placeholder = "Ghi chú", @style = "min-height:56px;width:100%;margin-right:81px" })
+                                            @*<b class="tooltip tooltip-top-right">Ghi chú</b>*@
+                                        </label>
+                                        <div style="clear:both"></div>
+                                    </div>
+                                </section>
+                            </fieldset>
+                            
+                            <div style="clear:both"></div><br />
+                            <footer>
+                                <button type="submit" class="k-button k-button-icontext btn_custom" style="float: left;" id="btnSubmit">Lưu</button>
+                                <img src="@Url.Content("~/Content/Bootstrap/loading.gif")" class="hide" id="loading" style="margin-top: 5px;" />
+                            </footer>
+                        }
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="s2">
+                    <div>
+                        <form class="smart-form">
+                            <fieldset style="float:left;">
+                                <section style="float:left;">
+                                    <div class="divlabel" style="width:60px;">
+                                        <label class="label" style="float:left;">Người dùng</label>
+                                    </div>
+                                    <div class="divfile" style="width:385px;">
+                                        <label class="select">
+                                            @Html.DropDownList("selectUser", new SelectList(listUser, "UserID", "DisplayName"), new { multiple = "multiple", placeholder = "-- Chọn người dùng --" })
+                                        </label>
+                                    </div>
+                                </section>
+                            </fieldset>
+                            <div style="clear:both"></div><br />
+                            <footer>
+                                <button type="button" class="k-button k-button-icontext btn_custom" style="float:left" id="btnSaveUser" onclick="onSaveUser()">Lưu</button>
+                                <img src="@Url.Content("~/Content/Bootstrap/loading.gif")" class="hide" id="loadingSaveUser" style="margin-top: 5px;" />
+                            </footer>
+                        </form>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="s3">
+                    <div>
+                        <form class="smart-form">
+                            <fieldset style="float:left;">
+                                <section style="float:left;">
+                                    <div class="divlabel" style="width:60px;">
+                                        <label class="label" style="float:left;">Chọn quyền</label>
+                                    </div>
+                                    <div class="divfile" style="width:385px;">
+                                        <label class="select">
+                                            @Html.DropDownList("selectAction", new SelectList(listAction, "Value", "Text"), "-- Chọn quyền --")
+                                        </label>
+                                    </div>
+                                </section>
+                                <div id="treelist" style="float: left; width: 455px"></div>
+                                <div id="divGridAction" style="width:60%;float:right"></div>
+                                <div style="clear:both;"></div>
+                            </fieldset>
+                            <div style="clear:both"></div><br />
+                            <footer id="PermissionAction">
+                                <button type="button" class="k-button k-button-icontext btn_custom" onclick="SavePermission(this)" style="float: left;">Lưu</button>
+                                <img src="@Url.Content("~/Content/Bootstrap/loading.gif")" class="hide" id="loadingSavePermission" style="margin-top: 5px;" />
+                            </footer>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>

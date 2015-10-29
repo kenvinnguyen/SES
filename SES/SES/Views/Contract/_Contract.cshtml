@@ -1,0 +1,278 @@
+﻿
+@using SES.Models;
+
+@{
+    ViewBag.Title = "Danh mục ấn phẩm";
+}
+@Scripts.Render("~/Scripts/app/Contract.js")
+@Scripts.Render("~/Scripts/app/app.js")
+@{
+    var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
+    var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
+    var listActiveStatus = dict.ContainsKey("activestatus") ? (List<ActiveStatus>)dict["activestatus"] : new List<ActiveStatus>();
+    var listTranporter = dict.ContainsKey("listTranporter") ? (List<DC_LG_Transporter>)dict["listTranporter"] : new List<DC_LG_Transporter>();
+    var listContractTransporter = dict.ContainsKey("listContractTransporter") ? (List<DC_LG_Contract>)dict["listContractTransporter"] : new List<DC_LG_Contract>();
+   }
+<style>
+    .ace-file-input {
+        position: relative;
+        height: 38px;
+        line-height: 38px;
+        margin-bottom: 9px;
+    }
+</style>
+<section>
+    @if (Auth_Action.AssetResult(asset, "Search"))
+    {
+        <div class="row divSearch">
+            <div class="col-sm-12">
+                <div class="jarviswidget" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-deletebutton="false">
+                    <header>
+                        @*<span class="widget-icon"> <i class="fa fa-search"></i> </span>*@
+                        <h2 style="color:#6fb3e0">Tìm kiếm</h2>
+                    </header>
+                    <div>
+                        <div class="widget-body no-padding">
+                            <form class="smart-form">
+                                <fieldset>
+                                    <div class="row">
+                                        @if (Auth_Action.AssetResult(asset, "ContractName"))
+                                        {
+                                            <section class="col col-3">
+                                                <label class="input">
+                                                    <input type="text" class="input-xs" id="txtContractID" placeholder="Mã,Tên hợp đồng">
+                                                </label>
+                                            </section>
+                                        }
+                                        @*@if (Auth_Action.AssetResult(asset, "TransporterID"))
+                                        {
+                                            <section class="col col-3">
+                                                <label class="input">
+                                                    <input type="text" class="input-xs" id="txtTransporterName" placeholder="Đơn vị vận chuyển">
+                                                </label>
+                                            </section>
+                                        }*@
+                                        @if (Auth_Action.AssetResult(asset, "Status"))
+                                        {
+                                            <section class="col col-3search">
+                                                <label class="select">
+                                                    @Html.DropDownList("selectStatus_search", new SelectList(listActiveStatus, "StatusValue", "StatusName"), "-- Chọn trạng thái --")
+                                                </label>
+                                            </section>
+                                        }
+                                        <section class="col col-3search">
+                                            <a class="k-button k-button-icontext btn_customSearch" href="javascript:void(0);" onclick="doSearch()">Tìm kiếm</a>
+                                        </section>
+                                    </div>
+                                </fieldset>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="jarviswidget">
+        <header>
+            <h2 style="color:#6fb3e0">Hợp đồng vận chuyển</h2>
+        </header>
+        <div class="row">
+            <article class="col-sm-12">
+                <div class="widget-body">
+                    @(Html.Kendo().Grid<SES.Models.DC_LG_Contract>()
+                    .Name("grid")
+                    .Columns(columns =>
+                    {
+                        if (asset.ContainsKey("Update") && asset["Update"])
+                        {
+                            columns.Bound(p => p.ContractID).HtmlAttributes(new { data_id = "#=ContractID#", onclick = "onOpenPopup(1,this)", @style = "color:\\#428bca;cursor:pointer;text-decoration:underline" }).Title("Mã hợp đồng").Width(110);
+                        }
+                        else
+                        {
+                            columns.Bound(p => p.ContractID).Title("Mã hợp đồng").Width(100);
+                        }
+                        if (Auth_Action.AssetResult(asset, "ContractName"))
+                        {
+                            columns.Bound(p => p.ContractName).Title("Tên hợp đồng").HtmlAttributes(new { data_column = "ContractName" }).Width(150);
+                        }
+                        if (Auth_Action.AssetResult(asset, "Status"))
+                        {
+                            columns.Bound(p => p.Status).Title("Trạng thái").HtmlAttributes(new { data_column = "IsActive" }).Width(130);
+                        }
+                        if (Auth_Action.AssetResult(asset, "TransporterName"))
+                        {
+                            columns.Bound(p => p.TransporterName).Title("Đơn vị vận chuyển").Width(150);
+                            
+                        }
+                        if (Auth_Action.AssetResult(asset, "DiscountPercent"))
+                        {
+                            columns.Bound(p => p.DiscountPercent).Title("% chiết khấu").HtmlAttributes(new { data_column = "Size",style ="text-align:right" }).Width(100).ClientTemplate("#=DiscountPercent*100#%");
+                        }
+                        if (Auth_Action.AssetResult(asset, "StartDate"))
+                        {
+                            columns.Bound(p => p.StartDate).Title("Ngày bắt đầu").Format("{0:dd/MM/yyyy}").Width(110).ClientTemplate("#if(kendo.toString(StartDate,'dd/MM/yyyy') != '01/01/1900'){#" + "#= kendo.toString(StartDate,'dd/MM/yyyy') #" + "#}#").HtmlAttributes(new { style = "text-align:right" });
+                        }
+                        if (Auth_Action.AssetResult(asset, "EndDate"))
+                        {
+                            columns.Bound(p => p.EndDate).Title("Ngày kết thúc").Format("{0:dd/MM/yyyy}").Width(110).ClientTemplate("#if(kendo.toString(EndDate,'dd/MM/yyyy') != '01/01/1900'){#" + "#= kendo.toString(EndDate,'dd/MM/yyyy') #" + "#}#").HtmlAttributes(new { style = "text-align:right" });
+                        }
+                        if (Auth_Action.AssetResult(asset, "Note"))
+                        {
+                            columns.Bound(p => p.Note).Title("Ghi chú").Width(130).HeaderHtmlAttributes(new { data_column = "Note" }); 
+                        }
+
+                        columns.Bound(p => p.CreatedBy).Title("Người tạo").Width(110);
+                        columns.Bound(p => p.CreatedAt).Width(110).Format("{0:dd/MM/yyyy}").HtmlAttributes(new { style = "text-align:right" }).Title("Ngày tạo").Width(110);
+                        columns.Bound(p => p.UpdatedBy).Title("Người cập nhật").Width(110);
+                        columns.Bound(o => o.UpdatedAt).Title("Ngày cập nhật").Format("{0:dd/MM/yyyy}").Width(110).ClientTemplate("#if(kendo.toString(UpdatedAt,'dd/MM/yyyy') != '01/01/1900'){#" + "#= kendo.toString(UpdatedAt,'dd/MM/yyyy') #" + "#}#").HtmlAttributes(new { style = "text-align:right" });
+
+                    })
+                    .ToolBar(toolBar =>
+                        {
+                            if (asset.ContainsKey("Insert") && asset["Insert"])
+                            {
+                                toolBar.Custom()
+                                        .Text("Thêm mới")
+                                        .HtmlAttributes(new { id = "btnInsert", @class = "btn btn-success", @style = "background-color:#87b87f; color:white;", onclick = "onOpenPopup(0,this)", @href = "javascript:void(0)" });
+                            }
+                            if (asset.ContainsKey("Export") && asset["Export"])
+                            {
+                                toolBar.Custom()
+                                        .Text("Xuất Excel")
+                                        .HtmlAttributes(new { @class = "btn btn-primary export", @style = "background-color:#428bca; color:white;" }).Url(Url.Action("Export", "Contract", new { filter = "~", sort = "~", ContractID = "~" }));
+                            }
+                        })
+                    .Events(events => { events.DataBound("onDatabound"); })
+                    .Pageable(pager => pager.PageSizes(new[] { 20, 100, 200, 300 }))
+                    .Resizable(r => r.Columns(true))
+                    .Navigatable()
+                    .Scrollable()
+                    .Sortable()
+                    .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .Batch(true)
+                        .PageSize(100)
+                        .Model(model =>
+                        {
+                            model.Id(p => p.ContractID);
+                        })
+                        //.Events(e => { e.RequestEnd("onRequestEnd"); e.RequestStart("onRequestStart"); })
+                        .Read(read => read.Action("Read", "Contract"))
+                    )
+                    )
+                </div>
+            </article>
+        </div>
+    </div>
+    <div id="popup" class="row" style="margin:0 auto">
+        <div class="bordered">
+            @using (Html.BeginForm("Create", "Contract", FormMethod.Post, new { @class = "smart-form", id = "formPopup", enctype = "multipart/form-data" }))
+            {
+                @Html.Hidden("CreatedAt");
+                @Html.Hidden("CreatedBy");
+                <fieldset style="float: left; width: 370px; padding-left: 0px; padding-right: 0px;">
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right;">Mã hợp đồng (*)</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="input" style="float:right;width:240px;">
+                                @Html.TextBox("ContractID", "", new { @class = "input-xs popup_text_right", placeholder = "Mã hợp đồng" })
+                                @*<b class="tooltip tooltip-top-right">Tên hợp đồng</b>*@
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right;">Tên hợp đồng (*)</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="input" style="float:right;width:240px;">
+                                @Html.TextBox("ContractName", "", new { @class = "input-xs popup_text_right", placeholder = "Tên hợp đồng" })
+                                @*<b class="tooltip tooltip-top-right">Tên hợp đồng</b>*@
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right">Đơn vị vận chuyển</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            @*<label class="select" style="float: right">
+                                @Html.DropDownList("TransporterID", new SelectList(listTranporter, "TransporterID", "TransporterName"), "Chọn đơn vị vận chuyển")
+                            </label>*@
+                            <label class="select">
+                                @Html.DropDownList("TransporterID", new SelectList(listTranporter, "TransporterID", "TransporterName"), new { multiple = "multiple", placeholder = "-- Chọn ĐVVC --" })
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right">Phần trăm chiết khấu</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="input" style="float:right;width:240px;">
+                                @Html.TextBox("DiscountPercent", "", new { @class = "input-xs popup_text_right", placeholder = "Phần trăm chiết khấu" })
+                                @*<b class="tooltip tooltip-top-right">Kích cỡ</b>*@
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+                   
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right">Trạng thái</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="select" style="float: right">
+                                @Html.DropDownList("Status", new SelectList(listActiveStatus, "StatusValue", "StatusName", 1))
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+                    <section style=" float:left;">
+                        <div class=" divlabel">
+                            <label class="label" style="float:right">Từ ngày</label>
+                        </div>
+                        <div class="divfile">
+                            <input name="StartDate" id="StartDate" style="float: right; width: 240px;" />
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+                    <section style="float:left;">
+                        <div class=" divlabel">
+                            <label class="label" style="float:right">Đến ngày</label>
+                        </div>
+                        <div class="divfile">
+                            <input name="EndDate" id="EndDate" style="float: right; width: 240px;" />
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+                    <section style="float:left;">
+                        <div class=" divlabel">
+                            <label class="label" style="float:right">Ghi chú</label>
+                        </div>
+                        <div class="divfile">
+                            <label class="textarea textarea-resizable" style="float:right;width:240px;">
+                                @Html.TextArea("Note", new { placeholder = "Ghi chú", @style = "min-height:56px;width:100%;margin-right:91px" })
+                                @*<b class="tooltip tooltip-top-right">Ghi chú</b>*@
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+
+                </fieldset>
+                <div style="clear:both"></div>
+                <footer>
+                    <button type="submit" class="k-button k-button-icontext btn_custom" style="float: left;">Lưu</button>
+                    <img src="@Url.Content("~/Content/Bootstrap/loading.gif")" class="hide" id="loading" style="margin-top: 17px;" />
+                </footer>
+            }
+        </div>
+    </div>
+</section>

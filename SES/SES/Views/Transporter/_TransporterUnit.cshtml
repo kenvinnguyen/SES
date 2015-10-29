@@ -1,0 +1,257 @@
+﻿@using SES.Models;
+@{
+    ViewBag.Title = "Danh sách đơn vị vận chuyển";
+}
+
+@{
+    var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
+    var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
+    var listActiveStatus = dict.ContainsKey("activestatus") ? (List<ActiveStatus>)dict["activestatus"] : new List<ActiveStatus>();
+}
+<script src="@Url.Content("~/Scripts/app/app.js")"></script>
+<script src="@Url.Content("~/Scripts/app/Transporter.js")"></script>
+
+<div class="jarviswidget" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-deletebutton="false">
+    <header>
+        @*<span class="widget-icon"> <i class="fa fa-search"></i> </span>*@
+        <h2 style="color:#6fb3e0">Tìm kiếm</h2>
+
+    </header>
+    <div>
+        <div class="widget-body no-padding">
+            <form class="smart-form">
+                <fieldset>
+                    <section class="row">
+                        @*@if (Auth_Action.AssetResult(asset, "TransporterID"))
+                            {*@
+                        <section class="col col-3search">
+                            <label class="input">
+                                <input type="text" class="input-xs" id="txtTransporterID" placeholder="Mã, Tên ĐVVC">
+                            </label>
+                        </section>
+                        <section class="col col-3search">
+                            <label class="select">
+                                @Html.DropDownList("selectIsActive_search", new SelectList(listActiveStatus, "StatusValue", "StatusName"), "-- Chọn trạng thái --")
+                            </label>
+                        </section>
+                        @*}
+
+                            @* } *@
+                        <section class="col col-3search">
+                            <a class="k-button k-button-icontext btn_customSearch" href="javascript:void(0);" onclick="doSearch()">Tìm kiếm</a>
+                        </section>
+                    </section>
+                </fieldset>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="jarviswidget">
+    <header>
+        @*<span class="widget-icon"> <i class="fa fa-search"></i> </span>*@
+        <h2 style="color:#6fb3e0">Danh sách đơn vị vận chuyển</h2>
+
+    </header>
+
+    <!-- widget div-->
+    <div class="row">
+        <!-- NEW COL START -->
+        <article class="col-sm-12">
+            <div class="widget-body">
+                @(Html.Kendo().Grid<SES.Models.DC_LG_Transporter>()
+        .Name("grid")
+                    .Columns(columns =>
+                    {
+                        //if (asset.ContainsKey("Update") && asset["Update"])
+                        //{
+                        //    columns.Bound(p => p.TransporterID).HtmlAttributes(new { data_id = "#=TransporterID#", onclick = "onOpenPopupDe(1,this)", @style = "color:\\#428bca;cursor:pointer;text-decoration:underline" }).Title("Mã ĐVVC").Width(100);
+                        //}
+                        //else
+                        //{
+                        //    columns.Bound(p => p.TransporterID).Title("Mã ĐVVC").Width(100);
+                        //}
+                        if (Auth_Action.AssetResult(asset, "TransporterID"))
+                        {
+                            columns.Bound(p => p.TransporterID).Title("Mã ĐVVC").Width(100);
+                        }
+                        
+                        if (Auth_Action.AssetResult(asset, "TransporterName"))
+                        {
+                            columns.Bound(p => p.TransporterName).Title("Tên ĐVVC").HtmlAttributes(new { data_column = "TransporterName" }).Width(130);
+                        }
+                        
+                        if (Auth_Action.AssetResult(asset, "Weight"))
+                        {
+                            columns.Bound(p => p.Weight).Title("Trọng số").Width(130);
+                        }
+                        if (Auth_Action.AssetResult(asset, "Status"))
+                        {
+                            columns.Bound(p => p.Status).Title("Trạng thái").HtmlAttributes(new { data_column = "IsActive" }).Width(130);
+                            //columns.Bound(p => p.IsActive).Title("Trạng thái").Width(130);
+                        }
+
+                        if (Auth_Action.AssetResult(asset, "Note"))
+                        {
+                            columns.Bound(p => p.Note).Title("Ghi chú").Width(130);
+                        }
+
+                        columns.Bound(p => p.CreatedBy).Title("Người tạo").Width(130);
+
+                        columns.Bound(p => p.CreatedAt).Format("{0:dd/MM/yyyy}").HtmlAttributes(new { style = "text-align:right" }).Title("Ngày tạo").Width(130);
+
+                    })
+                    .ToolBar(toolBar =>
+                        {
+                            //if (asset.ContainsKey("Insert") && asset["Insert"])
+                            //{
+                            //    toolBar.Custom()
+                            //            .Text("Thêm mới")
+                            //            .HtmlAttributes(new { id = "btnInsert", @class = "btn btn-success", @style = "background-color:#87b87f; color:white;", onclick = "onOpenPopupDe(0,this)", @href = "javascript:void(0)" });
+                            //}
+                            if (asset.ContainsKey("Export") && asset["Export"])
+                            {
+                                toolBar.Custom()
+                                        .Text("Xuất Excel")
+                                        .HtmlAttributes(new { @class = "btn btn-primary export", @style = "background-color:#428bca; color:white;" }).Url(Url.Action("Export", "Transporter", new { filter = "~", sort = "~",Code="~" }));
+                            }
+                            //if (asset.ContainsKey("Import") && asset["Import"])
+                            //{
+                            //    toolBar.Custom()
+                            //            .Text("Nhập Excel")
+                            //            .HtmlAttributes(new { @class = "btn btn-info", @style = "background-color:#9585bf; color:white;", onclick = "openImport()", @href = "javascript:void(0)" });
+                            //}
+                            //if (asset.ContainsKey("Update") && asset["Update"])
+                            //{
+                            //    toolBar.Custom()
+                            //            .Text("Cập nhật phân quyền dữ liệu")
+                            //            .HtmlAttributes(new { @style = "background-color:#739e73; color:white;", onclick = "onUpdatePermissionData()", @href = "javascript:void(0)" });
+                            //}
+                        })
+                    .Events(events => { events.DataBound("onDatabound"); })
+                    .Pageable(pager => pager.PageSizes(new[] { 20, 100, 200, 300 }))
+                    .Resizable(r => r.Columns(true))
+                    .Navigatable()
+                    .Scrollable()
+                    .Sortable()
+                    .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .Batch(true)
+                        .PageSize(100)
+                        .Model(model =>
+                        {
+                            model.Id(p => p.TransporterID);
+                        })
+                        .Events(e => { e.RequestEnd("onRequestEnd"); e.RequestStart("onRequestStart"); })
+                        .Read(read => read.Action("Read", "Transporter"))
+                    )
+                )
+            </div>
+        </article>
+        <!-- END COL -->
+
+    </div>
+    <div id="popup" class="row" style="margin:0 auto">
+        <div class="bordered">
+            @using (Html.BeginForm("Create", "Transporter", FormMethod.Post, new { @class = "smart-form", id = "formPopupDe", enctype = "multipart/form-data" }))
+            {
+                @Html.Hidden("CreatedAt");
+                @Html.Hidden("CreatedBy");
+                <fieldset style="float: left; width: 370px; padding-left: 0px; padding-right: 0px;padding-top:26px;">
+                    <section style="float:left;">
+                        <div class=" divlabel">
+                            <label class="label" style="float:right;">Mã ĐVVC (*)</label>
+                        </div>
+                        <div class="divfile">
+                            <label class="input" style="float:right;width:240px;">
+                                @Html.TextBox("TransporterID", "", new { @class = "input-xs popup_text_left", placeholder = "Mã ĐVVC" })
+                                @*<b class="tooltip tooltip-top-right">Mã ĐVVC</b>*@
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+                    <section style="float:left;">
+                        <div class=" divlabel">
+                            <label class="label" style="float:right;">Tên ĐVVC (*)</label>
+                        </div>
+                        <div class="divfile">
+                            <label class="input" style="float:right;width:240px;">
+                                @Html.TextBox("TransporterName", "", new { @class = "input-xs popup_text_left", placeholder = "Tên ĐVVC" })
+                                @*<b class="tooltip tooltip-top-right">Tên ĐVVC (*)</b>*@
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+                    <section style="float:left;">
+                        <div class=" divlabel">
+                            <label class="label" style="float:right;">Trạng thái</label>
+                        </div>
+                        <div class="divfile">
+                            <label class="select" style="float: right">
+                                @Html.DropDownList("Status", new SelectList(listActiveStatus, "StatusValue", "StatusName", 1))
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+                    <section style="float:left;">
+                        <div class=" divlabel">
+                            <label class="label" style="float:right;">Trọng số</label>
+                        </div>
+                        <div class="divfile">
+                            <label class="input" style="float:right;width:240px;">
+                                @Html.TextBox("Weight", "", new { @class = "input-xs popup_text_right", placeholder = "Trọng số" })
+                                @*<b class="tooltip tooltip-top-right">Khối lượng</b>*@
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+                   
+                    <section style="float:left;">
+                        <div class=" divlabel">
+                            <label class="label" style="float:right;">Ghi chú</label>
+                        </div>
+                        <div class="divfile">
+                            <label class="textarea textarea-resizable" style="float:right;width:240px;">
+                                @Html.TextArea("Note", new { placeholder = "Ghi chú", @style = "min-height:56px;width:100%;margin-right:91px" })
+                                @*<b class="tooltip tooltip-top-right">Ghi chú</b>*@
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+                </fieldset>
+                @*<fieldset id="popupContent" style="float: left; width: 370px; border: none; padding-right: 0; padding-top: 26px;">
+                    <section style="float:left;">
+                        <div class=" divlabel">
+                            <label class="label" style="float:right;">Email</label>
+                        </div>
+                        <div class="divfile">
+                            <label class="input" style="float:right;width:240px;">
+                                @Html.TextBox("Email", "", new { @class = "input-xs popup_text_right", placeholder = "Email" })
+                                <b class="tooltip tooltip-top-right">Email</b>
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+                    <section style="float:left;">
+                        <div class=" divlabel">
+                            <label class="label" style="float:right;">Ghi chú</label>
+                        </div>
+                        <div class="divfile">
+                            <label class="textarea textarea-resizable" style="float:right;width:240px;">
+                                @Html.TextArea("Note", new { placeholder = "Ghi chú", @style = "min-height:56px;width:100%;margin-right:91px" })
+                                <b class="tooltip tooltip-top-right">Ghi chú</b>
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+                </fieldset>*@
+                <div style="clear:both"></div><br />
+                <footer>
+                    <button type="submit" class="k-button k-button-icontext btn_custom" style="float: left;" id="btnSubmit">Lưu</button>
+                    <img src="@Url.Content("~/Content/Bootstrap/loading.gif")" class="hide" id="loading" style="margin-top: 5px;" />
+                </footer>
+            }
+        </div>
+    </div>
+</div>

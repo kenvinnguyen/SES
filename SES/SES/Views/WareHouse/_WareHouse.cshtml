@@ -1,0 +1,30 @@
+﻿@using SES.Models;
+<script src="~/Scripts/app/WareHouse.js"></script>
+@{
+    var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
+    var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
+    var listActiveStatus = dict.ContainsKey("activestatus") ? (List<ActiveStatus>)dict["activestatus"] : new List<ActiveStatus>();
+    var listRole = dict.ContainsKey("listrole") ? (List<Auth_Role>)dict["listrole"] : new List<Auth_Role>();
+}
+<ul class="nav nav-tabs bordered padding-12 tab-color-blue background-blue">
+    <li class="active">
+        <a href="#s1" data-toggle="tab" id="btnWh">Thông tin kho</a>
+    </li>
+    <li>
+        <a href="#s2" data-toggle="tab" id="btnWHL">Vị trí kho</a>
+    </li>
+    <li>
+        <a href="#s3" data-toggle="tab" id="btnUnit">Đơn vị tính</a>
+    </li>
+</ul>
+<div id="tabQlVM" class="tab-content padding-10">
+    <div class="tab-pane fade in active" id="s1">
+        @Html.Partial("_PartialWareHouse")
+    </div>
+    <div class="tab-pane fade" id="s2">
+        @Html.Partial("_PartialWareHouseLocation")
+    </div>
+    <div class="tab-pane fade" id="s3">
+        @Html.Partial("_PartialUnit")
+    </div>
+</div>

@@ -1,0 +1,273 @@
+﻿@using SES.Models;
+@{
+    ViewBag.Title = "Chiết khấu";
+}
+@{
+    var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
+    var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
+    var listActiveStatus = dict.ContainsKey("activestatus") ? (List<ActiveStatus>)dict["activestatus"] : new List<ActiveStatus>();
+}
+<script src="@Url.Content("~/Scripts/app/app.js")"></script>
+<script src="@Url.Content("~/Scripts/app/DeliveryDiscount.js")"></script>
+<div class="jarviswidget" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-deletebutton="false">
+    <header>
+        @*<span class="widget-icon"> <i class="fa fa-search"></i> </span>*@
+        <h2 style="color:#6fb3e0">Tìm kiếm</h2>
+
+    </header>
+    <div>
+        <div class="widget-body no-padding">
+            <form class="smart-form">
+                <fieldset>
+                    <section class="row">
+                        <section class="col col-3search">
+                            <label class="input">
+                                <input type="text" class="input-xs" id="txtSupportDLFeeID" placeholder="Mã, Tên Chiết khấu">
+                            </label>
+                        </section>
+                        @*<section class="col col-3search">
+                                @Html.DropDownList("PromotionTypeSearch", new SelectList(new List<object>
+                                {
+                                    new { value ="123456789jhhkjfawfe332" , text = "-- Chọn CTKM--"  },
+                                    new { value ="Khuyễn mãi tiền" , text = "Khuyễn mãi tiền"  },
+                                    new { value = "Chiết khấu %" , text = "Chiết khấu %" },
+
+                                },
+                                "value",
+                                "text",
+                                1
+                                )
+                                )
+                            </section>*@
+                        <section class="col col-3search">
+                            <label class="select">
+                                @Html.DropDownList("selectIsActive_search", new SelectList(listActiveStatus, "StatusValue", "StatusName"), "-- Chọn trạng thái --")
+                            </label>
+                        </section>
+                        <section class="col col-3search">
+                            <a class="k-button k-button-icontext btn_customSearch" href="javascript:void(0);" onclick="doSearch()">Tìm kiếm</a>
+                        </section>
+                    </section>
+                </fieldset>
+            </form>
+
+        </div>
+    </div>
+</div>
+<div class="jarviswidget">
+    <header>
+        @*<span class="widget-icon"> <i class="fa fa-search"></i> </span>*@
+        <h2 style="color:#6fb3e0">  Danh sách hỗ trợ cước phí vận chuyển  </h2>
+
+    </header>
+
+    <!-- widget div-->
+    <div class="row">
+        <!-- NEW COL START -->
+        <article class="col-sm-12">
+            <div class="widget-body">
+                @(Html.Kendo().Grid<SES.Models.DC_LG_DeliverFee_Support>()
+        .Name("grid")
+                    .Columns(columns =>
+                    {
+                        if (asset.ContainsKey("Update") && asset["Update"])
+                        {
+                            columns.Bound(p => p.SupportDLFeeID).HtmlAttributes(new { data_id = "#=SupportDLFeeID#", onclick = "onOpenPopup(1,this)", @style = "color:\\#428bca;cursor:pointer;text-decoration:underline" }).Title("Mã").Width(100);
+                        }
+                        else
+                        {
+                            columns.Bound(p => p.SupportDLFeeID).Title("Mã").Width(100).HeaderHtmlAttributes(new { data_column = "SupportDLFeeID" });
+                        }
+                        if (Auth_Action.AssetResult(asset, "SupportDLFeeName"))
+                        {
+                            columns.Bound(p => p.SupportDLFeeName).Title("Tên").Width(130).HeaderHtmlAttributes(new { data_column = "SupportDLFeeName" });
+                        }
+                        if (Auth_Action.AssetResult(asset, "Status"))
+                        {
+                            columns.Bound(p => p.Status).Title("Trạng thái").HtmlAttributes(new { data_column = "IsActive" }).Width(130);
+                        }
+                        if (Auth_Action.AssetResult(asset, "TransporterName"))
+                        {
+                            columns.Bound(p => p.TransporterName).Title("Đơn vị vận chuyển").Width(130).HeaderHtmlAttributes(new { data_column = "TransporterName" });
+                        }
+                        
+                       
+                        if (Auth_Action.AssetResult(asset, "Note"))
+                        {
+                            columns.Bound(p => p.Note).Title("Ghi chú").Width(130).HeaderHtmlAttributes(new { data_column = "Note" }); ;
+                        }
+                        columns.Bound(p => p.StartDate).Format("{0:dd/MM/yyyy}").HtmlAttributes(new { style = "text-align:right" }).Title("Từ ngày").Width(130);
+                        columns.Bound(p => p.EndDate).Format("{0:dd/MM/yyyy}").HtmlAttributes(new { style = "text-align:right" }).Title("Đến ngày").Width(130);
+                        columns.Bound(p => p.CreatedBy).Title("Người tạo").Width(130);
+
+                    })
+                    .ToolBar(toolBar =>
+                        {
+                            //if (asset.ContainsKey("Insert") && asset["Insert"])
+                            //{
+                            //    toolBar.Custom()
+                            //            .Text("Thêm mới")
+                            //            .HtmlAttributes(new { id = "btnInsert", @class = "btn btn-success", @style = "background-color:#87b87f; color:white;", onclick = "onOpenPopup(0,this)", @href = "javascript:void(0)" });
+                            //}
+                            if (asset.ContainsKey("Export") && asset["Export"])
+                            {
+                                toolBar.Custom()
+                                        .Text("Xuất Excel")
+                                        .HtmlAttributes(new { @class = "btn btn-primary export", @style = "background-color:#428bca; color:white;" }).Url(Url.Action("Export", "DeliveryDiscount", new { filter = "~", sort = "~" }));
+                            }
+
+                        })
+                    .Events(events => { events.DataBound("onDatabound"); })
+                    .Pageable(pager => pager.PageSizes(new[] { 20, 100, 200, 300 }))
+                    .Resizable(r => r.Columns(true))
+                    .Navigatable()
+                    .Scrollable()
+                    .Sortable()
+                    .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .Batch(true)
+                        .PageSize(100)
+                        .Model(model =>
+                        {
+                            model.Id(p => p.SupportDLFeeID);
+                        })
+                        .Events(e => { e.RequestEnd("onRequestEnd"); e.RequestStart("onRequestStart"); })
+                                        .Read(read => read.Action("Read", "DeliveryDiscount"))
+                    )
+                )
+            </div>
+        </article>
+
+    </div>
+    <div id="popup" class="row" style="margin:0 auto">
+        <div class="nav nav-tabs bordered padding-12 tab-color-blue background-blue">
+            <ul id="tabUserAu" class="nav nav-tabs borded">
+                <li class="active">
+                    <a href="#s1" data-toggle="tab">Thông tin chung</a>
+                </li>
+                <li>
+                    <a href="#s2" data-toggle="tab">Áp dụng cho</a>
+                </li>
+                <li>
+                    <a href="#s3" data-toggle="tab">Điều kiện chiết khấu</a>
+                </li>
+
+            </ul>
+            <div>
+                <div id="tabUser" class="tab-content">
+                    <div class="tab-pane fade in active" id="s1">
+                        <div class="bordered">
+                            @using (Html.BeginForm("Create", "DeliveryDiscount", FormMethod.Post, new { @class = "smart-form", id = "formPopupDe", enctype = "multipart/form-data" }))
+                            {
+                                @Html.Hidden("CreatedAt");
+                                @Html.Hidden("CreatedBy");
+                                <fieldset style="float: left; width: 370px; padding-left: 0; padding-right: 0;">
+                                    <section style="float:left;">
+                                        <div class=" divlabel">
+                                            <label class="label" style="float:right">Mã CTCK (*)</label>
+                                        </div>
+                                        <div class="divfile">
+                                            <label class="input" style="float:right;width:240px;">
+                                                @Html.TextBox("SupportDLFeeID", "", new { @class = "input-xs popup_text_left", placeholder = "Mã CTCK" })
+                                                @*<b class="tooltip tooltip-top-right">Mã CTCK</b>*@
+                                            </label>
+                                            <div style="clear:both"></div>
+                                        </div>
+                                    </section>
+                                    <section style="float:left;">
+                                        <div class=" divlabel">
+                                            <label class="label" style="float:right">Tên CTCK (*)</label>
+                                        </div>
+                                        <div class="divfile">
+                                            <label class="input" style="float:right;width:240px;">
+                                                @Html.TextBox("SupportDLFeeName", "", new { @class = "input-xs popup_text_left", placeholder = "Tên CTCK" })
+                                                @*<b class="tooltip tooltip-top-right">Tên CTCK</b>*@
+                                            </label>
+                                            <div style="clear:both"></div>
+                                        </div>
+                                    </section>
+                                    <section style="float:left;">
+                                        <div class=" divlabel">
+                                            <label class="label" style="float:right">Loại CTCK(*)</label>
+                                        </div>
+                                        <div class="divfile">
+                                            <label class="select" style="float: right">
+
+                                                @Html.DropDownList("DiscountionType", new SelectList(new List<object>
+                            {
+                                new { value ="Chiết khấu tiền" , text = "Chiết khấu tiền"  },
+                                new { value = "Chiết khấu %" , text = "Chiết khấu %" },
+
+                            },
+                            "value",
+                            "text",
+                            1
+                            )
+                            )
+
+                                                @*<b class="tooltip tooltip-top-right">Loại CTCK</b>*@
+                                            </label>
+                                            <div style="clear:both"></div>
+                                        </div>
+                                    </section>
+                                    <section style="float:left;">
+                                        <div class=" divlabel">
+                                            <label class="label" style="float:right">Trạng thái (*)</label>
+                                        </div>
+                                        <div class="divfile">
+                                            <label class="select" style="float: right">
+                                                @Html.DropDownList("Status", new SelectList(listActiveStatus, "StatusValue", "StatusName", 1))
+                                            </label>
+                                            <div style="clear:both"></div>
+                                        </div>
+                                    </section>
+                                </fieldset>
+                                <fieldset id="popupContent" style="float: left; width: 370px; padding-left: 0; padding-right: 0;">
+                                    <section style="float:left;">
+                                        <div class=" divlabel">
+                                            <label class="label" style="float:right">Từ ngày</label>
+                                        </div>
+                                        <div class="divfile">
+                                            <input name="FromDate" id="FromDate" style="float: right; width: 240px;" />
+                                            <div style="clear:both"></div>
+                                        </div>
+                                    </section>
+                                    <section style="float:left;">
+                                        <div class=" divlabel">
+                                            <label class="label" style="float:right">Đến ngày</label>
+                                        </div>
+                                        <div class="divfile">
+                                            <input name="EndDate" id="EndDate" style="float: right; width: 240px;" />
+                                            <div style="clear:both"></div>
+                                        </div>
+                                    </section>
+                                    <section style="float:left;">
+                                        <div class=" divlabel">
+                                            <label class="label" style="float:right">Ghi chú</label>
+                                        </div>
+                                        <div class="divfile">
+                                            <label class="textarea textarea-resizable" style="float:right;width:240px;">
+                                                @Html.TextArea("Note", new { placeholder = "Ghi chú", @style = "min-height:56px;width:100%;margin-right:91px" })
+                                                @*<b class="tooltip tooltip-top-right">Ghi chú</b>*@
+                                            </label>
+                                            <div style="clear:both"></div>
+                                        </div>
+                                    </section>
+                                </fieldset>
+                                <div style="clear:both"></div><br />
+                                <footer>
+                                    <button type="submit" class="k-button k-button-icontext btn_custom" style="float: left;" id="btnSubmit">Lưu</button>
+                                    <img src="@Url.Content("~/Content/Bootstrap/loading.gif")" class="hide" id="loading" style="margin-top: 5px;" />
+                                </footer>
+                            }
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="s2">
+                    </div>
+                    <div class="tab-pane fade" id="s3">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

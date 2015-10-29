@@ -1,0 +1,140 @@
+﻿@using SES.Models;
+@{
+
+    var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
+    var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
+    var listActiveStatus = dict.ContainsKey("activestatus") ? (List<ActiveStatus>)dict["activestatus"] : new List<ActiveStatus>();
+
+}
+<script src="@Url.Content("~/Scripts/app/DeliveryFee.js")"></script>
+<script src="@Url.Content("~/Scripts/app/app.js")"></script>
+<div>
+    @if (Auth_Action.AssetResult(asset, "Search"))
+    {
+
+        <div class="jarviswidget" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-deletebutton="false">
+
+            <header>
+                @*<span class="widget-icon"> <i class="fa fa-search"></i> </span>*@
+                <h2 style="color:#6fb3e0">Tìm kiếm</h2>
+
+            </header>
+                <div class="widget-body no-padding" style="margin: 0">
+                    <form class="smart-form">
+                        <fieldset>
+                            <div class="row divSearch">
+
+                                @if (Auth_Action.AssetResult(asset, "DeliveryFeeID"))
+                                {
+                                    <section class="col col-3">
+                                        <label class="input">
+                                            <input type="text" class="input-xs" id="txtDeliveryFeeTID" placeholder="Mã, tên gói cước vận chuyển">
+                                        </label>
+                                    </section>
+                                }
+                                @if (Auth_Action.AssetResult(asset, "ProvinceID"))
+                                {
+                                    <section class="col col-3">
+                                        <label class="input">
+                                            <input type="text" class="input-xs" id="txtProvince" placeholder="Mã, tên tỉnh/thành phố">
+                                        </label>
+                                    </section>
+                                }
+                                @if (Auth_Action.AssetResult(asset, "DistrictID"))
+                                {
+                                    <section class="col col-3">
+                                        <label class="input">
+                                            <input type="text" class="input-xs" id="txtDistrict" placeholder="Mã, tên quận/huyện">
+                                        </label>
+                                    </section>
+                                }
+                                <section class="col col-3search">
+                                    <a class="k-button k-button-icontext btn_customSearch" href="javascript:void(0);" onclick="doSearchterritory()">Tìm kiếm</a>
+                                </section>
+                            </div>
+                        </fieldset>
+                    </form>
+
+                </div>
+        </div>
+    }
+</div>
+<div class="jarviswidget">
+    <header>
+        <h2 style="color:#6fb3e0">Danh sách gói cước</h2>
+    </header>
+
+    <div class="row">
+        <!-- NEW COL START -->
+        <article class="col-sm-12">
+            <div class="widget-body">
+                @(Html.Kendo().Grid<SES.Models.DC_LG_DeliveryFee_Territory>()
+                        .Name("gridterritory")
+                    .Columns(columns =>
+                    {
+                        if (Auth_Action.AssetResult(asset, "DeliveryFeeID"))
+                        {
+                            columns.Bound(p => p.DeliveryFeeID).Title("Mã gói cước").Width(150);
+                        }
+                        if (Auth_Action.AssetResult(asset, "DeliveryFeeName"))
+                        {
+                            columns.Bound(p => p.DeliveryFeeName).Title("Tên gói cước").Width(150);
+                        }
+                       
+                        if (Auth_Action.AssetResult(asset, "ProvinceName"))
+                        {
+                            columns.Bound(p => p.ProvinceName).Title("Tỉnh/Thành phố").Width(150);
+                        }
+                       
+                        if (Auth_Action.AssetResult(asset, "DistrictName"))
+                        {
+                            columns.Bound(p => p.DistrictName).Title("Quận/Huyện").Width(150);
+                        }
+                        if (Auth_Action.AssetResult(asset, "PickingProvinceName"))
+                        {
+                            columns.Bound(p => p.PickingProvinceName).Title("Tỉnh/Thành phố nhận hàng").Width(180);
+                        }
+                        if (Auth_Action.AssetResult(asset, "PickingDistrictName"))
+                        {
+                            columns.Bound(p => p.PickingDistrictName).Title("Quận/Huyện nhận hàng").Width(150);
+                        }
+                        if (Auth_Action.AssetResult(asset, "Note"))
+                        {
+                            columns.Bound(p => p.Note).Title("Ghi chú").Width(150);
+                        }
+
+                    })
+                    .ToolBar(toolBar =>
+                        {
+
+                            if (asset.ContainsKey("Export") && asset["Export"])
+                            {
+                                toolBar.Custom()
+                                        .Text("Xuất Excel")
+                                        .HtmlAttributes(new { @class = "export", @style = "background-color:#6FB3e0; color:white;" }).Url(Url.Action("Export_DeliveryTerritory", "DeliveryFee", new { filter = "~", sort = "~" }));
+                            }
+
+                        })
+                    .Events(events => { events.DataBound("onDataboundTerritory"); })
+                    .Pageable(pager => pager.PageSizes(new[] { 20, 100, 200, 300 }))
+                    .Resizable(r => r.Columns(true))
+                    .Navigatable()
+                    .Scrollable()
+                    .Sortable()
+                    .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .Batch(true)
+                        .PageSize(100)
+                        .Model(model =>
+                        {
+                            model.Id(p => p.DeliveryFeeID);
+                        })
+                                        .Read(read => read.Action("Read_DeliveryFeeTerritory", "DeliveryFee"))
+                    )
+                )
+            </div>
+        </article>
+        <!-- END COL -->
+
+    </div>
+</div>

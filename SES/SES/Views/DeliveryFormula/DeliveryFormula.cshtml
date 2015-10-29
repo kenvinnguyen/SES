@@ -1,0 +1,238 @@
+﻿@using SES.Models;
+
+@{
+    ViewBag.Title = "Công thức tính phí vận chuyển";
+}
+@Scripts.Render("~/Scripts/app/DeliveryFormula.js")
+@Scripts.Render("~/Scripts/app/app.js")
+@{
+    var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
+    var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
+    var listActiveStatus = dict.ContainsKey("activestatus") ? (List<ActiveStatus>)dict["activestatus"] : new List<ActiveStatus>();
+
+}
+<style>
+    .ace-file-input {
+        position: relative;
+        height: 38px;
+        line-height: 38px;
+        margin-bottom: 9px;
+    }
+</style>
+<section>
+    @if (Auth_Action.AssetResult(asset, "Search"))
+    {
+        <div class="row divSearch">
+            <div class="col-sm-12">
+                <div class="jarviswidget" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-deletebutton="false">
+                    <header>
+                        @*<span class="widget-icon"> <i class="fa fa-search"></i> </span>*@
+                        <h2 style="color:#6fb3e0">Tìm kiếm</h2>
+                    </header>
+                    <div>
+                        <div class="widget-body no-padding">
+                            <form class="smart-form">
+                                <fieldset>
+                                    <div class="row">
+                                        @if (Auth_Action.AssetResult(asset, "FormulaName"))
+                                        {
+                                            <section class="col col-3">
+                                                <label class="input">
+                                                    <input type="text" class="input-xs" id="txtFormulaID" placeholder="Tên công thức">
+                                                </label>
+                                            </section>
+                                        }
+                                        @if (Auth_Action.AssetResult(asset, "Status"))
+                                        {
+                                            <section class="col col-3search">
+                                                <label class="select">
+                                                    @Html.DropDownList("selectStatus_search", new SelectList(listActiveStatus, "StatusValue", "StatusName"), "-- Chọn trạng thái --")
+                                                </label>
+                                            </section>
+                                        }
+                                        <section class="col col-3search">
+                                            <a class="k-button k-button-icontext btn_customSearch" href="javascript:void(0);" onclick="doSearch()">Tìm kiếm</a>
+                                        </section>
+                                    </div>
+                                </fieldset>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="row">
+        <div id="popupImport">
+            <div style="float:left;">
+                <form id="importform" action="@Url.Content("~/DeliveryFormula/ImportData")" method="post" enctype="multipart/form-data" style="margin-bottom:0px;">
+                    <input type="file" name="FileUpload" class="FileUpload" />
+                </form>
+            </div>
+            <div style="float:right;">
+                <a class="k-button k-button-icontext btn_custom" href="javascript:void(0);" onclick="beginImport()">Nhập</a>
+            </div>
+            <div style="clear:both"></div>
+        </div>
+    </div>
+
+    <div class="jarviswidget">
+        <header>
+            <h2 style="color:#6fb3e0">Danh sách công thức tính phí vận chuyển </h2>
+        </header>
+        <div class="row">
+            <article class="col-sm-12">
+                <div class="widget-body">
+                    @(Html.Kendo().Grid<SES.Models.DC_Formula>()
+                    .Name("grid")
+                    .Columns(columns =>
+                    {
+                        if (asset.ContainsKey("Update") && asset["Update"])
+                        {
+                            columns.Bound(p => p.FormulaID).HtmlAttributes(new { data_id = "#=FormulaID#", onclick = "onOpenPopup(1,this)", @style = "color:\\#428bca;cursor:pointer;text-decoration:underline" }).Title("Mã công thức").Width(110);
+                        }
+                        else
+                        {
+                            columns.Bound(p => p.FormulaName).Title("Tên công thức").Width(100);
+                        }
+                        if (Auth_Action.AssetResult(asset, "FormulaName"))
+                        {
+                            columns.Bound(p => p.FormulaName).Title("Tên công thức").HtmlAttributes(new { data_column = "FormulaName" }).Width(150);
+                        }
+                        if (Auth_Action.AssetResult(asset, "Formula"))
+                        {
+                            columns.Bound(p => p.Formula).Title("Công thức").HtmlAttributes(new { data_column = "Formula" }).Width(150);
+                        }
+                        if (Auth_Action.AssetResult(asset, "Status"))
+                        {
+                            columns.Bound(p => p.Status).Title("Trạng thái").HtmlAttributes(new { data_column = "IsActive" }).Width(130);
+                        }
+                        if (Auth_Action.AssetResult(asset, "Note"))
+                        {
+                            columns.Bound(p => p.Note).Title("Ghi chú")
+                                .HtmlAttributes(new { @Style = "text-align:right" }).Width(150)
+                              
+                                ;
+                        }
+                       
+                        columns.Bound(p => p.CreatedBy).Title("Người tạo").Width(110);
+                        columns.Bound(p => p.CreatedAt).Width(110).Format("{0:dd/MM/yyyy}").HtmlAttributes(new { style = "text-align:right" }).Title("Ngày tạo").Width(110);
+                        columns.Bound(p => p.UpdatedBy).Title("Người cập nhật").Width(110).Hidden();
+                        columns.Bound(o => o.UpdatedAt).Title("Ngày cập nhật").Format("{0:dd/MM/yyyy}").Width(110).ClientTemplate("#if(kendo.toString(UpdatedAt,'dd/MM/yyyy') != '01/01/1900'){#" + "#= kendo.toString(UpdatedAt,'dd/MM/yyyy') #" + "#}#").Hidden();
+
+                    })
+                    .ToolBar(toolBar =>
+                        {
+                            if (asset.ContainsKey("Insert") && asset["Insert"])
+                            {
+                                toolBar.Custom()
+                                        .Text("Thêm mới")
+                                        .HtmlAttributes(new { id = "btnInsert", @class = "btn btn-success", @style = "background-color:#87b87f; color:white;", onclick = "onOpenPopup(0,this)", @href = "javascript:void(0)" });
+                            }
+                            //if (asset.ContainsKey("Export") && asset["Export"])
+                            //{
+                            //    toolBar.Custom()
+                            //            .Text("Xuất Excel")
+                            //            .HtmlAttributes(new { @class = "btn btn-primary export", @style = "background-color:#428bca; color:white;" }).Url(Url.Action("Export", "RuleCheck", new { filter = "~", sort = "~", FormulaID = "~" }));
+
+                            //}
+                            if (asset.ContainsKey("Import") && asset["Import"])
+                            {
+                                toolBar.Custom()
+                                        .Text("Nhập Excel")
+                                        .HtmlAttributes(new { @class = "btn btn-info", @style = "background-color:#9585bf; color:white;", onclick = "openImport()", @href = "javascript:void(0)" });
+                            }
+
+                        })
+                    .Events(events => { events.DataBound("onDatabound"); })
+                    .Pageable(pager => pager.PageSizes(new[] { 20, 100, 200, 300 }))
+                    .Resizable(r => r.Columns(true))
+                    .Navigatable()
+                    .Scrollable()
+                    .Sortable()
+                    .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .Batch(true)
+                        .PageSize(100)
+                        .Model(model =>
+                        {
+                            model.Id(p => p.FormulaID);
+                        })
+                        //.Events(e => { e.RequestEnd("onRequestEnd"); e.RequestStart("onRequestStart"); })
+                                .Read(read => read.Action("Read", "DeliveryFormula"))
+                    )
+                    )
+                </div>
+            </article>
+        </div>
+    </div>
+    <div id="popup" class="row" style="margin:0 auto">
+        <div class="bordered">
+            @using (Html.BeginForm("Create", "DeliveryFormula", FormMethod.Post, new { @class = "smart-form", id = "formPopup", enctype = "multipart/form-data" }))
+            {
+                @Html.Hidden("CreatedAt");
+                @Html.Hidden("CreatedBy");
+                @*@Html.Hidden("FormulaID");*@
+                <fieldset style="float: left; width: 370px; padding-left: 0px; padding-right: 0px;">
+                    <section style="display:none; float:left;"></section>
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right;">Tên công thức (*)</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="input" style="float:right;width:240px;">
+                                @Html.TextBox("FormulaName", "", new { @class = "input-xs popup_text_right", placeholder = "Tên công thức" })
+                                <b class="tooltip tooltip-top-right">Tên công thức (*)</b>
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right">Công thức </label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="input" style="float:right;width:240px;">
+                                @Html.TextBox("Formula", "", new { @class = "inputs-xs popup_text_right", placeholder = "Công thức" })
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right">Trạng thái</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="select" style="float: right">
+                                @Html.DropDownList("Status", new SelectList(listActiveStatus, "StatusValue", "StatusName", 1), "-- Chọn trạng thái --")
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right">Ghi chú</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="textarea textarea-resizable" style="float:right;width:240px;">
+                                @Html.TextArea("Note", "", new { @class = "input-xs popup_text_left", placeholder = "Ghi chú" })
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+
+                </fieldset>
+                
+                <div style="clear:both"></div>
+                <footer>
+                    <button type="submit" class="k-button k-button-icontext btn_custom" style="float: left;">Lưu</button>
+                    <img src="@Url.Content("~/Content/Bootstrap/loading.gif")" class="hide" id="loading" style="margin-top: 17px;" />
+                </footer>
+            }
+        </div>
+    </div>
+</section>
+

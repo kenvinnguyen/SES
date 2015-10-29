@@ -1,0 +1,133 @@
+﻿@using SES.Models;
+@{
+    ViewBag.Title = "Danh sách đơn vị vận chuyển";
+}
+
+@{
+    var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
+    var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
+    var listActiveStatus = dict.ContainsKey("activestatus") ? (List<ActiveStatus>)dict["activestatus"] : new List<ActiveStatus>();
+}
+<script src="@Url.Content("~/Scripts/app/app.js")"></script>
+<script src="@Url.Content("~/Scripts/app/Transporter.js")"></script>
+
+<div class="jarviswidget" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-deletebutton="false">
+    <header>
+        @*<span class="widget-icon"> <i class="fa fa-search"></i> </span>*@
+        <h2 style="color:#6fb3e0">Tìm kiếm</h2>
+
+    </header>
+    <div>
+        <div class="widget-body no-padding">
+            <form class="smart-form">
+                <fieldset>
+                    <section class="row">
+                        @*@if (Auth_Action.AssetResult(asset, "TransporterLocationID"))
+                            {*@
+                        <section class="col col-3search">
+                            <label class="input">
+                                <input type="text" class="input-xs" id="txtTransporterLocationID" placeholder="Mã, Tên ĐBVC">
+                            </label>
+                        </section>
+                        <section class="col col-3search">
+                            <label class="input">
+                                <input type="text" class="input-xs" id="txtTransporterIDLoc" placeholder="Đơn vị vận chuyển">
+                            </label>
+                        </section>
+                        <section class="col col-3search">
+                            <label class="select">
+                                @Html.DropDownList("selectIsActive_searchlocation", new SelectList(listActiveStatus, "StatusValue", "StatusName"), "-- Chọn trạng thái --")
+                            </label>
+                        </section>
+                        @*}
+
+                            @* } *@
+                        <section class="col col-3search">
+                            <a class="k-button k-button-icontext btn_customSearch" href="javascript:void(0);" onclick="doSearchTransporterlocation()">Tìm kiếm</a>
+                        </section>
+                    </section>
+                </fieldset>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="jarviswidget">
+    <header>
+        <h2 style="color:#6fb3e0">Danh sách địa bàn vận chuyển</h2>
+
+    </header>
+
+    <div class="row">
+        <article class="col-sm-12">
+            <div class="widget-body">
+                @(Html.Kendo().Grid<SES.Models.DC_LG_Transporter_Location>()
+        .Name("gridlocation")
+                    .Columns(columns =>
+                    {
+                        {
+                            columns.Bound(p => p.TransporterLocationID).Title("Mã ĐBVC").Width(100);
+                        }
+                        if (Auth_Action.AssetResult(asset, "TransporterLocationName"))
+                        {
+                            columns.Bound(p => p.TransporterLocationName).Title("Tên ĐBVC").HtmlAttributes(new { data_column = "TransporterLocationName" }).Width(130);
+                        }
+
+                        if (Auth_Action.AssetResult(asset, "IsAllMerchant"))
+                        {
+                            columns.Bound(p => p.IsAllMerchant).Title("Tất cả gian hàng").HtmlAttributes(new { data_column = "IsAllMerchannt", style = "text-align:right" }).Width(130);
+                        }
+                        if (Auth_Action.AssetResult(asset, "TransporterName"))
+                        {
+                            columns.Bound(p => p.TransporterName).Title("Đơn vị vận chuyển").Width(130);
+                        }
+                        if (Auth_Action.AssetResult(asset, "Status"))
+                        {
+                            columns.Bound(p => p.Status).Title("Trạng thái").HtmlAttributes(new { data_column = "IsActive" }).Width(130);
+                            //columns.Bound(p => p.IsActive).Title("Trạng thái").Width(130);
+                        }
+
+                        if (Auth_Action.AssetResult(asset, "Note"))
+                        {
+                            columns.Bound(p => p.Note).Title("Ghi chú").Width(130);
+                        }
+
+                        columns.Bound(p => p.CreatedBy).Title("Người tạo").Width(130);
+
+                        columns.Bound(p => p.CreatedAt).Format("{0:dd/MM/yyyy}").HtmlAttributes(new { style = "text-align:right" }).Title("Ngày tạo").Width(130);
+
+                    })
+                    .ToolBar(toolBar =>
+                        {
+                            if (asset.ContainsKey("Export") && asset["Export"])
+                            {
+                                toolBar.Custom()
+                                        .Text("Xuất Excel")
+                                        .HtmlAttributes(new { @class = "btn btn-primary export", @style = "background-color:#428bca; color:white;" }).Url(Url.Action("Export_TransporterLocation", "Transporter", new { filter = "~", sort = "~", Code = "~" }));
+                            }
+                        })
+                    .Events(events => { events.DataBound("onDataboundTranLocation"); })
+                    .Pageable(pager => pager.PageSizes(new[] { 20, 100, 200, 300 }))
+                    .Resizable(r => r.Columns(true))
+                    .Navigatable()
+                    .Scrollable()
+                    .Sortable()
+                    .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .Batch(true)
+                        .PageSize(100)
+                        .Model(model =>
+                        {
+                            model.Id(p => p.TransporterLocationID);
+                        })
+                        //.Events(e => { e.RequestEnd("onRequestEnd"); e.RequestStart("onRequestStart"); })
+                        .Read(read => read.Action("Read_TransporterLocation", "Transporter"))
+                    )
+                )
+            </div>
+        </article>
+        <!-- END COL -->
+
+    </div>
+</div>

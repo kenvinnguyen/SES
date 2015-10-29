@@ -1,0 +1,36 @@
+﻿@model SES.Models.ChangePasswordModel
+<div class="row" id="popupChangePass" style="margin: 0 auto;">
+    <div class="no-padding">
+        @using (Html.BeginForm("ChangePassword", "Account", FormMethod.Post, new { @class = "smart-form", id = "formPopupChangePass" }))
+        {
+            @Html.HiddenFor(m => m.UserIDChange, new { Value = User.Identity.Name })
+            <fieldset id="popupContent">
+                <section>
+                    <label class="label">Old password : </label>
+                    <label class="input">
+                        @Html.PasswordFor(m => m.OldPass, new { @class = "input-sm", placeholder = "Old passwords" })
+                        <b class="tooltip tooltip-top-right">Old passwords</b>
+                    </label>
+                </section>
+                <section>
+                    <label class="label">New password : </label>
+                    <label class="input">
+                        @Html.PasswordFor(m => m.NewPass, new { @class = "input-sm", placeholder = "New passwords" })
+                        <b class="tooltip tooltip-top-right">New passwords</b>
+                    </label>
+                </section>
+                <section>
+                    <label class="label">Repeat new password : </label>
+                    <label class="input">
+                        @Html.PasswordFor(m => m.RepeatNewPass, new { @class = "input-sm", placeholder = "Repeat new passwords" })
+                        <b class="tooltip tooltip-top-right">Repeat new passwords</b>
+                    </label>
+                </section>
+            </fieldset>
+            <footer>
+                <button type="submit" class="btn btn-primary btn-lg">OK</button>
+                <img src="@Url.Content("~/Content/Bootstrap/loading.gif")" class="hide" id="loadingChangePass" />
+            </footer>
+        }
+    </div>
+</div>
