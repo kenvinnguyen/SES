@@ -11,6 +11,11 @@ $(document).ready(function () {
         onLoadPage(r + "/Home/Partial");
         hideLoading();
     });
+    //Công ty
+    $("#menu_Merchant").click(function () {
+        onLoadPage(r + "/Merchant/PartialMerchant");
+    });
+
     //phan quyen
     $("#menu_HOAdminAuthRole").click(function () {
         onLoadPage(r + "/HOAdminAuthRole/PartialRole");
