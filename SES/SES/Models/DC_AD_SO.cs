@@ -60,5 +60,37 @@ namespace SES.Models
         public int PKMerchantID { get; set; }
         public string MerchantID { get; set; }
         public string MerchantName { get; set; }
+        public bool Status { get; set; }
+
+        public List<DC_OCM_Merchant> GetList(int page, int pageSize, string whereCondition)
+        {
+            List<SqlParameter> param = new List<SqlParameter>();
+            param.Add(new SqlParameter("@Page", page));
+            param.Add(new SqlParameter("@PageSize", pageSize));
+            param.Add(new SqlParameter("@WhereCondition", whereCondition));
+            DataTable dt = new SqlHelper().ExecuteQuery("p_get_Merchant", param);
+            var lst = new List<DC_OCM_Merchant>();
+            foreach (DataRow row in dt.Rows)
+            {
+                var item = new DC_OCM_Merchant();
+                item.MerchantID = !row.IsNull("MerchantID") ? row["MerchantID"].ToString() : "";
+                item.MerchantName = !row.IsNull("MerchantName") ? row["MerchantName"].ToString() : "";
+                //item.ContractName = !row.IsNull("ContractName") ? row["ContractName"].ToString() : "";
+                //item.TransporterID = !row.IsNull("TransporterID") ? row["TransporterID"].ToString() : "";
+                //item.DiscountPercent = !row.IsNull("DiscountPercent") ? double.Parse(row["DiscountPercent"].ToString()) : 0;
+                //item.StartDate = !row.IsNull("StartDate") ? DateTime.Parse(row["StartDate"].ToString()) : DateTime.Parse("1900-01-01");
+                //item.EndDate = !row.IsNull("EndDate") ? DateTime.Parse(row["EndDate"].ToString()) : DateTime.Parse("1900-01-01");
+                //item.UpdatedAt = !row.IsNull("UpdatedAt") ? DateTime.Parse(row["UpdatedAt"].ToString()) : DateTime.Parse("1900-01-01");
+                //item.CreatedAt = !row.IsNull("CreatedAt") ? DateTime.Parse(row["CreatedAt"].ToString()) : DateTime.Parse("1900-01-01");
+                //item.UpdatedBy = !row.IsNull("UpdatedBy") ? row["UpdatedBy"].ToString() : "";
+                //item.CreatedBy = !row.IsNull("CreatedBy") ? row["CreatedBy"].ToString() : "";
+                //item.Note = !row.IsNull("Note") ? row["Note"].ToString() : "";
+                item.Status = !row.IsNull("Status") ? Convert.ToBoolean(row["Status"].ToString()) : false;
+
+                lst.Add(item);
+            }
+
+            return lst;
+        }
     }
 }
