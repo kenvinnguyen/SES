@@ -12,8 +12,8 @@ $(document).ready(function () {
         hideLoading();
     });
     //Công ty
-    $("#menu_Merchant").click(function () {
-        onLoadPage(r + "/Merchant/PartialMerchant");
+    $("#menu_Company").click(function () {
+        onLoadPage(r + "/Company/PartialCompany");
     });
 
     //phan quyen

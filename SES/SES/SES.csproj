@@ -11,7 +11,7 @@
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DecaInsight</RootNamespace>
+    <RootNamespace>SES</RootNamespace>
     <AssemblyName>SES</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
@@ -207,6 +207,7 @@
     <Compile Include="Controllers\DeliveryFeeController.cs" />
     <Compile Include="Controllers\DeliveryFormulaController.cs" />
     <Compile Include="Controllers\DeliveryPromotionController.cs" />
+    <Compile Include="Controllers\CompanyController.cs" />
     <Compile Include="Controllers\PrinterController.cs" />
     <Compile Include="Controllers\RuleCheckController.cs" />
     <Compile Include="Controllers\SalesOrderController.cs" />
@@ -231,6 +232,7 @@
     <Compile Include="Models\Auth_User.cs" />
     <Compile Include="Models\CommonLib.cs" />
     <Compile Include="Models\Auth_UserInRole.cs" />
+    <Compile Include="Models\Company.cs" />
     <Compile Include="Models\DC_AD_Printer.cs" />
     <Compile Include="Models\DC_AD_SO.cs" />
     <Compile Include="Models\DC_Formula.cs" />
@@ -1269,6 +1271,7 @@
     <Content Include="Scripts\app\DeliveryPromotion.js" />
     <Content Include="Scripts\app\Contract.js" />
     <Content Include="Scripts\app\ListPublication.js" />
+    <Content Include="Scripts\app\Company.js" />
     <Content Include="Scripts\app\Printer.js" />
     <Content Include="Scripts\app\Reason.js" />
     <Content Include="Scripts\app\HOAdminAuthAnnouncement.js" />
@@ -1900,6 +1903,7 @@
     <Content Include="Views\SalesOrder\SalesOrderDetail.cshtml" />
     <Content Include="Views\SalesOrder\SalesOrderHeader.cshtml" />
     <Content Include="Views\DeliveryFormula\DeliveryFormula.cshtml" />
+    <Content Include="Views\Company\_Company.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -57,9 +57,42 @@ namespace SES.Models
     public class DC_OCM_Merchant
     {
         [AutoIncrement]
-        public int PKMerchantID { get; set; }
         public string MerchantID { get; set; }
         public string MerchantName { get; set; }
+        public string ShortName { get; set; }
+        public string EnglishName { get; set; }
+        public string SubDomain { get; set; }
+        public string Phone { get; set; }
+        public string MobilePhone { get; set; }
+        public string Fax { get; set; }
+        public string Email { get; set; }
+        public string PersonalEmail { get; set; }
+        public string Address { get; set; }
+        public string Website { get; set; }
+        public string SignOffDate { get; set; }
+        public string ActiveDate { get; set; }
+        public int LegalPage { get; set; }
+        public string LegalPageReason { get; set; }
+        public int CreateMerchantStatus { get; set; }
+        public int TrainingMerchantManager { get; set; }
+        public int PublishedStatus { get; set; }
+        public int ApprovedStatus { get; set; }
+        public string UpdatedUser { get; set; }
+        public string PublishedUser { get; set; }
+        public string AprrovedStatus { get; set; }
+        public string UpdatedDate { get; set; }
+        public string PublishedDate { get; set; }
+        public string ApprovedDate { get; set; }
+        public string Url { get; set; }
+        public string Hotline { get; set; }
+        public string Descr { get; set; }
+        public string Keyword { get; set; }
+        public string ShortDescr { get; set; }
+        public DateTime? RowCreatedAt { get; set; }
+        public string RowCreatedUser { get; set; }
+        public DateTime? RowUpdatedAt { get; set; }
+        public string RowUpdatedUser { get; set; }
+        public int IsNew { get; set; }
         public bool Status { get; set; }
 
         public List<DC_OCM_Merchant> GetList(int page, int pageSize, string whereCondition)
@@ -75,15 +108,10 @@ namespace SES.Models
                 var item = new DC_OCM_Merchant();
                 item.MerchantID = !row.IsNull("MerchantID") ? row["MerchantID"].ToString() : "";
                 item.MerchantName = !row.IsNull("MerchantName") ? row["MerchantName"].ToString() : "";
-                //item.ContractName = !row.IsNull("ContractName") ? row["ContractName"].ToString() : "";
-                //item.TransporterID = !row.IsNull("TransporterID") ? row["TransporterID"].ToString() : "";
-                //item.DiscountPercent = !row.IsNull("DiscountPercent") ? double.Parse(row["DiscountPercent"].ToString()) : 0;
-                //item.StartDate = !row.IsNull("StartDate") ? DateTime.Parse(row["StartDate"].ToString()) : DateTime.Parse("1900-01-01");
-                //item.EndDate = !row.IsNull("EndDate") ? DateTime.Parse(row["EndDate"].ToString()) : DateTime.Parse("1900-01-01");
-                //item.UpdatedAt = !row.IsNull("UpdatedAt") ? DateTime.Parse(row["UpdatedAt"].ToString()) : DateTime.Parse("1900-01-01");
-                //item.CreatedAt = !row.IsNull("CreatedAt") ? DateTime.Parse(row["CreatedAt"].ToString()) : DateTime.Parse("1900-01-01");
-                //item.UpdatedBy = !row.IsNull("UpdatedBy") ? row["UpdatedBy"].ToString() : "";
-                //item.CreatedBy = !row.IsNull("CreatedBy") ? row["CreatedBy"].ToString() : "";
+                item.RowUpdatedAt = !row.IsNull("RowUpdatedAt") ? DateTime.Parse(row["RowUpdatedAt"].ToString()) : DateTime.Parse("1900-01-01");
+                item.RowCreatedAt = !row.IsNull("RowCreatedAt") ? DateTime.Parse(row["RowCreatedAt"].ToString()) : DateTime.Parse("1900-01-01");
+                item.RowUpdatedUser = !row.IsNull("RowUpdatedUser") ? row["RowUpdatedUser"].ToString() : "";
+                item.RowCreatedUser = !row.IsNull("RowCreatedUser") ? row["RowCreatedUser"].ToString() : "";
                 //item.Note = !row.IsNull("Note") ? row["Note"].ToString() : "";
                 item.Status = !row.IsNull("Status") ? Convert.ToBoolean(row["Status"].ToString()) : false;
 

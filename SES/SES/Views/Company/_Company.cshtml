@@ -5,13 +5,13 @@
 }
 
 
-@Scripts.Render("~/Scripts/app/Contract.js")
+@Scripts.Render("~/Scripts/app/Company.js")
 @Scripts.Render("~/Scripts/app/app.js")
 @{
     var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
     var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
     var listActiveStatus = dict.ContainsKey("activestatus") ? (List<ActiveStatus>)dict["activestatus"] : new List<ActiveStatus>();
-    var listMerchant = dict.ContainsKey("listMerchant") ? (List<DC_OCM_Merchant>)dict["listMerchant"] : new List<DC_OCM_Merchant>();
+    var listCompany = dict.ContainsKey("listCompany") ? (List<Company>)dict["listCompany"] : new List<Company>();
     //var listTranporter = dict.ContainsKey("listTranporter") ? (List<DC_LG_Transporter>)dict["listTranporter"] : new List<DC_LG_Transporter>();
     //var listContractTransporter = dict.ContainsKey("listContractTransporter") ? (List<DC_LG_Contract>)dict["listContractTransporter"] : new List<DC_LG_Contract>();
 }
@@ -47,11 +47,11 @@
                             <form class="smart-form">
                                 <fieldset>
                                     <div class="row">
-                                        @if (Auth_Action.AssetResult(asset, "ContractName"))
+                                        @if (Auth_Action.AssetResult(asset, "CompanyName"))
                                         {
                                             <section class="col col-3">
                                                 <label class="input">
-                                                    <input type="text" class="input-xs" id="txtContractID" placeholder="Mã,Tên công ty">
+                                                    <input type="text" class="input-xs" id="txtCompanyID" placeholder="Mã,Tên công ty">
                                                 </label>
                                             </section>
                                         }
@@ -84,7 +84,7 @@
             </div>
         </div>
     }
-    
+
     <div class="jarviswidget">
         <header>
             <h2 style="color:#6fb3e0">Công ty</h2>
@@ -92,21 +92,21 @@
         <div class="row">
             <article class="col-sm-12">
                 <div class="widget-body">
-                    @(Html.Kendo().Grid<SES.Models.DC_OCM_Merchant>()
+                    @(Html.Kendo().Grid<SES.Models.Company>()
                     .Name("grid")
                     .Columns(columns =>
                     {
                         if (asset.ContainsKey("Update") && asset["Update"])
                         {
-                            columns.Bound(p => p.MerchantID).HtmlAttributes(new { data_id = "#=MerchantID#", onclick = "onOpenPopup(1,this)", @style = "color:\\#428bca;cursor:pointer;text-decoration:underline" }).Title("Mã công ty").Width(110);
+                            columns.Bound(p => p.CompanyID).HtmlAttributes(new { data_id = "#=CompanyID#", onclick = "onOpenPopup(1,this)", @style = "color:\\#428bca;cursor:pointer;text-decoration:underline" }).Title("Mã công ty").Width(110);
                         }
                         else
                         {
-                            columns.Bound(p => p.MerchantID).Title("Mã hợp đồng").Width(100);
+                            columns.Bound(p => p.CompanyID).Title("Mã hợp đồng").Width(100);
                         }
-                        if (Auth_Action.AssetResult(asset, "MerchantName"))
+                        if (Auth_Action.AssetResult(asset, "CompanyName"))
                         {
-                            columns.Bound(p => p.MerchantName).Title("Tên công ty").HtmlAttributes(new { data_column = "MerchantName" }).Width(150);
+                            columns.Bound(p => p.CompanyName).Title("Tên công ty").HtmlAttributes(new { data_column = "CompanyName" }).Width(150);
                         }
                         if (Auth_Action.AssetResult(asset, "Status"))
                         {
@@ -134,10 +134,10 @@
                         //    columns.Bound(p => p.Note).Title("Ghi chú").Width(130).HeaderHtmlAttributes(new { data_column = "Note" });
                         //}
 
-                        //columns.Bound(p => p.CreatedBy).Title("Người tạo").Width(110);
-                        //columns.Bound(p => p.CreatedAt).Width(110).Format("{0:dd/MM/yyyy}").HtmlAttributes(new { style = "text-align:right" }).Title("Ngày tạo").Width(110);
-                        //columns.Bound(p => p.UpdatedBy).Title("Người cập nhật").Width(110);
-                        //columns.Bound(o => o.UpdatedAt).Title("Ngày cập nhật").Format("{0:dd/MM/yyyy}").Width(110).ClientTemplate("#if(kendo.toString(UpdatedAt,'dd/MM/yyyy') != '01/01/1900'){#" + "#= kendo.toString(UpdatedAt,'dd/MM/yyyy') #" + "#}#").HtmlAttributes(new { style = "text-align:right" });
+                        columns.Bound(p => p.CreatedBy).Title("Người tạo").Width(110);
+                        columns.Bound(p => p.CreatedAt).Width(110).Format("{0:dd/MM/yyyy}").HtmlAttributes(new { style = "text-align:right" }).Title("Ngày tạo").Width(110);
+                        columns.Bound(p => p.UpdatedBy).Title("Người cập nhật").Width(110);
+                        columns.Bound(o => o.UpdatedAt).Title("Ngày cập nhật").Format("{0:dd/MM/yyyy}").Width(110).ClientTemplate("#if(kendo.toString(UpdatedAt,'dd/MM/yyyy') != '01/01/1900'){#" + "#= kendo.toString(UpdatedAt,'dd/MM/yyyy') #" + "#}#").HtmlAttributes(new { style = "text-align:right" });
 
                     })
                     .ToolBar(toolBar =>
@@ -167,14 +167,66 @@
                         .PageSize(100)
                         .Model(model =>
                         {
-                            model.Id(p => p.MerchantID);
+                            model.Id(p => p.CompanyID);
                         })
                         //.Events(e => { e.RequestEnd("onRequestEnd"); e.RequestStart("onRequestStart"); })
-                        .Read(read => read.Action("Read", "Merchant"))
+                        .Read(read => read.Action("Read", "Company"))
                     )
                     )
                 </div>
             </article>
+        </div>
+    </div>
+
+    <div id="popup" class="row" style="margin:0 auto">
+        <div class="bordered">
+            @using (Html.BeginForm("Create", "Company", FormMethod.Post, new { @class = "smart-form", id = "formPopup", enctype = "multipart/form-data" }))
+            {
+                @Html.Hidden("CreatedAt");
+                @Html.Hidden("CreatedBy");
+                <fieldset style="float: left; width: 370px; padding-left: 0px; padding-right: 0px;">
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right;">Mã công ty (*)</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="input" style="float:right;width:240px;">
+                                @Html.TextBox("CompanyID", "", new { @class = "input-xs popup_text_right", placeholder = "Mã công ty" })
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right;">Tên công ty (*)</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="input" style="float:right;width:240px;">
+                                @Html.TextBox("CompanyName", "", new { @class = "input-xs popup_text_right", placeholder = "Tên công ty" })
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right">Trạng thái</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="select" style="float: right">
+                                @Html.DropDownList("Status", new SelectList(listActiveStatus, "StatusValue", "StatusName", 1))
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+
+                </fieldset>
+                <div style="clear:both"></div>
+                <footer>
+                    <button type="submit" class="k-button k-button-icontext btn_custom" style="float: left;">Lưu</button>
+                    <img src="@Url.Content("~/Content/Bootstrap/loading.gif")" class="hide" id="loading" style="margin-top: 17px;" />
+                </footer>
+            }
         </div>
     </div>
 
