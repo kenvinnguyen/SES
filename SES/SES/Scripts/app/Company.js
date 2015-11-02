@@ -110,10 +110,16 @@ $(document).ready(function () {
                 required: true,
                 //alphanumeric: true
             },
-            //TransporterID: {
-            //    required: true,
-            //    //alphanumeric: true
-            //},
+
+            Phone: {
+                required: true,
+                //alphanumeric: true
+            },
+
+            Address: {
+                required: true,
+                //alphanumeric: true
+            },
             //DiscountPercent: {
             //    required: true,
             //    number: true,
@@ -130,6 +136,13 @@ $(document).ready(function () {
             CompanyName: {
                 required: "Thông tin bắt buộc"
             },
+            Phone: {
+                required: "Thông tin bắt buộc"
+            },
+            Address: {
+                required: "Thông tin bắt buộc"
+            },
+
             //DiscountPercent: {
             //    required: "Thông tin bắt buộc",
             //    number: "Phần trăm chiết khấu phải là số",
@@ -258,7 +271,7 @@ function doSearch() {
 }
 
 function readHeaderInfo() {
-    contentTab = setContentTab(["CompanyID", "CompanyName"//, "Desc", "Size", 'Price', 'VATPrice', 'Unit', 'Type', 'WHID', 'WHLID', 'ShapeTemplate', 'Status'
+    contentTab = setContentTab(["CompanyID", "CompanyName", "Phone", "Fax", 'Email', 'Address', 'Website', 'Status'
                                 ], "30");
 }
 

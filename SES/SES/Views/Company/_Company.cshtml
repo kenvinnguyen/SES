@@ -108,37 +108,19 @@
                         {
                             columns.Bound(p => p.CompanyName).Title("Tên công ty").HtmlAttributes(new { data_column = "CompanyName" }).Width(150);
                         }
+                        columns.Bound(p => p.Phone).Title("Số điện thoại").Width(100);
+                        columns.Bound(p => p.Fax).Title("Fax").Width(100);
+                        columns.Bound(p => p.Email).Title("Email").Width(100);
+                        columns.Bound(p => p.Address).Title("Địa chỉ").Width(100);
+                        columns.Bound(p => p.Website).Title("Website").Width(100);
                         if (Auth_Action.AssetResult(asset, "Status"))
                         {
                             columns.Bound(p => p.Status).Title("Trạng thái").HtmlAttributes(new { data_column = "IsActive" }).Width(130);
                         }
-                        //if (Auth_Action.AssetResult(asset, "TransporterName"))
-                        //{
-                        //    columns.Bound(p => p.TransporterName).Title("Đơn vị vận chuyển").Width(150);
-
-                        //}
-                        //if (Auth_Action.AssetResult(asset, "DiscountPercent"))
-                        //{
-                        //    columns.Bound(p => p.DiscountPercent).Title("% chiết khấu").HtmlAttributes(new { data_column = "Size", style = "text-align:right" }).Width(100).ClientTemplate("#=DiscountPercent*100#%");
-                        //}
-                        //if (Auth_Action.AssetResult(asset, "StartDate"))
-                        //{
-                        //    columns.Bound(p => p.StartDate).Title("Ngày bắt đầu").Format("{0:dd/MM/yyyy}").Width(110).ClientTemplate("#if(kendo.toString(StartDate,'dd/MM/yyyy') != '01/01/1900'){#" + "#= kendo.toString(StartDate,'dd/MM/yyyy') #" + "#}#").HtmlAttributes(new { style = "text-align:right" });
-                        //}
-                        //if (Auth_Action.AssetResult(asset, "EndDate"))
-                        //{
-                        //    columns.Bound(p => p.EndDate).Title("Ngày kết thúc").Format("{0:dd/MM/yyyy}").Width(110).ClientTemplate("#if(kendo.toString(EndDate,'dd/MM/yyyy') != '01/01/1900'){#" + "#= kendo.toString(EndDate,'dd/MM/yyyy') #" + "#}#").HtmlAttributes(new { style = "text-align:right" });
-                        //}
-                        //if (Auth_Action.AssetResult(asset, "Note"))
-                        //{
-                        //    columns.Bound(p => p.Note).Title("Ghi chú").Width(130).HeaderHtmlAttributes(new { data_column = "Note" });
-                        //}
-
                         columns.Bound(p => p.CreatedBy).Title("Người tạo").Width(110);
                         columns.Bound(p => p.CreatedAt).Width(110).Format("{0:dd/MM/yyyy}").HtmlAttributes(new { style = "text-align:right" }).Title("Ngày tạo").Width(110);
                         columns.Bound(p => p.UpdatedBy).Title("Người cập nhật").Width(110);
                         columns.Bound(o => o.UpdatedAt).Title("Ngày cập nhật").Format("{0:dd/MM/yyyy}").Width(110).ClientTemplate("#if(kendo.toString(UpdatedAt,'dd/MM/yyyy') != '01/01/1900'){#" + "#= kendo.toString(UpdatedAt,'dd/MM/yyyy') #" + "#}#").HtmlAttributes(new { style = "text-align:right" });
-
                     })
                     .ToolBar(toolBar =>
                         {
@@ -152,7 +134,7 @@
                             {
                                 toolBar.Custom()
                                         .Text("Xuất Excel")
-                                        .HtmlAttributes(new { @class = "btn btn-primary export", @style = "background-color:#428bca; color:white;" }).Url(Url.Action("Export", "Contract", new { filter = "~", sort = "~", ContractID = "~" }));
+                                        .HtmlAttributes(new { @class = "btn btn-primary export", @style = "background-color:#428bca; color:white;" }).Url(Url.Action("Export", "Company", new { filter = "~", sort = "~", CompanyID = "~" }));
                             }
                         })
                     .Events(events => { events.DataBound("onDatabound"); })
@@ -196,6 +178,7 @@
                             <div style="clear:both"></div>
                         </div>
                     </section>
+
                     <section style="float:left;">
                         <div style="float: left; width: 120px; margin-left:0;">
                             <label class="label" style="float:right;">Tên công ty (*)</label>
@@ -203,6 +186,65 @@
                         <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
                             <label class="input" style="float:right;width:240px;">
                                 @Html.TextBox("CompanyName", "", new { @class = "input-xs popup_text_right", placeholder = "Tên công ty" })
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right;">Số điện thoại(*)</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="input" style="float:right;width:240px;">
+                                @Html.TextBox("Phone", "", new { @class = "input-xs popup_text_right", placeholder = "Số điện thoại" })
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right;">Fax</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="input" style="float:right;width:240px;">
+                                @Html.TextBox("Fax", "", new { @class = "input-xs popup_text_right", placeholder = "Fax" })
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right;">Email</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="input" style="float:right;width:240px;">
+                                @Html.TextBox("Email", "", new { @class = "input-xs popup_text_right", placeholder = "Email" })
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right;">Địa chỉ(*)</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="input" style="float:right;width:240px;">
+                                @Html.TextBox("Address", "", new { @class = "input-xs popup_text_right", placeholder = "Địa chỉ" })
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right;">Website</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="input" style="float:right;width:240px;">
+                                @Html.TextBox("Website", "", new { @class = "input-xs popup_text_right", placeholder = "Website" })
                             </label>
                             <div style="clear:both"></div>
                         </div>

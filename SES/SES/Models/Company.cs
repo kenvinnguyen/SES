@@ -42,13 +42,16 @@ namespace SES.Models
                 var item = new Company();
                 item.CompanyID = !row.IsNull("CompanyID") ? row["CompanyID"].ToString() : "";
                 item.CompanyName = !row.IsNull("CompanyName") ? row["CompanyName"].ToString() : "";
+                item.Phone = !row.IsNull("Phone") ? row["Phone"].ToString() : "";
+                item.Fax = !row.IsNull("Fax") ? row["Fax"].ToString() : "";
+                item.Email = !row.IsNull("Email") ? row["Email"].ToString() : "";
+                item.Address = !row.IsNull("Address") ? row["Address"].ToString() : "";
+                item.Website = !row.IsNull("Website") ? row["Website"].ToString() : "";
                 item.UpdatedAt = !row.IsNull("UpdatedAt") ? DateTime.Parse(row["UpdatedAt"].ToString()) : DateTime.Parse("1900-01-01");
                 item.CreatedAt = !row.IsNull("CreatedAt") ? DateTime.Parse(row["CreatedAt"].ToString()) : DateTime.Parse("1900-01-01");
                 item.UpdatedBy = !row.IsNull("UpdatedBy") ? row["UpdatedBy"].ToString() : "";
                 item.CreatedBy = !row.IsNull("CreatedBy") ? row["CreatedBy"].ToString() : "";
-                //item.Note = !row.IsNull("Note") ? row["Note"].ToString() : "";
                 item.Status = !row.IsNull("Status") ? Convert.ToBoolean(row["Status"].ToString()) : false;
-
                 lst.Add(item);
             }
 

@@ -1261,6 +1261,9 @@
     <Content Include="ExportTemplate\ThongTinNhaPhanPhoi.xlsx" />
     <Content Include="ExportTemplate\TuyenBanHang.xlsx" />
     <Content Include="ExportTemplate\KhoBai.xlsx" />
+    <Content Include="ExportTemplate\CongTy.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Properties\PublishProfiles\HongHanh.pubxml" />
     <Content Include="Scripts\app\AdminMasterHoliday.js" />
     <Content Include="Scripts\app\AdminMasterTerritory.js" />
