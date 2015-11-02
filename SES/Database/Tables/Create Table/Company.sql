@@ -19,7 +19,7 @@ CREATE TABLE [dbo].[Company](
 	[CreatedBy] [varchar](32) NULL,
 	[UpdatedAt] [datetime] NULL,
 	[UpdatedBy] [varchar](32) NULL,
-	[Status] [bit] NOT NULL,
+	[Status] [bit] NOT NULL  DEFAULT (1),
  CONSTRAINT [PK_Company] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC,
@@ -27,8 +27,5 @@ CREATE TABLE [dbo].[Company](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
-GO
-
-ALTER TABLE [dbo].[Company] ADD  DEFAULT ((1)) FOR [Status]
 GO
 
