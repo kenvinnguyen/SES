@@ -127,6 +127,22 @@ namespace SES.Controllers
             finally { db.Close(); }
         }
 
+        [HttpPost]
+        public ActionResult GetCompanyByID(string id)
+        {
+            IDbConnection dbConn = new OrmliteConnection().openConn();
+            try
+            {
+                var listCompany = dbConn.Select<Company>("CompanyID={0}", id);
+                return Json(new { success = true, listcompany = listCompany });
+            }
+            catch (Exception e)
+            {
+                return Json(new { success = false, message = e.Message });
+            }
+            finally { dbConn.Close(); }
+        }
+
         public FileResult Export([DataSourceRequest]DataSourceRequest request)
         {
             ExcelPackage pck = new ExcelPackage(new FileInfo(Server.MapPath("~/ExportTemplate/CongTy.xlsx")));
