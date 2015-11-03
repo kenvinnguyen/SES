@@ -15,6 +15,10 @@ $(document).ready(function () {
     $("#menu_Company").click(function () {
         onLoadPage(r + "/Company/PartialCompany");
     });
+    //Nhân viên bán hàng
+    $("#menu_SalesPerson").click(function () {
+        onLoadPage(r + "/SalesPerson/PartialSalesPerson");
+    });
 
     //phan quyen
     $("#menu_HOAdminAuthRole").click(function () {

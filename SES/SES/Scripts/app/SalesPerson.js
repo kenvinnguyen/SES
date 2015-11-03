@@ -6,15 +6,18 @@ var contentTab;
 $(document).ready(function () {
     //active menu
     resetMenu();
-    $("#menu_Company").parent().addClass('active');
+    $("#menu_SalesPerson").parent().addClass('active');
 
-    document.title = "Công ty";
+    document.title = "Nhân viên bán hàng";
     //fillter & form popup
     $("#selectStatus_search").select2();
     $("#s2id_selectStatus_search").css('width', '100%');
 
     $("#Status").select2();
     $("#s2id_Status").css('width', '240px');
+
+    $("#Gender").select2();
+    $("#s2id_Gender").css('width', '240px');
     //$("#TransporterID").select2();
     //$("#s2id_TransporterID").css('width', '240px');
 
@@ -22,7 +25,7 @@ $(document).ready(function () {
         resizeGrid(numHeight);
     });
 
-    $("#txtCompanyID").keypress(function (e) {
+    $("#txtSalesPersonID").keypress(function (e) {
         if (e.keyCode == 13) {
             doSearch();
         }
@@ -102,24 +105,21 @@ $(document).ready(function () {
     $("#formPopup").validate({
         // Rules for form validation
         rules: {
-            CompanyID: {
+            SalesPersonID: {
                 required: true,
                 //alphanumeric: true
             },
-            CompanyName: {
-                required: true,
-                //alphanumeric: true
-            },
-
-            Phone: {
+            SalesPersonName: {
                 required: true,
                 //alphanumeric: true
             },
 
-            Address: {
+            Gender: {
                 required: true,
                 //alphanumeric: true
             },
+
+
             //DiscountPercent: {
             //    required: true,
             //    number: true,
@@ -130,16 +130,13 @@ $(document).ready(function () {
 
         // Messages for form validation
         messages: {
-            CompanyID: {
+            SalesPersonID: {
                 required: "Thông tin bắt buộc"
             },
-            CompanyName: {
+            SalesPersonName: {
                 required: "Thông tin bắt buộc"
             },
-            Phone: {
-                required: "Thông tin bắt buộc"
-            },
-            Address: {
+            Gender: {
                 required: "Thông tin bắt buộc"
             },
 
@@ -163,7 +160,7 @@ $(document).ready(function () {
                     if (data.success) {
                         if (keyAction == 0) {
                             // Create
-                            $("#formPopup").find('fieldset:eq(0) section:eq(0)').empty().append('<div style="float: left; width: 120px; margin-left:0;"><label class="label" style="float: right;">Mã công ty (*) </label></div><div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;"><label style="float: right;text-align: left;width: 240px;height: 19px;padding-top: 2px;"><strong style="color:red;">' + data.CompanyID + '</strong><input type="hidden" id="CompanyID" name="CompanyID" value="' + data.CompanyID + '" /></label> <div style="clear:both"></div></div>');
+                            $("#formPopup").find('fieldset:eq(0) section:eq(0)').empty().append('<div style="float: left; width: 120px; margin-left:0;"><label class="label" style="float: right;">Mã nhân viên (*) </label></div><div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;"><label style="float: right;text-align: left;width: 240px;height: 19px;padding-top: 2px;"><strong style="color:red;">' + data.SalesPersonID + '</strong><input type="hidden" id="SalesPersonID" name="SalesPersonID" value="' + data.SalesPersonID + '" /></label> <div style="clear:both"></div></div>');
                             $("#CreatedAt").val(dateToString(data.CreatedAt));
                             $("#CreatedBy").val(data.CreatedBy);
                             keyAction = -1;
@@ -204,17 +201,20 @@ function onOpenPopup(key, obj) {
         keyAction = key;
         popup.title('Thêm');
         //onRefreshPopup
-        $("#formPopup").find('fieldset:eq(0) section:eq(0)').empty().append('<div class="divlabel"><label class="label" style="float:right">Mã công ty (*)</label></div><div class="divfile"><label class="input" style="float:right;width:240px;"><input type="text" id="CompanyID" name="CompanyID" class="input-xs" placeholder="Mã công ty" style="margin-right:85px" /></label><div style="clear:both"></div></div>');
+        $("#formPopup").find('fieldset:eq(0) section:eq(0)').empty().append('<div class="divlabel"><label class="label" style="float:right">Mã nhân viên (*)</label></div><div class="divfile"><label class="input" style="float:right;width:240px;"><input type="text" id="SalesPersonID" name="SalesPersonID" class="input-xs" placeholder="Mã nhân viên" style="margin-right:85px" /></label><div style="clear:both"></div></div>');
         $('#formPopup')[0].reset();
-        $("#CompanyID").attr('readonly', false);
+        $("#SalesPersonID").attr('readonly', false);
         $("#CreatedBy").val('');
         $("#CreatedAt").val('');
-        $("#CompanyName").val('');
+        $("#SalesPersonName").val('');
         //$("#TransporterID").val('');
         //$("#TransporterID").trigger("change");
         $("#Status option[value='True']").attr('selected', true);
+        $("#Gender option[value='True']").attr('selected', true);
+        $("#CompanyID option").removeAttr('selected');
+        generateSelect2("CompanyID");
         setTimeout(function () {
-            $("#CompanyID").focus();
+            $("#SalesPersonID").focus();
         }, 500);
     }
         // Cập nhậpS
@@ -224,20 +224,29 @@ function onOpenPopup(key, obj) {
         var id = $(obj).data('id');
         //$("#ContractID").attr('readonly', true);
         //$("#ContractID").css('color', 'red');
-        $("#formPopup").find('fieldset:eq(0) section:eq(0)').empty().append('<div style="float: left; width: 120px; margin-left:0;"><label class="label" style="float: right;">Mã công ty (*)</label></div><div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;"> <label style="float: right;text-align: left;width: 240px;height: 19px;padding-top: 2px;"><strong style="color:red;">' + id + '</strong><input type="hidden" id="CompanyID" name="CompanyID" value="' + id + '"/></label> <div style="clear:both"></div></di>');
+        $("#formPopup").find('fieldset:eq(0) section:eq(0)').empty().append('<div style="float: left; width: 120px; margin-left:0;"><label class="label" style="float: right;">Mã nhân viên (*)</label></div><div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;"> <label style="float: right;text-align: left;width: 240px;height: 19px;padding-top: 2px;"><strong style="color:red;">' + id + '</strong><input type="hidden" id="SalesPersonID" name="SalesPersonID" value="' + id + '"/></label> <div style="clear:both"></div></di>');
         var currentRow = $(obj).closest("tr");
         var dataItem = $("#grid").data("kendoGrid").dataItem(currentRow);
-     
-        onBindDataToFormCompany(dataItem);
+        $.post(r + "/Conpany/GetCompanyByID", { id: id }, function (data) {
+            if (data.success) {
+                $("#CompanyID option:selected").removeAttr('selected');
+                generateSelect2("CompanyID");
+                for (var i = 0; i < data.listcompany.length; i++) {
+                    $("#CompanyID option[value='" + data.listcompany[i].CompanyID + "']").attr('selected', true);
+                }
+                $("#CompanyID").trigger("change");
+            }
+        });
+        onBindDataToFormSalesPerson(dataItem);
         setTimeout(function () {
-            $("#CompanyName").focus();
+            $("#SalesPersonName").focus();
         }, 500);
         readHeaderInfo();
     }
 }
 
 // Load lại data khi tạo mới hoặc cập nhật
-function onBindDataToFormCompany(dataItem) {
+function onBindDataToFormSalesPerson(dataItem) {
     for (var propName in dataItem) {
         if (dataItem[propName] != null && dataItem[propName].constructor.toString().indexOf("Date") > -1) {
             var d = kendo.toString(kendo.parseDate(dataItem[propName]), 'dd/MM/yyyy')
@@ -254,14 +263,14 @@ function onBindDataToFormCompany(dataItem) {
 function doSearch() {
     var grid = $("#grid").data("kendoGrid");
     var filter = { logic: "and", filters: [] };
-    var text = $("#txtCompanyID").val();
+    var text = $("#txtSalesPersonID").val();
     if (text) {
         var filterOr = { logic: "or", filters: [] };
-        filterOr.filters.push({ field: "CompanyID", operator: "contains", value: text });
-        filterOr.filters.push({ field: "CompanyName", operator: "contains", value: text });
+        filterOr.filters.push({ field: "SalesPersonID", operator: "contains", value: text });
+        filterOr.filters.push({ field: "SalesPersonName", operator: "contains", value: text });
         filter.filters.push(filterOr);
     }
-   
+
     text = $("#selectStatus_search").val();
     if (text) {
         filter.filters.push({ field: "Status", operator: "eq", value: text });
@@ -271,8 +280,8 @@ function doSearch() {
 }
 
 function readHeaderInfo() {
-    contentTab = setContentTab(["CompanyID", "CompanyName", "Phone", "Fax", 'Email', 'Address', 'Website', 'Status'
-                                ], "30");
+    contentTab = setContentTab(['SalesPersonID', 'SalesPersonName', 'CompanyID', 'Gender', 'Phone', 'Email', 'Address', 'Status'
+    ], "30");
 }
 
 function onDatabound(e) {

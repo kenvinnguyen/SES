@@ -194,6 +194,17 @@ function changeIsActive(arrCol) {
                 $(tr).empty().append('<span class="label-success" style="font-size:12px">Ngưng hoạt động</span>');
             }
         }
+
+        if (attr == 'IsGender') {
+            if (tr.textContent == "true") {
+                //$(tr).empty().append('<span class="label label-success" style="font-size:12px">Đang hoạt động</span>');
+                $(tr).empty().append('<span class="label-success" style="font-size:12px">Nam</span>');
+            }
+            else if (tr.textContent == "false") {
+                //$(tr).empty().append('<span class="label label-danger" style="font-size:12px">Ngưng hoạt động</span>');
+                $(tr).empty().append('<span class="label-success" style="font-size:12px">Nữ</span>');
+            }
+        }
     }
 }
 

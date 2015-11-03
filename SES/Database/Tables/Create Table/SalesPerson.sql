@@ -30,4 +30,7 @@ CREATE TABLE [dbo].[SalesPerson](
 
 GO
 
+SET ANSI_PADDING OFF
+GO
+
 

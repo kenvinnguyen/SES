@@ -11,7 +11,7 @@
     var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
     var listActiveStatus = dict.ContainsKey("activestatus") ? (List<ActiveStatus>)dict["activestatus"] : new List<ActiveStatus>();
     var listTranporter = dict.ContainsKey("listTranporter") ? (List<DC_LG_Transporter>)dict["listTranporter"] : new List<DC_LG_Transporter>();
-    var listContractTransporter = dict.ContainsKey("listContractTransporter") ? (List<DC_LG_Contract>)dict["listContractTransporter"] : new List<DC_LG_Contract>();
+    var listCntractTransporter = dict.ContainsKey("listContractTransporter") ? (List<DC_LG_Contract>)dict["listContractTransporter"] : new List<DC_LG_Contract>();
    }
 <style>
     .ace-file-input {
@@ -104,7 +104,6 @@
                         if (Auth_Action.AssetResult(asset, "TransporterName"))
                         {
                             columns.Bound(p => p.TransporterName).Title("Đơn vị vận chuyển").Width(150);
-                            
                         }
                         if (Auth_Action.AssetResult(asset, "DiscountPercent"))
                         {

@@ -1,4 +1,5 @@
-﻿using SES.Service;
+﻿using ServiceStack.DataAnnotations;
+using SES.Service;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -28,6 +29,8 @@ namespace SES.Models
         public DateTime? UpdatedAt { get; set; }
         public string UpdatedBy { get; set; }
         public bool Status { get; set; }
+        [Ignore]
+        public string CompanyName { get; set; }
         public List<SalesPerson> GetList(int page, int pageSize, string whereCondition)
         {
             List<SqlParameter> param = new List<SqlParameter>();
@@ -57,6 +60,7 @@ namespace SES.Models
                 item.UpdatedBy = !row.IsNull("UpdatedBy") ? row["UpdatedBy"].ToString() : "";
                 item.CreatedBy = !row.IsNull("CreatedBy") ? row["CreatedBy"].ToString() : "";
                 item.Status = !row.IsNull("Status") ? Convert.ToBoolean(row["Status"].ToString()) : false;
+                item.CompanyName = !row.IsNull("CompanyName") ? row["CompanyName"].ToString() : "";
                 lst.Add(item);
             }
 

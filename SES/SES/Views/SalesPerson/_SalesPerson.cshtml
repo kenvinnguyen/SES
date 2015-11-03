@@ -5,13 +5,20 @@
 }
 
 
-@Scripts.Render("~/Scripts/app/Company.js")
+@Scripts.Render("~/Scripts/app/SalesPerson.js")
 @Scripts.Render("~/Scripts/app/app.js")
 @{
     var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
     var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
     var listActiveStatus = dict.ContainsKey("activestatus") ? (List<ActiveStatus>)dict["activestatus"] : new List<ActiveStatus>();
-    var listSalesPerson = dict.ContainsKey("listSalesPerson") ? (List<Company>)dict["listSalesPerson"] : new List<Company>();
+    var listSalesPerson = dict.ContainsKey("listSalesPerson") ? (List<SalesPerson>)dict["listSalesPerson"] : new List<SalesPerson>();
+    //var listSalesPerson = dict.ContainsKey("listSalesPerson") ? (List<DC_LG_Contract>)dict["listSalesPerson"] : new List<DC_LG_Contract>();
+    var listCompany = dict.ContainsKey("listCompany") ? (List<Company>)dict["listCompany"] : new List<Company>();
+    var listgender = new List<ActiveStatus>
+    {
+          new ActiveStatus { StatusName = "Nữ", StatusValue = false },
+          new ActiveStatus { StatusName = "Nam", StatusValue = true }
+    };
 }
 <style>
     .ace-file-input {
@@ -54,7 +61,7 @@
                                                 </label>
                                             </section>
                                         }
-                                     
+
                                         @if (Auth_Action.AssetResult(asset, "Status"))
                                         {
                                             <section class="col col-3search">
@@ -76,10 +83,10 @@
             </div>
         </div>
     }
-    
+
     <div class="jarviswidget">
         <header>
-            <h2 style="color:#6fb3e0">Công ty</h2>
+            <h2 style="color:#6fb3e0">Nhân viên bán hàng</h2>
         </header>
         <div class="row">
             <article class="col-sm-12">
@@ -90,7 +97,7 @@
                     {
                         if (asset.ContainsKey("Update") && asset["Update"])
                         {
-                            columns.Bound(p => p.SalesPersonID).HtmlAttributes(new { data_id = "#=SalesPersonID#", onclick = "onOpenPopup(1,this)", @style = "color:\\#428bca;cursor:pointer;text-decoration:underline" }).Title("Mã công ty").Width(110);
+                            columns.Bound(p => p.SalesPersonID).HtmlAttributes(new { data_id = "#=SalesPersonID#", onclick = "onOpenPopup(1,this)", @style = "color:\\#428bca;cursor:pointer;text-decoration:underline" }).Title("Mã nhân viên").Width(110);
                         }
                         else
                         {
@@ -100,6 +107,12 @@
                         {
                             columns.Bound(p => p.SalesPersonName).Title("Tên nhân viên").HtmlAttributes(new { data_column = "SalesPersonName" }).Width(150);
                         }
+                        if (Auth_Action.AssetResult(asset, "CompanyName"))
+                        {
+                            columns.Bound(p => p.CompanyName).Title("Công ty").Width(150);
+
+                        }
+                        columns.Bound(p => p.Gender).Title("Giới tính").HtmlAttributes(new { data_column = "IsGender" }).Width(100);
                         columns.Bound(p => p.Phone).Title("Số điện thoại").Width(100);
                         columns.Bound(p => p.Email).Title("Email").Width(100);
                         columns.Bound(p => p.Address).Title("Địa chỉ").Width(100);
@@ -124,7 +137,7 @@
                             {
                                 toolBar.Custom()
                                         .Text("Xuất Excel")
-                                        .HtmlAttributes(new { @class = "btn btn-primary export", @style = "background-color:#428bca; color:white;" }).Url(Url.Action("Export", "Company", new { filter = "~", sort = "~", SalesPersonID = "~" }));
+                                        .HtmlAttributes(new { @class = "btn btn-primary export", @style = "background-color:#428bca; color:white;" }).Url(Url.Action("Export", "SalesPerson", new { filter = "~", sort = "~", SalesPersonID = "~" }));
                             }
                         })
                     .Events(events => { events.DataBound("onDatabound"); })
@@ -147,6 +160,119 @@
                     )
                 </div>
             </article>
+        </div>
+    </div>
+
+    <div id="popup" class="row" style="margin:0 auto">
+        <div class="bordered">
+            @using (Html.BeginForm("Create", "SalesPerson", FormMethod.Post, new { @class = "smart-form", id = "formPopup", enctype = "multipart/form-data" }))
+            {
+                @Html.Hidden("CreatedAt");
+                @Html.Hidden("CreatedBy");
+                <fieldset style="float: left; width: 370px; padding-left: 0px; padding-right: 0px;">
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right;">Mã nhân viên (*)</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="input" style="float:right;width:240px;">
+                                @Html.TextBox("SalesPersonID", "", new { @class = "input-xs popup_text_right", placeholder = "Mã nhân viên" })
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right;">Tên nhân viên (*)</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="input" style="float:right;width:240px;">
+                                @Html.TextBox("SalesPersonName", "", new { @class = "input-xs popup_text_right", placeholder = "Tên nhân viên" })
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right">Công ty</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="select">
+                                @Html.DropDownList("CompanyID", new SelectList(listCompany, "CompanyID", "CompanyName"), new { placeholder = "-- Chọn công ty --" })
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right">Giới tính</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="select" style="float: right">
+                                @Html.DropDownList("Gender", new SelectList(listgender, "StatusValue", "StatusName", 1))
+                            </label>
+                           <div style="clear:both"></div>
+                        </div>
+                    </section>
+
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right;">Số điện thoại</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="input" style="float:right;width:240px;">
+                                @Html.TextBox("Phone", "", new { @class = "input-xs popup_text_right", placeholder = "Số điện thoại" })
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right;">Email</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="input" style="float:right;width:240px;">
+                                @Html.TextBox("Email", "", new { @class = "input-xs popup_text_right", placeholder = "Email" })
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right;">Địa chỉ</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="input" style="float:right;width:240px;">
+                                @Html.TextBox("Address", "", new { @class = "input-xs popup_text_right", placeholder = "Địa chỉ" })
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right">Trạng thái</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="select" style="float: right">
+                                @Html.DropDownList("Status", new SelectList(listActiveStatus, "StatusValue", "StatusName", 1))
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+
+                </fieldset>
+                <div style="clear:both"></div>
+                <footer>
+                    <button type="submit" class="k-button k-button-icontext btn_custom" style="float: left;">Lưu</button>
+                    <img src="@Url.Content("~/Content/Bootstrap/loading.gif")" class="hide" id="loading" style="margin-top: 17px;" />
+                </footer>
+            }
         </div>
     </div>
 </section>
