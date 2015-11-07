@@ -13,7 +13,7 @@ CREATE TABLE [dbo].[Customer](
 	[Email] [nvarchar](200) NOT NULL,
 	[Phone] [nvarchar](200) NOT NULL,
 	[Fax] [nvarchar](200) NOT NULL,
-	[Birthday] DateTime NOT NULL,
+	[Birthday] varchar(20) NOT NULL,
 	[ProvinceID] varchar(15) NOT NULL,
 	[DistrictID] varchar(15) NOT NULL,
 	[Gender] [nvarchar](4) NOT NULL,
