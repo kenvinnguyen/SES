@@ -170,6 +170,18 @@ namespace SES.Controllers
             var data = new Master_Territory().GetPageDistrict(request.Page, request.PageSize, whereCondition);
             return Json(data);
         }
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult Read_Ward([DataSourceRequest]DataSourceRequest request)
+        {
+            log4net.Config.XmlConfigurator.Configure();
+            string whereCondition = "";
+            if (request.Filters.Count > 0)
+            {
+                whereCondition = " AND " + new KendoApplyFilter().ApplyFilter(request.Filters[0]);
+            }
+            var data = new Master_Territory().GetPageWard(request.Page, request.PageSize, whereCondition);
+            return Json(data);
+        }
 
 
         //====================================================Index=================================================        

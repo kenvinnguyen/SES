@@ -63,6 +63,22 @@ $(document).ready(function () {
             return false;
         }
     });
+    $("#txtTerritoryIDWard").keypress(function (e) {
+
+        if (e.keyCode == 13) {
+
+            doSearchWard();
+            return false;
+        }
+    });
+    $("#txtTerritoryIDWardParent").keypress(function (e) {
+
+        if (e.keyCode == 13) {
+
+            doSearchWard();
+            return false;
+        }
+    });
 });
 //filter Country
 
@@ -143,6 +159,25 @@ function doSearchDistrict() {
     }
     grid.dataSource.filter(filter);
 }
+function doSearchWard() {
+
+    var grid = $("#gridWard").data("kendoGrid");
+    var filter = { logic: "and", filters: [] };
+
+    var text = $("#txtTerritoryIDWard").val();
+    if (text) {
+        var filterOr = { logic: "or", filters: [] };
+        filterOr.filters.push({ field: "TerritoryID", operator: "contains", value: text });
+        filterOr.filters.push({ field: "TerritoryName", operator: "contains", value: text });
+
+        filter.filters.push(filterOr);
+    }
+    text = $("#txtTerritoryIDWardParent").val();
+    if (text) {
+        filter.filters.push({ field: "ParentName", operator: "contains", value: text });
+    }
+    grid.dataSource.filter(filter);
+}
 
 
 //===========================================Databound ===========================================
@@ -150,34 +185,17 @@ function doSearchDistrict() {
 function onDataboundCountry(e) {
     resizeOtherGrid(numHeight, $("#gridCountry"));
     var grid = $("#gridCountry").data("kendoGrid");
-    // ask the parameterMap to create the request object for you
     var requestObject = (new kendo.data.transports["aspnetmvc-server"]({ prefix: "" }))
     .options.parameterMap({
         page: grid.dataSource.page(),
         sort: grid.dataSource.sort(),
         filter: grid.dataSource.filter()
     });
-
-    // Get the export link as jQuery object
     var $exportLink = grid.element.find('.export');
-
-    // Get its 'href' attribute - the URL where it would navigate to
     var href = $exportLink.attr('href');
     if (href) {
-        // Update the 'page' parameter with the grid's current page
-        //href = href.replace(/page=([^&]*)/, 'page=' + requestObject.page || '~');
-
-        // Update the 'sort' parameter with the grid's current sort descriptor
         href = href.replace(/sort=([^&]*)/, 'sort=' + requestObject.sort || '~');
-
-        // Update the 'pageSize' parameter with the grid's current pageSize
-        //href = href.replace(/pageSize=([^&]*)/, 'pageSize=' + grid.dataSource._pageSize);
-
-        //update filter descriptor with the filters applied
-
         href = href.replace(/filter=([^&]*)/, 'filter=' + (requestObject.filter || '~'));
-
-        // Update the 'href' attribute
         $exportLink.attr('href', href);
     }
 }
@@ -185,34 +203,17 @@ function onDataboundCountry(e) {
 function onDataboundRegion(e) {
     resizeOtherGrid(numHeight, $("#gridRegion"));
     var grid = $("#gridRegion").data("kendoGrid");
-    // ask the parameterMap to create the request object for you
     var requestObject = (new kendo.data.transports["aspnetmvc-server"]({ prefix: "" }))
     .options.parameterMap({
         page: grid.dataSource.page(),
         sort: grid.dataSource.sort(),
         filter: grid.dataSource.filter()
     });
-
-    // Get the export link as jQuery object
     var $exportLink = grid.element.find('.export');
-
-    // Get its 'href' attribute - the URL where it would navigate to
     var href = $exportLink.attr('href');
     if (href) {
-        // Update the 'page' parameter with the grid's current page
-        //href = href.replace(/page=([^&]*)/, 'page=' + requestObject.page || '~');
-
-        // Update the 'sort' parameter with the grid's current sort descriptor
         href = href.replace(/sort=([^&]*)/, 'sort=' + requestObject.sort || '~');
-
-        // Update the 'pageSize' parameter with the grid's current pageSize
-        //href = href.replace(/pageSize=([^&]*)/, 'pageSize=' + grid.dataSource._pageSize);
-
-        //update filter descriptor with the filters applied
-
         href = href.replace(/filter=([^&]*)/, 'filter=' + (requestObject.filter || '~'));
-
-        // Update the 'href' attribute
         $exportLink.attr('href', href);
     }
 }
@@ -220,34 +221,17 @@ function onDataboundRegion(e) {
 function onDataboundProvince(e) {
     resizeOtherGrid(numHeight, $("#gridProvince"));
     var grid = $("#gridProvince").data("kendoGrid");
-    // ask the parameterMap to create the request object for you
     var requestObject = (new kendo.data.transports["aspnetmvc-server"]({ prefix: "" }))
     .options.parameterMap({
         page: grid.dataSource.page(),
         sort: grid.dataSource.sort(),
         filter: grid.dataSource.filter()
     });
-
-    // Get the export link as jQuery object
     var $exportLink = grid.element.find('.export');
-
-    // Get its 'href' attribute - the URL where it would navigate to
     var href = $exportLink.attr('href');
     if (href) {
-        // Update the 'page' parameter with the grid's current page
-        //href = href.replace(/page=([^&]*)/, 'page=' + requestObject.page || '~');
-
-        // Update the 'sort' parameter with the grid's current sort descriptor
         href = href.replace(/sort=([^&]*)/, 'sort=' + requestObject.sort || '~');
-
-        // Update the 'pageSize' parameter with the grid's current pageSize
-        //href = href.replace(/pageSize=([^&]*)/, 'pageSize=' + grid.dataSource._pageSize);
-
-        //update filter descriptor with the filters applied
-
         href = href.replace(/filter=([^&]*)/, 'filter=' + (requestObject.filter || '~'));
-
-        // Update the 'href' attribute
         $exportLink.attr('href', href);
     }
 }
@@ -255,7 +239,23 @@ function onDataboundProvince(e) {
 function onDataboundDistrict(e) {
     resizeOtherGrid(numHeight, $("#gridDistrict"));
     var grid = $("#gridDistrict").data("kendoGrid");
-    // ask the parameterMap to create the request object for you
+    var requestObject = (new kendo.data.transports["aspnetmvc-server"]({ prefix: "" }))
+    .options.parameterMap({
+        page: grid.dataSource.page(),
+        sort: grid.dataSource.sort(),
+        filter: grid.dataSource.filter()
+    });
+    var $exportLink = grid.element.find('.export');
+    var href = $exportLink.attr('href');
+    if (href) {
+        href = href.replace(/sort=([^&]*)/, 'sort=' + requestObject.sort || '~');
+        href = href.replace(/filter=([^&]*)/, 'filter=' + (requestObject.filter || '~'));
+        $exportLink.attr('href', href);
+    }
+}
+function onDataboundWard(e) {
+    resizeOtherGrid(numHeight, $("#gridWard"));
+    var grid = $("#gridWard").data("kendoGrid");
     var requestObject = (new kendo.data.transports["aspnetmvc-server"]({ prefix: "" }))
     .options.parameterMap({
         page: grid.dataSource.page(),
@@ -263,26 +263,12 @@ function onDataboundDistrict(e) {
         filter: grid.dataSource.filter()
     });
 
-    // Get the export link as jQuery object
     var $exportLink = grid.element.find('.export');
 
-    // Get its 'href' attribute - the URL where it would navigate to
     var href = $exportLink.attr('href');
     if (href) {
-        // Update the 'page' parameter with the grid's current page
-        //href = href.replace(/page=([^&]*)/, 'page=' + requestObject.page || '~');
-
-        // Update the 'sort' parameter with the grid's current sort descriptor
         href = href.replace(/sort=([^&]*)/, 'sort=' + requestObject.sort || '~');
-
-        // Update the 'pageSize' parameter with the grid's current pageSize
-        //href = href.replace(/pageSize=([^&]*)/, 'pageSize=' + grid.dataSource._pageSize);
-
-        //update filter descriptor with the filters applied
-
         href = href.replace(/filter=([^&]*)/, 'filter=' + (requestObject.filter || '~'));
-
-        // Update the 'href' attribute
         $exportLink.attr('href', href);
     }
 }

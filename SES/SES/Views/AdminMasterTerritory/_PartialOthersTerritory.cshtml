@@ -23,9 +23,9 @@
     <li>
         <a href="#s4" data-toggle="tab">Quận Huyện</a>
     </li>
-    @*<li>
+    <li>
         <a href="#s5" data-toggle="tab">Phường Xã</a>
-    </li>*@
+    </li>
 
 </ul>
 <div id="tabQlVM" class="tab-content padding-10">
@@ -41,93 +41,8 @@
     <div class="tab-pane fade" id="s4">
         @Html.Partial("_PartialTreeDistrict")
     </div>
-    @*<div class="tab-pane fade" id="s5">
-        @Html.Partial("_PartialTreeWard");
-    </div>*@
+    <div class="tab-pane fade" id="s5">
+        @Html.Partial("_PartialTreeWard")
+    </div>
 </div>
-@*<script type="text/kendo-tmpl" id="templategridCountry">
-
-    @(Html.Kendo().Grid<SES.Models.Master_Territory>()
-                        .Name("gridCountry")
-                    .Columns(columns =>
-                    {
-                        if (Auth_Action.AssetResult(asset, "TerritoryID"))
-                        {
-                            columns.Bound(p => p.TerritoryID).Title("Mã quốc gia").Width(150);
-                        }
-                        if (Auth_Action.AssetResult(asset, "TerritoryName"))
-                        {
-                            columns.Bound(p => p.TerritoryName).Title("Tên").Width(150);
-                        }
-                        if (Auth_Action.AssetResult(asset, "Title"))
-                        {
-                            columns.Bound(p => p.Title).Title("Loại").Width(150);
-                        }
-                        if (Auth_Action.AssetResult(asset, "Latitude"))
-                        {
-                            columns.Bound(p => p.Latitude).Title("Kinh độ").HtmlAttributes(new { @style = "text-align:right" }).Width(150);
-                        }
-                        if (Auth_Action.AssetResult(asset, "Longitude"))
-                        {
-                            columns.Bound(p => p.Longitude).Title("Vĩ độ").HtmlAttributes(new { @style = "text-align:right" }).Width(150);
-                        }
-                    })
-                    .ToolBar(toolBar =>
-                        {
-
-                            if (asset.ContainsKey("Export") && asset["Export"])
-                            {
-                                toolBar.Custom()
-                                        .Text("Xuất Excel")
-                                        .HtmlAttributes(new { @class = "export", @style = "background-color:#5B9BD5; color:white;" }).Url(Url.Action("Export_Country", "AdminMasterTerritory", new { filter = "~", sort = "~" }));
-                            }
-
-                        })
-                    .Events(events => { events.DataBound("onDataboundCountry"); })
-                    .Pageable(pager => pager.PageSizes(new[] { 20, 100, 200, 300 }))
-                    .Resizable(r => r.Columns(true))
-                    .Navigatable()
-                    .Scrollable()
-                    .Sortable()
-                    .DataSource(dataSource => dataSource
-                        .Ajax()
-                        .Batch(true)
-                        .PageSize(100)
-                        .Model(model =>
-                        {
-                            model.Id(p => p.TerritoryID);
-                        })
-                        .Events(e => { e.RequestEnd("onRequestEnd"); e.RequestStart("onRequestStart"); })
-                                        .Read(read => read.Action("Read_Country", "AdminMasterTerritory"))
-                            ).ToClientTemplate()
-    )
-</script>*@
-
-
-@*@(Html.Kendo().TabStrip()
-     .Name("tabstripIndex")
-    .Events(
-        events => events
-            //.Show("onShow")
-            //.Select("onSelect")
-            //.Activate("onActivate")
-                .ContentLoad("onTabstripIndexContentLoad")
-                    //.Error("onError")
-        )
-      .Items(t =>
-      {
-
-          t.Add().Text("Quốc gia")
-               .Selected(true)
-              .LoadContentFrom("IndexCountry", "AdminMasterTerritory");
-          t.Add().Text("Vùng miền")
-              .LoadContentFrom("IndexRegion", "AdminMasterTerritory");
-          t.Add().Text("Tỉnh thành")
-           .LoadContentFrom("IndexProvince", "AdminMasterTerritory");
-          t.Add().Text("Quận huyện")
-           .LoadContentFrom("IndexDistrict", "AdminMasterTerritory");
-          //t.Add().Text("Phường xã")
-          // .LoadContentFrom("IndexWard", "AdminMasterTerritory");
-      })
-<script>*@
 

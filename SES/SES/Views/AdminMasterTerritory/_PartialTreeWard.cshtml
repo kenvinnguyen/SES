@@ -1,12 +1,11 @@
 ﻿@using SES.Models;
 @{
-    Scripts.Render("~/bundles/appAdminMasterTerritory");
     var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
     var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
     var listActiveStatus = dict.ContainsKey("activestatus") ? (List<ActiveStatus>)dict["activestatus"] : new List<ActiveStatus>();
-    //Scripts.Render("~/Scripts/app/AdminMasterTerritory.js");
-    //Scripts.Render("~/Scripts/app/app.js");
 }
+<script></script>
+<script src="@Url.Content("~/Scripts/app/AdminMasterTerritory.js")"></script>
 <div>
     @if (Auth_Action.AssetResult(asset, "Search"))
     {
@@ -40,7 +39,7 @@
                                 }
 
                                 <section class="col col-3search">
-                                    <a class="k-button k-button-icontext btn_customSearch" href="javascript:void(0);" onclick="doSearch()">Tìm kiếm</a>
+                                    <a class="k-button k-button-icontext btn_customSearch" href="javascript:void(0);" onclick="doSearchWard()">Tìm kiếm</a>
                                 </section>
                             </div>
                         </fieldset>
@@ -86,13 +85,9 @@
                         {
                             columns.Bound(p => p.Title).Title("Loại").Width(150);
                         }
-                        if (Auth_Action.AssetResult(asset, "Latitude"))
+                        if (Auth_Action.AssetResult(asset, "Note"))
                         {
-                            columns.Bound(p => p.Latitude).Title("Kinh độ").HtmlAttributes(new { @style = "text-align:right" }).Width(150);
-                        }
-                        if (Auth_Action.AssetResult(asset, "Longitude"))
-                        {
-                            columns.Bound(p => p.Longitude).Title("Vĩ độ").HtmlAttributes(new { @style = "text-align:right" }).Width(150);
+                            columns.Bound(p => p.Note).Title("Ghi chú").Width(200);
                         }
                     })
                     .ToolBar(toolBar =>

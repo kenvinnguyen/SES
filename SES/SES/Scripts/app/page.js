@@ -95,7 +95,9 @@ $(document).ready(function () {
     $("#menu_DeliveryFormula").click(function () {
         onLoadPage(r + "/DeliveryFormula/PartialDeliveryFormula");
     });
-
+    $("#menu_Customer").click(function () {
+        onLoadPage(r + "/Customer/PartialCustomer");
+    });
         var url = localStorage['urlpage'] || '';
         if (url) {
             onLoadPage(url);
