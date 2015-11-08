@@ -91,7 +91,9 @@ $(document).ready(function () {
     $("#menu_Contract").click(function () {
         onLoadPage(r + "/Contract/PartialContract");
     });
-
+    $("#menu_Products").click(function () {
+        onLoadPage(r + "/Products/PartialProducts");
+    });
     $("#menu_DeliveryFormula").click(function () {
         onLoadPage(r + "/DeliveryFormula/PartialDeliveryFormula");
     });
