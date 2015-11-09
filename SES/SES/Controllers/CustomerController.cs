@@ -140,6 +140,99 @@ namespace SES.Controllers
             }
 
         }
+        public JsonResult GetCustomerHirerachy(string customerid)
+        {
+            IDbConnection db = new OrmliteConnection().openConn();
+            try
+            {
+                //select list menu cha
+                List<CustomerHirerachy> lstFirstMenu = db.Select<CustomerHirerachy>("Status = 1 AND ParentCustomerHirerachyID ='' ").OrderBy(p => p.CustomerHirerachyIndex).ToList();
+                List<CustomerHirerachy> allCustomerHirerachy = db.Select<CustomerHirerachy>("Status = 1 ").OrderBy(p => p.CustomerHirerachyIndex).ToList();
+
+                var listCustomer = new List<CustomerHirerachy>();
+                if (!string.IsNullOrEmpty(customerid))
+                {
+                    listCustomer = db.SqlList<CustomerHirerachy>("p_CustomerHirerachy_Select '" + customerid+"'");
+                }
+
+                List<CustomerHirerachyViewModel> lstMenuView = new List<CustomerHirerachyViewModel>();
+                foreach (CustomerHirerachy der in lstFirstMenu)
+                {
+                    CustomerHirerachyViewModel node = new CustomerHirerachyViewModel();
+                    node.id = der.CustomerHirerachyID;
+                    node.text = der.CustomerHirerachyName;
+                    node.items = new List<CustomerHirerachyViewModel>();
+                    AddChildrenNode(ref node, allCustomerHirerachy, listCustomer);
+                    lstMenuView.Add(node);
+                }
+                return Json(new { success = true, Data = lstMenuView });
+            }
+            catch (Exception e)
+            {
+                return Json(new { success = false, message = e.Message });
+            }
+            finally { db.Close(); }
+        }
+
+        private void AddChildrenNode(ref CustomerHirerachyViewModel node, List<CustomerHirerachy> allCustomerHirerachy, List<CustomerHirerachy> listCustomer)
+        {
+            try
+            {
+                string parentID = node.id;
+                var obj = listCustomer.Find(p => p.CustomerHirerachyID == parentID);
+                if (obj != null)
+                {
+                    node.@checked = true;
+                }
+                List<CustomerHirerachy> lstChildMenu = allCustomerHirerachy.Where(p => p.ParentCustomerHirerachyID == parentID).ToList();// db.Select<CustomerHirerachy>("Status = {0} AND ParentCustomerHirerachyID ={1}", true, parentID).OrderBy(p => p.CustomerHirerachyIndex).ToList();//Danh sách menu con của parentID 
+                foreach (CustomerHirerachy der in lstChildMenu)
+                {
+                    CustomerHirerachyViewModel n = new CustomerHirerachyViewModel();
+                    n.id = der.CustomerHirerachyID;
+                    n.text = der.CustomerHirerachyName;
+
+                    var check = listCustomer.Find(p => p.CustomerHirerachyID == der.CustomerHirerachyID);
+                    if (check != null)
+                    {
+                        n.@checked = true;
+                    }
+
+                    n.items = new List<CustomerHirerachyViewModel>();
+                    AddChildrenNode(ref n, allCustomerHirerachy, listCustomer);
+                    node.items.Add(n);
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+        [HttpPost]
+        public ActionResult SaveCustomerHirerachy(string CustomerID, string CustomerHirerachyIDs)
+        {
+            IDbConnection db = new OrmliteConnection().openConn();
+            try
+            {
+                if (string.IsNullOrEmpty(CustomerHirerachyIDs))
+                {
+                    db.UpdateOnly(new CustomerHirerachyDetail() { Status = false, UpdatedAt = DateTime.Now, UpdatedBy = currentUser.UserID },
+                        onlyFields: p => new { p.Status, p.UpdatedAt, p.UpdatedBy },
+                        where: p => p.CustomerID == CustomerID);
+                }
+                else
+                {
+                    db.ExecuteNonQuery("p_CustomerHirerachyDetail_Save_By_CustomerID @CustomerID, @UserID, @CustomerHirerachyIDs", new
+                    {
+                        CustomerID = CustomerID,
+                        UserID = currentUser.UserID,
+                        CustomerHirerachyIDs = CustomerHirerachyIDs
+                    });
+                }
+                return Json(new { success = true });
+            }
+            catch (Exception e) { return Json(new { success = false, message = e.Message }); }
+            finally { db.Close(); }
+        }
         [HttpPost]
         public ActionResult GetCustomerCode(string CustomerID)
         {

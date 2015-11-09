@@ -169,6 +169,9 @@
                 <li class="active">
                     <a href="#s1" data-toggle="tab">Thông tin chung</a>
                 </li>
+                <li>
+                    <a href="#s2" data-toggle="tab">Phân cấp khách hàng</a>
+                </li>
             </ul>
             <div>
                 <div id="tabUser" class="tab-content">
@@ -181,17 +184,6 @@
                                 @Html.Hidden("CustomerID");
                                 <div style="height:240px" id="divcon">
                                     <fieldset style="float: left; width: 370px; padding-left: 0; padding-right: 0;">
-                                        @*<section style="float:left;">
-                                                <div class=" divlabel">
-                                                    <label class="label" style="float:right">Mã KH(*)</label>
-                                                </div>
-                                                <div class="divfile">
-                                                    <label class="input" style="float:right;width:240px;">
-                                                        @Html.TextBox("CustomerID", "", new { @class = "input-xs popup_text_left", placeholder = "Mã KH(*)" })
-                                                    </label>
-                                                    <div style="clear:both"></div>
-                                                </div>
-                                            </section>*@
                                         <section style="float:left;"></section>
                                         <section style="float:left;">
                                             <div class=" divlabel">
@@ -309,7 +301,7 @@
                                             "value",
                                             "text",
                                             1
-                                            ),"Chọn loại cửa hàng"
+                                            ), "Chọn loại cửa hàng"
                                             )
                                                 </label>
                                                 <div style="clear:both"></div>
@@ -332,7 +324,7 @@
                                             </div>
                                             <div class="divfile">
                                                 <label class="select" style="float: right">
-                                                    @Html.DropDownList("DistrictID", new SelectList(listdistrict, "TerritoryID", "TerritoryName", 1),"Chọn Quận/Huyện")
+                                                    @Html.DropDownList("DistrictID", new SelectList(listdistrict, "TerritoryID", "TerritoryName", 1), "Chọn Quận/Huyện")
                                                 </label>
                                                 <div style="clear:both"></div>
                                             </div>
@@ -376,8 +368,23 @@
                             }
                         </div>
                     </div>
+                    <div class="tab-pane fade" id="s2">
+                        <div>
+                            <form class="smart-form">
+                                <fieldset style="float:left;">
+                                    <div id="treelist" style="float: left; width: 744px"></div>
+                                    <div id="divGridAction" style="width:60%;float:right"></div>
+                                    <div style="clear:both;"></div>
+                                </fieldset>
+                                <div style="clear:both"></div><br />
+                                <footer id="PermissionAction">
+                                    <button type="button" class="k-button k-button-icontext btn_custom" onclick="SaveCustomerHirerachy(this)" style="float: left;">Lưu</button>
+                                    <img src="@Url.Content("~/Content/Bootstrap/loading.gif")" class="hide" id="loadingSave" style="margin-top: 5px;" />
+                                </footer>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>

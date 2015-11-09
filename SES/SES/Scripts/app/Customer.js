@@ -1,7 +1,7 @@
 ﻿var numHeight = 320;
 var keyAction;
-var indexTabstripActive = -1;
-var contentTab;
+var generateTreeList = false;
+var selectedMenu = "";
 
 $(document).ready(function () {
     //active menu
@@ -21,7 +21,7 @@ $(document).ready(function () {
     $("#s2id_DistrictID").css('width', '240px');
     $("#Shoptype").select2();
     $("#s2id_Shoptype").css('width', '240px');
-
+    //onCheck();
     $("#DistrictID").prop("disabled", true);
     $(window).resize(function () {
         resizeGrid(numHeight);
@@ -220,6 +220,7 @@ function onOpenPopup(key, obj) {
         $("#CreatedAt").val('');
         $("#CreatedBy").val('');
         $("#CustomerName").focus();
+        generateFuncTreeList("1");
         setTimeout(function () {
             $("#CustomerName").focus();
         }, 500);
@@ -239,7 +240,7 @@ function onOpenPopup(key, obj) {
         onBindDataToForm(dataItem);
         var prov = dataItem.ProvinceID;
         var dist = dataItem.DistrictID;
-        debugger;
+        generateFuncTreeList(dataItem.CustomerID);
         var shoptype = dataItem.Shoptype;
         $("#ProvinceID").val(prov);
         $("#ProvinceID").trigger('change');
@@ -494,7 +495,134 @@ function changeIsActive(arrCol) {
         }
     }
 }
+function showLoading() {
+    $("#divLoading").show();
+}
 
+function hideLoading() {
+    $("#divLoading").hide();
+}
+// Treelist
+function generateFuncTreeList(customerid) {
+    debugger;
+    if (customerid == null || customerid == 'undefined' || customerid == "") {
+        customerid = "";
+        return;
+    }
+    $("#treelist").show();
+    showLoading();
+    $.post(r + "/Customer/GetCustomerHirerachy", { customerid: customerid }, function (data) {
+        debugger;
+        if (data.success) {
+            var obj = $("#treelist").data('kendoTreeView');
+            if (typeof obj == 'undefined') {
+                $("#treelist").kendoTreeView({
+                    checkboxes: {
+                        name: "cbMenuTreeview",
+                        checkChildren: true
+                    },
+                    dataSource: data.Data,
+                    check: onCheck,
+                    change: onChangeTreeList
+                });
+            }
+            else {
+                obj.setDataSource(new kendo.data.HierarchicalDataSource({
+                    data: data.Data
+                }));
+            }
+            $("#treelist ul:first-child").css("height", "210px");
+            generateTreeList = true;
+            onCheck();
+        }
+        else {
+            alertBox("Báo lỗi", data.message, false, 3000);
+            console.log(data.message);
+        }
+        hideLoading();
+    });
+}
+
+function checkParentNode(nodes, checkedNodes) {
+    if (typeof nodes != "undefined" && nodes.checked != true) {
+        if (jQuery.inArray(nodes.id, checkedNodes) < 0)
+            checkedNodes.unshift(nodes.id);
+        if (typeof nodes.parent().parent() != "undefined") {
+            checkParentNode(nodes.parent().parent(), checkedNodes);
+        }
+    }
+}
+
+// function that gathers IDs of checked nodes
+function checkedNodeIds(nodes, checkedNodes) {
+    for (var i = 0; i < nodes.length; i++) {
+        if (nodes[i].checked) {
+            if (typeof nodes[i].parent() != "undefined" && typeof nodes[i].parent().parent() != "undefined") {
+                checkParentNode(nodes[i].parent().parent(), checkedNodes);
+            }
+            checkedNodes.push(nodes[i].id);
+        }
+        if (nodes[i].hasChildren) {
+            checkedNodeIds(nodes[i].children.view(), checkedNodes);
+        }
+    }
+}
+
+// show checked node IDs on datasource change
+function onCheck() {
+    var checkedNodes = [],
+        treeView = $("#treelist").data("kendoTreeView"),
+        message;
+    checkedNodeIds(treeView.dataSource.view(), checkedNodes);
+    if (checkedNodes.length > 0) {
+        selectedMenu = checkedNodes.toString();
+    }
+    else {
+        selectedMenu = "";
+    }
+    console.log(selectedMenu);
+}
+
+function onDataBindingTreeList(e) {
+    $("#divLoading").show();
+}
+
+function onDataBoundTreeList(e) {
+    $("#divLoading").hide();
+}
+
+function onChangeTreeList(e) {
+    var selectedRows = this.select();
+    var dataItem = this.dataItem(selectedRows[0]);
+    if (dataItem.children.view().length > 0 || dataItem.id == "Home") {
+        $("#divGridAction").empty();
+        return;
+    }
+    menuIDSelected = dataItem.id;
+    onLoadGridAction();
+}
+
+function SaveCustomerHirerachy(obj) {
+    var id = $("#CustomerID").val();
+    debugger;
+    if (typeof id == 'undefined' || id=="") {
+        alertBox("Báo lỗi", "Khách hàng chưa được tạo!!", false, 3000);
+        return;
+    }
+    $("#loadingSave").removeClass('hide');
+    $(obj).attr('disabled', true);
+    $.post(r + "/Customer/SaveCustomerHirerachy", { CustomerID: $("#CustomerID").val(), CustomerHirerachyIDs: selectedMenu }, function (data) {
+        if (data.success) {
+            alertBox("Lưu thành công", "", true, 3000);
+        }
+        else {
+            alertBox("Báo lỗi", data.message, false, 3000);
+            console.log(data.message);
+        }
+        $("#loadingSave").addClass('hide');
+        $(obj).attr('disabled', false);
+    });
+}
 
 
 
