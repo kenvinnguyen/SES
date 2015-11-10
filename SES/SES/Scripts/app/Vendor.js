@@ -216,6 +216,7 @@ function onOpenPopup(key, obj) {
         $("#Status option:selected").removeAttr('selected');
         $("#Status").trigger("change");
         $("#ProvinceID option").removeAttr('selected');
+        $('#ProvinceID').trigger('change');
         setTimeout(function () {
             $("#VendorID").focus();
         }, 500);
