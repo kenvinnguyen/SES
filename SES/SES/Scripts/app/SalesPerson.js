@@ -238,6 +238,9 @@ function onOpenPopup(key, obj) {
             }
         });
         onBindDataToFormSalesPerson(dataItem);
+        var status = dataItem.Status == true ? "True" : "False";
+        $('#Status').val(status);
+        $('#Status').trigger('change');
         setTimeout(function () {
             $("#SalesPersonName").focus();
         }, 500);

@@ -229,6 +229,9 @@ function onOpenPopup(key, obj) {
         var dataItem = $("#grid").data("kendoGrid").dataItem(currentRow);
      
         onBindDataToFormCompany(dataItem);
+        var status = dataItem.Status == true ? "True" : "False";
+        $('#Status').val(status);
+        $('#Status').trigger('change');
         setTimeout(function () {
             $("#CompanyName").focus();
         }, 500);
