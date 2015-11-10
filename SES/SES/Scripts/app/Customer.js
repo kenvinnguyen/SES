@@ -169,7 +169,6 @@ $(document).ready(function () {
                             $("#formPopup").find('fieldset:eq(0) section:eq(0)').empty().append('<div style="float: left; width: 120px; margin-left:0;"><label class="label" style="float: right;">Mã KH </label></div><div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;"><label style="float: right;text-align: left;width: 240px;height: 19px;padding-top: 2px;"><strong style="color:red;">' + data.CustomerID + '</strong><input type="hidden" id="CustomerID" name="CustomerID" value="' + data.CustomerID + '" /></label> <div style="clear:both"></div></div>');
                             $("#formPopup").find('fieldset:eq(1) section:eq(0)').show();
                             $("#formPopup").find('fieldset:eq(1) section:eq(0)').empty().append('<div style="float: left; width: 120px;height:24px; margin-left:0;"><label class="label" style="float: right;"></label> <div style="clear:both"></div>');
-                            debugger;
                             $("#CustomerID").val(data.CustomerID);
                             $("#CreatedAt").val(dateToString(data.CreatedAt));
                             $("#CreatedBy").val(data.CreatedBy);
@@ -612,9 +611,7 @@ function onChangeTreeList(e) {
 }
 
 function SaveCustomerHirerachy(obj) {
-    debugger;
     var id = $("#CustomerID").val();
-    debugger;
     if (typeof id == 'undefined' || id=="") {
         alertBox("Báo lỗi", "Khách hàng chưa được tạo!!", false, 3000);
         return;
