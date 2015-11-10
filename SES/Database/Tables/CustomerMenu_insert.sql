@@ -6,12 +6,12 @@ INSERT INTO [dbo].[Auth_Menu]
      VALUES(
            'Customer','','Khách hàng',5,'Customer',1,GETDATE(),'system',GETDATE(),''
 		   )
-insert into Auth_Action(RoleID,MenuID,Action,IsAllowed,RowCreatedAt,RowCreatedAt) values('1','Customer','Delete','1',getdate(),'administrator')
-insert into Auth_Action(RoleID,MenuID,Action,IsAllowed,RowCreatedAt,RowCreatedAt) values('1','Customer','Export','1',getdate(),'administrator')
-insert into Auth_Action(RoleID,MenuID,Action,IsAllowed,RowCreatedAt,RowCreatedAt) values('1','Customer','Import','1',getdate(),'administrator')
-insert into Auth_Action(RoleID,MenuID,Action,IsAllowed,RowCreatedAt,RowCreatedAt) values('1','Customer','Insert','1',getdate(),'administrator')
-insert into Auth_Action(RoleID,MenuID,Action,IsAllowed,RowCreatedAt,RowCreatedAt) values('1','Customer','Update','1',getdate(),'administrator')
-insert into Auth_Action(RoleID,MenuID,Action,IsAllowed,RowCreatedAt,RowCreatedAt) values('1','Customer','View','1',getdate(),'administrator')
+insert into Auth_Action(RoleID,MenuID,Action,IsAllowed,RowCreatedAt,RowCreatedBy) values('1','Customer','Delete','1',getdate(),'administrator')
+insert into Auth_Action(RoleID,MenuID,Action,IsAllowed,RowCreatedAt,RowCreatedBy) values('1','Customer','Export','1',getdate(),'administrator')
+insert into Auth_Action(RoleID,MenuID,Action,IsAllowed,RowCreatedAt,RowCreatedBy) values('1','Customer','Import','1',getdate(),'administrator')
+insert into Auth_Action(RoleID,MenuID,Action,IsAllowed,RowCreatedAt,RowCreatedBy) values('1','Customer','Insert','1',getdate(),'administrator')
+insert into Auth_Action(RoleID,MenuID,Action,IsAllowed,RowCreatedAt,RowCreatedBy) values('1','Customer','Update','1',getdate(),'administrator')
+insert into Auth_Action(RoleID,MenuID,Action,IsAllowed,RowCreatedAt,RowCreatedBy) values('1','Customer','View','1',getdate(),'administrator')
 
 
 
