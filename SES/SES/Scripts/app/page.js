@@ -103,6 +103,9 @@ $(document).ready(function () {
     $("#menu_Vendor").click(function () {
         onLoadPage(r + "/Vendor/PartialVendor");
     });
+    $("#menu_Promotion").click(function () {
+        onLoadPage(r + "/Vendor/Promotion");
+    });
         var url = localStorage['urlpage'] || '';
         if (url) {
             onLoadPage(url);
