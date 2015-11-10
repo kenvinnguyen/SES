@@ -266,10 +266,7 @@ function doSearch() {
     var text = $("#txtVendorID").val();
     if (text) {
         var filterOr = { logic: "or", filters: [] };
-        if ($.isNumeric(text))
-        {
-            filterOr.filters.push({ field: "VendorID", operator: "eq", value: text });
-        }
+        filterOr.filters.push({ field: "VendorID", operator: "contains", value: text });
         filterOr.filters.push({ field: "VendorName", operator: "contains", value: text });
         filter.filters.push(filterOr);
     }
