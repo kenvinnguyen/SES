@@ -1,5 +1,4 @@
-USE [SES]
-GO
+
 
 /****** Object:  Table [dbo].[CustomerHirerachy]    Script Date: 11/9/2015 10:10:08 PM ******/
 SET ANSI_NULLS ON

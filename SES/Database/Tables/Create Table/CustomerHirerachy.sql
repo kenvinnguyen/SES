@@ -1,5 +1,4 @@
-USE [SES]
-GO
+
 
 /****** Object:  Table [dbo].[Customer]    Script Date: 11/8/2015 9:21:25 PM ******/
 SET ANSI_NULLS ON
@@ -17,7 +16,7 @@ CREATE TABLE [dbo].[CustomerHirerachy](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[CustomerHirerachyID] [nvarchar](20) NOT NULL,
 	[CustomerHirerachyName] [nvarchar](200) NOT NULL,
-	[ParentHirerachyID] [nvarchar](20) NOT NULL,
+	[ParentCustomerHirerachyID] [nvarchar](20) NOT NULL,
 	[CustomerHirerachyIndex] [nvarchar](200) NOT NULL,
 	[Status] bit,
 	[CreatedAt] [datetime]  NULL,
