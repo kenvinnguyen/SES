@@ -100,6 +100,9 @@ $(document).ready(function () {
     $("#menu_Customer").click(function () {
         onLoadPage(r + "/Customer/PartialCustomer");
     });
+    $("#menu_Vendor").click(function () {
+        onLoadPage(r + "/Vendor/PartialVendor");
+    });
         var url = localStorage['urlpage'] || '';
         if (url) {
             onLoadPage(url);
