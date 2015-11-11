@@ -1,0 +1,237 @@
+﻿@using SES.Models;
+@Scripts.Render("~/Scripts/app/PurchaseOrder.js")
+@{
+    var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
+    var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
+    var listPONumber = dict["PONumber"] != null ? dict["PONumber"].ToString() : "";
+}
+<style>
+    /*span.k-datepicker, span.k-timepicker, span.k-datetimepicker, span.k-colorpicker, span.k-numerictextbox, span.k-combobox, span.k-dropdown, .k-toolbar .k-split-button {
+        margin-left: 5px !important;
+    }*/
+
+    .k-autocomplete.k-state-default, .k-picker-wrap.k-state-default, .k-numeric-wrap.k-state-default, .k-dropdown-wrap.k-state-default {
+        height: 24px !important;
+    }
+</style>
+<section>
+    <form id="formHeader" method="post" enctype="multipart/form-data" action="@Url.Content("~/PurchaseOrder/ConfirmCreate")">
+        <div class="jarviswidget">
+            <header>
+                <h2 style="color:#6fb3e0">Danh sách yêu cầu</h2>
+            </header>
+            <div>
+                <span class="smart-form">
+                    <fieldset>
+                        <div class="row">
+                            <div style="float:left;width:30%">
+                                <div style="float: left; width:100%; margin-bottom:15px;">
+                                    <section>
+                                        <label class="label" style="float: left; width: 20%; color: #9D9D9D">Mã PO</label>
+                                        <label class="input" style="float: left; width: 70%; ">
+                                            <input style="background: #f0fff0;" type="text" class="input-xs" name="PONumber" id="PONumber" readonly="readonly" value="@listPONumber">
+                                        </label>
+                                    </section>
+                                </div>
+                                <div style="float: left; width:100%; margin-bottom:15px;">
+                                    <label class="label" style="float: left; width: 20%; color: #9D9D9D">Nhà CC (*)</label>
+                                    <label class="input" style="float: left; width: 70%;">
+                                        @(Html.Kendo().AutoComplete()
+                                    .Name("VendorID")
+                                    .DataTextField("VendorID")
+                                      .Filter("contains")
+                                      .MinLength(3)
+                                            //.Events(e =>
+                                            //  {
+                                            //      e.Select("onSelect1");
+                                            //  })
+                                    .HtmlAttributes(new { style = "width:100%; height: 24px;", @placeholder = "Nhập 3 ký tự", @class = "required", name = "VendorID" })
+                                      .DataSource(source =>
+                                      {
+                                          source.Read(read =>
+                                          {
+                                              read.Action("GetVendor", "PurchaseOrder")
+                                                  .Data("onDataVendor");
+                                          })
+                                          .ServerFiltering(true);
+                                      })
+                                       .Template("<span class=\"k-state-default\"><p>#:data.VendorID# - #:data.VendorName#</p></span>")
+                                        )
+                                    </label>
+
+                                </div>
+                            </div>
+                            <div style="float:left;width:25%">
+                                <div style="float: left; width:100%; margin-bottom:15px;">
+                                    <section>
+                                        <label class="label" style="float: left; width: 27%; color: #9D9D9D">Số lượng</label>
+                                        <label class="input" style="float: left; width: 60%;">
+                                            <input style="background: #f0fff0;" type="text" class="input-xs" id="TotalQty" name="TotalQty" disabled="disabled">
+                                        </label>
+                                    </section>
+                                </div>
+                                <div style="float: left; width:100%; margin-bottom:15px;">
+                                    <section>
+                                        <label class="label" style="float: left; width: 27%; color: #9D9D9D">Ngày tạo (*)</label>
+                                        <label class="label" style="float: left; width: 60%;">
+                                            @(Html.Kendo().DatePicker()
+                                        .Name("PODate").Format("dd/MM/yyyy")
+                                        .HtmlAttributes(new { name = "PODate", style = "width:100%" }))
+                                        </label>
+                                    </section>
+                                </div>
+
+                            </div>
+                            <div style="float:left;width:25%">
+                                <div style="float: left; width:100%; margin-bottom:15px;">
+                                    <section>
+                                        <label class="label" style="float: left; width: 28%; color: #9D9D9D">Tổng tiền</label>
+                                        <label class="input" style="float: left; width: 60%;">
+                                            <input style="background: #f0fff0;" type="text" class="input-xs" id="TotalAmt" name="TotalAmt" disabled="disabled">
+                                        </label>
+                                    </section>
+                                </div>
+                                <div style="float: left; width:100%; margin-bottom:15px;">
+                                    <section>
+                                        <label class="label" style="float: left; width: 28%; color: #9D9D9D">Ngày giao (*)</label>
+                                        <label class="label" style="float: left; width: 60%;">
+                                            @(Html.Kendo().DatePicker()
+                                                .Name("DeliveryDate").Format("dd/MM/yyyy")
+                                               .HtmlAttributes(new { name = "DeliveryDate", style ="width:100%" }))
+                                        </label>
+                                    </section>
+                                </div>
+                            </div>
+                            <div style="float:left; width:20%">
+                                <div style="float: left; width:100%; margin-bottom:15px;">
+                                    <section>
+                                        <label class="label" style="float: left; width: 22%; color: #9D9D9D">Ghi chú</label>
+                                        <label class="input" style="float:left; width:78%;">
+                                            <textarea class="input-xs" id="Note" name="Note" placeholder="Ghi chú" style="height:60px; width:88%"></textarea>
+                                        </label>
+                                    </section>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </span>
+            </div>
+        </div>
+        <div class="jarviswidget">
+            <header style="background:none; height:29px!important; border:none;">
+                <button type="button" class="k-button k-button-icontext btn_custom" style="float: left;" id="btnInsert" onclick="CreateHeader()">Lưu</button>
+                <img src="/Content/Bootstrap/loading.gif" class="hide" id="loading" style="margin-top: -14px;">
+            </header>
+        </div>
+        <div class="jarviswidget">
+            <header>
+                <h2 style="color:#6fb3e0">Chi tiết</h2>
+            </header>
+            <div class="row" style="padding-left:15px!important;">
+                <span class="smart-form">
+                    <fieldset>
+                        <div class="row">
+                            <div style="float:left;width:28%">
+                                <div style="float: left; width:100%; margin-bottom:15px;">
+                                    <section>
+                                        <label class="label" style="float: left; width: 20%; color: #9D9D9D">Ấn phẩm</label>
+                                        <label class="input" style="float:left; width:70%;">
+                                            @(Html.Kendo().AutoComplete()
+                                            .Name("ItemCode")
+                                            .DataTextField("Code")
+                                            .Filter("contains")
+                                            .MinLength(3)
+                                                //.Events(e =>
+                                                //  {
+                                                //      e.Select("onSelect1");
+                                                //  })
+                                                .HtmlAttributes(new { style = "width:100%; height: 24px;", @placeholder = "Nhập 3 ký tự", @class = "required", name = "ItemCode" })
+                                              .DataSource(source =>
+                                              {
+                                                  source.Read(read =>
+                                                  {
+                                                      read.Action("GetItem", "PurchaseOrder")
+                                                          .Data("onDataItem");
+                                                  })
+                                                  .ServerFiltering(true);
+                                              })
+                                                .Template("<span class=\"k-state-default\"><p>#:data.Code# - #:data.Name# - #:data.Size#</p></span>")
+                                            )
+
+                                        </label>
+                                    </section>
+                                </div>
+
+                            </div>
+                            <div style="float:left;width:25%">
+                                <div style="float: left; width: 100%; margin-bottom: 15px;">
+                                    <section>
+                                        <label class="label" style="float: left; width: 26%; color: #9D9D9D">Số lượng (*)</label>
+                                        <label class="input" style="float:left; width:50%;">
+                                            @Html.TextBox("Qty", "1", new { @class = "input-xs popup_text_right" })
+                                        </label>
+                                    </section>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </span>
+            </div>
+
+            <div class="row" style="padding-top: 0px!important;">
+                <div class="col-sm-12">
+                    <div class="widget-body">
+                        @(Html.Kendo().Grid<SES.Models.PO_Detail>()
+                    .Name("gridDetail")
+                    .Columns(columns =>
+                    {
+                        columns.Bound(p => p.Id).HeaderTemplate("<input style='text-align:center;opacity:1;' type='checkbox' id= 'checkAllItem'/>").ClientTemplate("<input style='text-align:center' onClick='getValueItem(this)' class='checkOrderItem' type='checkbox' id= '#=Id#'/>").Width(40).Filterable(false).Sortable(false);
+                        columns.Bound(p => p.PONumber).Title("Mã PO").Width(130);
+                        columns.Bound(p => p.ItemName).Title("Sản phẩm").Width(130);
+                        columns.Bound(p => p.UnitName).Title("Đơn vị tính").Width(130);
+                        columns.Bound(p => p.Qty).Title("Số lượng").Width(90).HtmlAttributes(new { @style = "text-align:right;" }).Format("{0:N0}");
+                        columns.Bound(p => p.Price).Title("Giá").Width(90).HtmlAttributes(new { @style = "text-align:right;" }).Format("{0:N0}");
+                        columns.Bound(p => p.TotalAmt).Title("Tổng tiền").Width(90).HtmlAttributes(new { @style = "text-align:right;" }).Format("{0:N0}");
+                        columns.Bound(p => p.Status).Title("Trạng thái").Width(90);
+                        columns.Bound(p => p.Note).Title("Ghi chú").Width(180);
+                        columns.Bound(p => p.CreatedBy).Title("Người tạo").Width(110);
+                        columns.Bound(p => p.CreatedAt).Width(110).Format("{0:dd/MM/yyyy}").HtmlAttributes(new { style = "text-align:right" }).Title("Ngày tạo").Width(110);
+                        columns.Bound(p => p.UpdatedBy).Title("Người cập nhật").Width(110);
+                        columns.Bound(o => o.UpdatedAt).Title("Ngày cập nhật").Format("{0:dd/MM/yyyy}").Width(110).ClientTemplate("#if(kendo.toString(UpdatedAt,'dd/MM/yyyy') != '01/01/1900'){#" + "#= kendo.toString(UpdatedAt,'dd/MM/yyyy') #" + "#}#");
+
+                    })
+                            //.ToolBar(toolBar =>
+                            //{
+                            //    if (asset.ContainsKey("Insert") && asset["Insert"])
+                            //    {
+                            //        toolBar.Custom()
+                            //        .Text("Lưu")
+                            //        .HtmlAttributes(new { id = "btnInsert", @class = "btn btn-success", @style = "background-color:#428bca; color:white;", onclick = "CreateHeader()", @href = "javascript:void(0)" });
+                            //    }
+
+                    //})
+                    .Events(events => { events.DataBound("onDataboundDetail"); })
+                    .Pageable(pager => pager.PageSizes(new[] { 20, 100, 200, 300 }))
+                    .Resizable(r => r.Columns(true))
+                    .Navigatable()
+                    .Scrollable()
+                    .Sortable()
+                    .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .Batch(true)
+                        .PageSize(100)
+                        .Model(model =>
+                        {
+                            model.Id(p => p.Id);
+                        })
+                        //.Events(e => { e.RequestEnd("onRequestEnd"); e.RequestStart("onRequestStart"); })
+                        .Read(read => read.Action("ReadDetail", "PurchaseOrder").Data("onDataPONumber")
+                        )
+                    )
+                        )
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>

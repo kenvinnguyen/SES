@@ -1,0 +1,170 @@
+﻿@using SES.Models;
+
+@{
+    ViewBag.Title = "Danh mục sản phẩm";
+}
+
+@Scripts.Render("~/Scripts/app/PurchaseOrder.js")
+@{
+    var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
+    var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
+    //var listActiveStatus = dict.ContainsKey("activestatus") ? (List<ActiveStatus>)dict["activestatus"] : new List<ActiveStatus>();
+    var listWareHouse = dict.ContainsKey("listWH") ? (List<DC_AD_WH>)dict["listWH"] : new List<DC_AD_WH>();
+    var listWareHouseLocation = dict.ContainsKey("listWHL") ? (List<DC_AD_WHL>)dict["listWHL"] : new List<DC_AD_WHL>();
+    var listMerchant = dict.ContainsKey("listMerchant") ? (List<DC_OCM_Merchant>)dict["listMerchant"] : new List<DC_OCM_Merchant>();
+    var listVendor = dict.ContainsKey("listVendor") ? (List<Vendor>)dict["listVendor"] : new List<Vendor>();
+    //var liststatus = dict.ContainsKey("ListStatus") ? (List<DC_Parameter>)dict["ListStatus"] : new List<DC_Parameter>();
+}
+<section>
+    @if (Auth_Action.AssetResult(asset, "Search"))
+    {
+        <div class="row divSearch">
+            <div class="col-sm-12">
+                <div class="jarviswidget" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-deletebutton="false">
+                    <header>
+                        @*<span class="widget-icon"> <i class="fa fa-search"></i> </span>*@
+                        <h2 style="color:#6fb3e0">Tìm kiếm</h2>
+                    </header>
+                    <div>
+                        <div class="widget-body no-padding">
+                            <form class="smart-form">
+                                <fieldset>
+                                    <div class="row">
+                                        @if (Auth_Action.AssetResult(asset, "Name"))
+                                        {
+                                            <section class="col col-3">
+                                                <label class="input">
+                                                    <input type="text" class="input-xs" id="txtNumberPO" placeholder="Số PO">
+                                                </label>
+                                            </section>
+                                        }
+                                        <section class="col col-3search">
+                                            <label class="select">
+                                                @Html.DropDownList("seachPrinter", new SelectList(listVendor, "VendorID", "VendorName"), "-- Chọn nhà cung cấp --")
+                                            </label>
+                                        </section>
+                                        <section class="col col-3search">
+                                            <label class="select">
+                                              @*  @Html.DropDownList("selectStatus_search", new SelectList(liststatus, "Value", "Value"), "-- Trạng thái --")*@
+                                            </label>
+                                        </section>
+                                        <section class="col col-3search">
+                                            <a class="k-button k-button-icontext btn_customSearch" href="javascript:void(0);" onclick="doSearch()">Tìm kiếm</a>
+                                        </section>
+                                        </div>
+                                    </fieldset>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    }
+</section>
+<div class="jarviswidget">
+    <header>
+        <h2 style="color:#6fb3e0">Danh mục sản phẩm</h2>
+    </header>
+    <div class="row">
+        <article class="col-sm-12">
+            <div class="widget-body">
+                @(Html.Kendo().Grid<SES.Models.PO_Header>()
+                    .Name("gridHeader")
+                    .Columns(columns =>
+                    {
+                        columns.Bound(p => p.PONumber).HeaderTemplate("<input style='text-align:center;opacity:1;' type='checkbox' id= 'checkboxcheckAll'  onClick='checkAll(this)' />").ClientTemplate("<input style='text-align:center' class='checkrowid' type='checkbox' id='#=PONumber#'  />").Width(30).Filterable(false).Sortable(false);
+                        columns.Bound(p => p.PONumber).HtmlAttributes(new { data_id = "#=PONumber#", onclick = "onOpenPopupDetail(1,this)", @style = "color:\\#428bca;cursor:pointer;text-decoration:underline" }).Title("Mã yêu cầu").Width(110);
+                        columns.Bound(p => p.PONumber).Hidden();
+                        columns.Bound(p => p.PODate).Title("Ngày tạo yêu cầu").Width(130).Format("{0:dd/MM/yyyy}");
+                        columns.Bound(p => p.TotalQty).Title("Số lượng").Width(90).HtmlAttributes(new { @style = "text-align:right;" }).Format("{0:N0}");
+                        columns.Bound(p => p.TotalAmt).Title("Tổng tiền").Width(90).HtmlAttributes(new { @style = "text-align:right;" }).Format("{0:N0}");
+                        columns.Bound(p => p.VendorName).Title("Nhà CC").Width(180);
+                        //columns.ForeignKey(p => p.VendorID, (System.Collections.IEnumerable)listVendor, "VendorID", "VendorName").Title("NCC").Width(150);
+                        columns.Bound(p => p.Note).Title("Ghi chú").Width(180);
+                        columns.Bound(p => p.Status).Title("Trạng thái").Width(120);
+                        
+                        //columns.ForeignKey(p => p.WHID, (System.Collections.IEnumerable)listWareHouse, "WHID", "WHName").Title("Kho").Width(130);
+                        //columns.ForeignKey(p => p.WHLID, (System.Collections.IEnumerable)listWareHouseLocation, "WHLID", "WHLName").Title("Vị trí kho").Width(150);
+                        columns.Bound(p => p.CreatedBy).Title("Người tạo").Width(110);
+                        columns.Bound(p => p.CreatedAt).Width(110).Format("{0:dd/MM/yyyy}").HtmlAttributes(new { style = "text-align:right" }).Title("Ngày tạo").Width(110);
+                        columns.Bound(p => p.UpdatedBy).Title("Người cập nhật").Width(110);
+                        columns.Bound(o => o.UpdatedAt).Title("Ngày cập nhật").Format("{0:dd/MM/yyyy}").Width(110).ClientTemplate("#if(kendo.toString(UpdatedAt,'dd/MM/yyyy') != '01/01/1900'){#" + "#= kendo.toString(UpdatedAt,'dd/MM/yyyy') #" + "#}#");
+
+                    })
+                    .ToolBar(toolBar =>
+                    {
+                        if (asset.ContainsKey("Insert") && asset["Insert"])
+                        {
+                            toolBar.Custom()
+                                    .Text("Thêm mới")
+                                    .HtmlAttributes(new { id = "btnInsertHeader", @class = "btn btn-success", @style = "background-color:#87b87f; color:white;", onclick = "onOpenPopupDetail(0, this)", @href = "javascript:void(0)" });
+                        }
+                        if (asset.ContainsKey("Export") && asset["Export"])
+                        {
+                            toolBar.Custom()
+                                    .Text("Xuất Excel")
+                                    .HtmlAttributes(new { @class = "btn btn-primary export", @style = "background-color:#428bca; color:white;" }).Url(Url.Action("Export", "AD_ItemList", new { filter = "~", sort = "~", Code = "~" }));
+                        }
+                        if (asset.ContainsKey("Update") && asset["Update"])
+                        {
+                            toolBar.Custom()
+                                    .Text("Nhập kho")
+                                    .HtmlAttributes(new { id = "btnUpdateWareHoues", @class = "btn btn-success", @style = "background-color:#87b87f; color:white;", onclick = "UpdateWareHoues()", @href = "javascript:void(0)" });
+                        }
+                    })
+                    .Events(events => { events.DataBound("onDataboundHeader"); })
+                    .Pageable(pager => pager.PageSizes(new[] { 20, 100, 200, 300 }))
+                    .Resizable(r => r.Columns(true))
+                    .Navigatable()
+                    .Scrollable()
+                    .Sortable()
+                    .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .Batch(true)
+                        .PageSize(100)
+                        .Model(model =>
+                        {
+                            model.Id(p => p.Id);
+                        })
+                        //.Events(e => { e.RequestEnd("onRequestEnd"); e.RequestStart("onRequestStart"); })
+                                .Read(read => read.Action("ReadHeader", "PurchaseOrder"))
+                    )
+                )
+            </div>
+        </article>
+    </div>
+</div>
+<div id="popupInventoryTransaction" class="row" style="margin:0 auto">
+    <div class="bordered smart-form ">
+        <fieldset style="float:left;width:400px">
+            <section style="float:left;">
+                <div style="float: left; width: 120px; margin-left:0;">
+                    <label class="label" style="float:right">Chọn kho (*)</label>
+                </div>
+                <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                    <label class="label" style="float:right;width:240px;">
+                        @Html.DropDownList("WHID", new SelectList(listWareHouse, "WHID", "WHName"), "Chọn kho", new { onclick = "ChangeLocation();" })
+                    </label>
+                    <div style="clear:both"></div>
+                </div>
+            </section>
+            <section style="float:left;">
+                <div style="float: left; width: 120px; margin-left:0;">
+                    <label class="label" style="float:right">Chọn vị trí kho (*)</label>
+                </div>
+                <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                    <label class="label" style="float:right;width:240px;">
+                        @Html.DropDownList("WHLID", new SelectList(listWareHouseLocation, "WHLID", "WHLName"), "Chọn vị trí kho")
+                    </label>
+                    <div style="clear:both"></div>
+                </div>
+            </section>
+        </fieldset>
+        <div style="clear:both"></div>
+        <footer>
+            <button type="button" class="k-button k-button-icontext btn_custom" style="float:left;" onclick="Save()">Lưu</button>
+            <img src="@Url.Content("~/Content/Bootstrap/loading.gif")" class="hide" id="loading" style="margin-top: -14px;" />
+        </footer>
+    </div>
+</div>
