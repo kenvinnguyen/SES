@@ -18,10 +18,10 @@ namespace SES.Models
             var list = new List<ActiveStatus>();
             try
             {
-                list = dbConn.Select<ActiveStatus>("SELECT StatusValue, StatusName FROM vw_List_Active_Status");                
+                list = dbConn.Select<ActiveStatus>("SELECT StatusValue, StatusName,IsAllMerchant,IsAllDistric FROM vw_List_Active_Status");
             }
             catch (Exception)
-            {                
+            {
                 throw;
             }
             finally { dbConn.Close(); }
@@ -33,6 +33,8 @@ namespace SES.Models
     {
         public bool StatusValue { get; set; }
         public string StatusName { get; set; }
+        public string IsAllMerchant { get; set; }
+        public string IsAllDistric { get; set; }
     }
-   
+
 }

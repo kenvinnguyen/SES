@@ -104,7 +104,7 @@ $(document).ready(function () {
         onLoadPage(r + "/Vendor/PartialVendor");
     });
     $("#menu_Promotion").click(function () {
-        onLoadPage(r + "/Vendor/Promotion");
+        onLoadPage(r + "/Promotion/PartialPromotion");
     });
         var url = localStorage['urlpage'] || '';
         if (url) {

@@ -1,0 +1,598 @@
+﻿@using SES.Models;
+@{
+    ViewBag.Title = "khuyến mãi";
+}
+@{
+    var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
+    var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
+    var listActiveStatus = dict.ContainsKey("activestatus") ? (List<ActiveStatus>)dict["activestatus"] : new List<ActiveStatus>();
+    //var listTranporter = new List<DC_LG_Transporter>();
+    //var tranAll = new DC_LG_Transporter();
+    //tranAll.TransporterID = 0;
+    //tranAll.TransporterName = "(Tất cả)";
+    //listTranporter.Add(tranAll);
+    //listTranporter.AddRange((List<DC_LG_Transporter>)dict["listTranporter"]);
+
+    var listTranporter = dict.ContainsKey("listTranporter") ? (List<DC_LG_Transporter>)dict["listTranporter"] : new List<DC_LG_Transporter>();
+    var listTerritoryDis = new List<Master_Territory>();
+    var tranlAll = new Master_Territory();
+    tranlAll.TerritoryID = "0";
+    tranlAll.TerritoryName = "(Tất cả)";
+    listTerritoryDis.Add(tranlAll);
+    listTerritoryDis.AddRange((List<Master_Territory>)dict["listTerritoryDis"]);
+    //var listTerritory = dict.ContainsKey("listTerritory") ? (List<Master_Territory>)dict["listTerritory"] : new List<Master_Territory>();
+    //var listTerritoryDis = dict.ContainsKey("listTerritoryDis") ? (List<Master_Territory>)dict["listTerritoryDis"] : new List<Master_Territory>();
+    var listMerchant = new List<DC_OCM_Merchant>();
+    var merchant = new DC_OCM_Merchant();
+    merchant.MerchantID = "0";
+    merchant.MerchantName = "(Tất cả)";
+    listMerchant.Add(merchant);
+    listMerchant.AddRange((List<DC_OCM_Merchant>)dict["listMerchant"]);
+
+    //var listMerchant = dict.ContainsKey("listMerchant") ? (List<DC_OCM_Merchant>)dict["listMerchant"] : new List<DC_OCM_Merchant>();
+
+}
+<style>
+    .k-grid-header th.k-header {
+        color: #428bca;
+    }
+    /*.k-grid table {
+        height:80px
+    }*/
+</style>
+<script src="@Url.Content("~/Scripts/app/Promotion.js")"></script>
+<div class="jarviswidget" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-deletebutton="false">
+    <header>
+        @*<span class="widget-icon"> <i class="fa fa-search"></i> </span>*@
+        <h2 style="color:#6fb3e0">Tìm kiếm</h2>
+
+    </header>
+    <div>
+        <div class="widget-body no-padding">
+            <form class="smart-form">
+                <fieldset>
+                    <section class="row">
+                        <section class="col col-3search">
+                            <label class="input">
+                                <input type="text" class="input-xs" id="txtPromotetionDLFeeID" placeholder="Mã, Tên CTKM">
+                            </label>
+                        </section>
+                        <section class="col col-3search">
+                            <label class="select">
+                                @Html.DropDownList("selectIsActive_search", new SelectList(listActiveStatus, "StatusValue", "StatusName"), "-- Chọn trạng thái --")
+                            </label>
+                        </section>
+                        <section class="col col-3search">
+                            <a class="k-button k-button-icontext btn_customSearch" href="javascript:void(0);" onclick="doSearch()">Tìm kiếm</a>
+                        </section>
+                    </section>
+                </fieldset>
+            </form>
+
+        </div>
+    </div>
+</div>
+<div class="jarviswidget">
+    <header>
+        <h2 style="color:#6fb3e0">  Danh sách hỗ trợ cước phí vận chuyển  </h2>
+    </header>
+    <div class="row">
+        <article class="col-sm-12">
+            <div class="widget-body">
+                @(Html.Kendo().Grid<SES.Models.Promotion>()
+        .Name("grid")
+                    .Columns(columns =>
+                    {
+                        if (asset.ContainsKey("Update") && asset["Update"])
+                        {
+                            columns.Bound(p => p.PromotionID).HtmlAttributes(new { data_id = "#=PromotionID#", onclick = "onOpenPopup(1,this)", @style = "color:\\#428bca;cursor:pointer;text-decoration:underline" }).Title("Mã").Width(100);
+                        }
+                        else
+                        {
+                            columns.Bound(p => p.PromotionID).Title("Mã").Width(100).HeaderHtmlAttributes(new { data_column = "PromotionID" });
+                        }
+                        if (Auth_Action.AssetResult(asset, "PromotionName"))
+                        {
+                            columns.Bound(p => p.PromotionName).Title("Tên").Width(130).HeaderHtmlAttributes(new { data_column = "PromotionName" });
+                        }
+                        if (Auth_Action.AssetResult(asset, "Status"))
+                        {
+                            columns.Bound(p => p.Status).Title("Trạng thái").HtmlAttributes(new { data_column = "IsActive" }).Width(130);
+                        }
+                        if (Auth_Action.AssetResult(asset, "TransporterName"))
+                        {
+                            columns.Bound(p => p.TransporterName).Title("ĐVVC").Width(130).HeaderHtmlAttributes(new { data_column = "TransporterName" });
+                        }
+                        if (Auth_Action.AssetResult(asset, "MerchantName"))
+                        {
+                            columns.Bound(p => p.MerchantName).Title("NCC").HtmlAttributes(new { data_column = "MerchantName" }).Width(130);
+                        }
+                        if (Auth_Action.AssetResult(asset, "TransporterLocationName"))
+                        {
+                            columns.Bound(p => p.DistrictName).Title("Địa bàn vận chuyển").HtmlAttributes(new { data_column = "TransporterLocationName" }).Width(130);
+                        }
+                        if (Auth_Action.AssetResult(asset, "DecaPercentQty"))
+                        {
+                            columns.Bound(p => p.DecaPercentQty).Title("Mức hỗ trợ NPP(SL)").HtmlAttributes(new { data_column = "DecaPercent", style = "text-align:right" }).Width(150).ClientTemplate("#if(DecaPercentQty!=0){#"+"#=DecaPercentQty*100#%" +"#}#");
+                        }
+                        if (Auth_Action.AssetResult(asset, "Description"))
+                        {
+                            columns.Bound(p => p.Description).Title("ĐK áp dụng NPP(SL)").HtmlAttributes(new { data_column = "Description" }).Width(180).ClientTemplate("#if(DecaPercentQty!=0){#" + "SLĐH min-max : #=DecaMinOrdQty# - #=DecaMaxOrdQty# : #=DecaPercentQty*100#%" + "#}#");
+                        }
+                        if (Auth_Action.AssetResult(asset, "DecaPercent"))
+                        {
+                            columns.Bound(p => p.DecaPercentAmt).Title("Mức hỗ trợ NPP($)").HtmlAttributes(new { data_column = "DecaPercent", style = "text-align:right" }).Width(150).ClientTemplate("#if(DecaPercentAmt!=0){#" + "#=DecaPercentAmt*100#%" + "#}#");
+                        }
+                        if (Auth_Action.AssetResult(asset, "Description"))
+                        {
+                            columns.Bound(p => p.Description).Title("ĐK áp dụng NPP($)").HtmlAttributes(new { data_column = "Description" }).Width(180).ClientTemplate("#if(DecaPercentAmt!=0){#" + "Mức giá ĐH min-max : #=DecaMinOrdAmt# - #=DecaMaxOrdAmt# : #=DecaPercentAmt*100#% " + "#}#"); ;
+                        }
+                        if (Auth_Action.AssetResult(asset, "MerchantPercent"))
+                        {
+                            columns.Bound(p => p.MerchantPercentQty).Title("Mức hỗ trợ NCC(SL)").HtmlAttributes(new { data_column = "MerchantPercent", style = "text-align:right" }).Width(150).ClientTemplate("#if(MerchantPercentQty!=0){#" + "#=MerchantPercentQty*100#%" + "#}#");
+                        }
+                        if (Auth_Action.AssetResult(asset, "Description"))
+                        {
+                            columns.Bound(p => p.Description).Title("ĐK áp dụng NCC(SL)").HtmlAttributes(new { data_column = "Description" }).Width(180).ClientTemplate("#if(MerchantPercentQty!=0){#" + "SLĐH min-max: #=MerchantMinOrdQty# - #=MerchantMaxOrdQty# : #=MerchantPercentQty*100#% " + "#}#");
+                        }
+                        if (Auth_Action.AssetResult(asset, "MerchantPercent"))
+                        {
+                            columns.Bound(p => p.MerchantPercentAmt).Title("Mức hỗ trợ NCC($)").HtmlAttributes(new { data_column = "MerchantPercent", style = "text-align:right" }).Width(150).ClientTemplate("#if(MerchantPercentAmt!=0){#" + "#=MerchantPercentAmt*100#%" + "#}#");
+                        }
+                        if (Auth_Action.AssetResult(asset, "Description"))
+                        {
+                            columns.Bound(p => p.Description).Title("ĐK áp dụng NCC($)").HtmlAttributes(new { data_column = "Description" }).Width(180).ClientTemplate("#if(MerchantPercentAmt!=0){#" + "Mức giá ĐH min-max :#=MerchantMinOrdAmt# - #=MerchantMaxOrdAmt# : #=MerchantPercentAmt*100#% " + "#}#"); ;
+                        }
+                        if (Auth_Action.AssetResult(asset, "Note"))
+                        {
+                            columns.Bound(p => p.Note).Title("Ghi chú").Width(130).HeaderHtmlAttributes(new { data_column = "Note" }); ;
+                        }
+                        columns.Bound(p => p.StartDate).Format("{0:dd/MM/yyyy}").HtmlAttributes(new { style = "text-align:right" }).Title("Từ ngày").Width(130);
+                        columns.Bound(p => p.EndDate).Format("{0:dd/MM/yyyy}").HtmlAttributes(new { style = "text-align:right" }).Title("Đến ngày").Width(130);
+                        columns.Bound(p => p.CreatedBy).Title("Người tạo").Width(130);
+
+                    })
+                    .ToolBar(toolBar =>
+                        {
+                            if (asset.ContainsKey("Insert") && asset["Insert"])
+                            {
+                                toolBar.Custom()
+                                        .Text("Thêm mới")
+                                        .HtmlAttributes(new { id = "btnInsert", @class = "btn btn-success", @style = "background-color:#87b87f; color:white;", onclick = "onOpenPopup(0,this)", @href = "javascript:void(0)" });
+                            }
+                            if (asset.ContainsKey("Export") && asset["Export"])
+                            {
+                                toolBar.Custom()
+                                        .Text("Xuất Excel")
+                                        .HtmlAttributes(new { @class = "btn btn-primary export", @style = "background-color:#428bca; color:white;" }).Url(Url.Action("Export", "Promotion", new { filter = "~", sort = "~" }));
+                            }
+
+                        })
+                    .Events(events => { events.DataBound("onDatabound"); })
+                    .Pageable(pager => pager.PageSizes(new[] { 20, 100, 200, 300 }))
+                    .Resizable(r => r.Columns(true))
+                    .Navigatable()
+                    .Scrollable()
+                    .Sortable()
+                    .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .Batch(true)
+                        .PageSize(100)
+                        .Model(model =>
+                        {
+                            model.Id(p => p.PromotionID);
+                        })
+                        .Events(e => { e.RequestEnd("onRequestEnd"); e.RequestStart("onRequestStart"); })
+                                        .Read(read => read.Action("Read", "Promotion"))
+                    )
+                )
+            </div>
+        </article>
+
+    </div>
+    <div id="popup" class="row" style="margin:0 auto">
+        <div class="nav nav-tabs bordered padding-12 tab-color-blue background-blue">
+            <ul id="tabUserAu" class="nav nav-tabs borded">
+                <li class="active">
+                    <a href="#s1" data-toggle="tab">Thông tin chung</a>
+                </li>
+                <li>
+                    <a href="#s2" data-toggle="tab">Áp dụng cho</a>
+                </li>
+                <li>
+                    <a href="#s3" data-toggle="tab" id="dkck">Điều kiện</a>
+                </li>
+            </ul>
+            <div>
+                <div id="tabUser" class="tab-content">
+                    <div class="tab-pane fade in active" id="s1">
+                        <div class="bordered">
+                            @using (Html.BeginForm("Create", "Promotion", FormMethod.Post, new { @class = "smart-form", id = "formPopupDe", enctype = "multipart/form-data" }))
+                            {
+                                @Html.Hidden("CreatedAt");
+                                @Html.Hidden("CreatedBy");
+                                <fieldset style="float: left; width: 370px; padding-left: 0; padding-right: 0;">
+                                    <section style="float:left;">
+                                        <div class=" divlabel">
+                                            <label class="label" style="float:right">Mã CTKM(*)</label>
+                                        </div>
+                                        <div class="divfile">
+                                            <label class="input" style="float:right;width:240px;">
+                                                @Html.TextBox("PromotetionDLFeeID", "", new { @class = "input-xs popup_text_left", placeholder = "Mã CTKM" })
+                                            </label>
+                                            <div style="clear:both"></div>
+                                        </div>
+                                    </section>
+                                    <section style="float:left;">
+                                        <div class=" divlabel">
+                                            <label class="label" style="float:right">Tên CTKM (*)</label>
+                                        </div>
+                                        <div class="divfile">
+                                            <label class="input" style="float:right;width:240px;">
+                                                @Html.TextBox("PromotionName", "", new { @class = "input-xs popup_text_left", placeholder = "Tên CTKM" })
+                                            </label>
+                                            <div style="clear:both"></div>
+                                        </div>
+                                    </section>
+                                    <section style="float:left;">
+                                        <div class=" divlabel">
+                                            <label class="label" style="float:right">Trạng thái (*)</label>
+                                        </div>
+                                        <div class="divfile">
+                                            <label class="select" style="float: right">
+                                                @Html.DropDownList("Status", new SelectList(listActiveStatus, "StatusValue", "StatusName", 1))
+                                            </label>
+                                            <div style="clear:both"></div>
+                                        </div>
+                                    </section>
+
+                                </fieldset>
+                                <fieldset id="popupContent" style="float: left; width: 370px; padding-left: 0; padding-right: 0;">
+                                    <section style="float:left;">
+                                        <div class=" divlabel">
+                                            <label class="label" style="float:right">Gian hàng áp dụng</label>
+                                        </div>
+                                        <div class="divfile">
+                                            <label class="select" style="float: right">
+                                                @Html.DropDownList("IsAllMerchant", new SelectList(listActiveStatus, "StatusValue", "IsAllMerchant", 1))
+                                            </label>
+                                            <div style="clear:both"></div>
+                                        </div>
+                                    </section>
+                                    <section style="float:left;">
+                                        <div class=" divlabel">
+                                            <label class="label" style="float:right">ĐBVC áp dụng</label>
+                                        </div>
+                                        <div class="divfile">
+                                            <label class="select" style="float: right">
+                                                @Html.DropDownList("IsAllDistric", new SelectList(listActiveStatus, "StatusValue", "IsAllDistric", 1))
+                                            </label>
+                                            <div style="clear:both"></div>
+                                        </div>
+                                    </section>
+
+                                    <section style="float:left;">
+                                        <div class=" divlabel">
+                                            <label class="label" style="float:right">Từ ngày-Đến Ngày</label>
+                                        </div>
+                                        <div class="divfile">
+                                            <label class="input" style="float: left; width: 240px;">
+                                                <input type="text" name="StartDate" class="input-xs" style="width:240px" id="StartDate" placeholder="Chọn ngày" />
+                                            </label>
+                                            <div style="clear:both"></div>
+                                        </div>
+                                    </section>
+                                    @*<section style="float:left;">
+                                        <div class=" divlabel">
+                                            <label class="label" style="float:right">Đến ngày</label>
+                                        </div>
+                                        <div class="divfile">
+                                            <input name="EndDate" id="EndDate" style="float: right; width: 240px;" />
+                                            <div style="clear:both"></div>
+                                        </div>
+                                    </section>*@
+                                </fieldset>
+                                <section style="float:left; margin-left:77px">
+                                        <div class=" divlabel">
+                                            <label class="label" style="float:right">Ghi chú</label>
+                                        </div>
+
+                                    </section>
+                                    <section style="float:left; width:612px; margin-left:11px">
+                                        <div class="divfile">
+                                            <label class="textarea textarea-resizable" style="float:right;width:100%;">
+                                                @Html.TextArea("Note", new { placeholder = "Ghi chú", @style = "min-height:56px;width:100%;margin-right:91px" })
+                                                @*<b class="tooltip tooltip-top-right">Ghi chú</b>*@
+                                            </label>
+                                            <div style="clear:both"></div>
+                                        </div>
+                                    </section>
+                                <div style="clear:both"></div><br />
+                                <footer>
+                                    <button type="submit" class="k-button k-button-icontext btn_custom" style="float: left;" id="btnSubmit">Lưu</button>
+                                    <img src="@Url.Content("~/Content/Bootstrap/loading.gif")" class="hide" id="loading" style="margin-top: 5px;" />
+                                </footer>
+                            }
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="s2">
+                        <div class="bordered">
+                            <form class="smart-form" name="form3" method="post" enctype="multipart/form-data" >
+                                <fieldset>
+                                    <section style="float:left;">
+                                        <div class="divlabel" style="width:100px;">
+                                            <label class="label" style="float:left;">Đơn vị vận chuyển</label>
+                                        </div>
+                                        <div class="divfile" style="width:620px;">
+                                            <label class="select">
+                                                @Html.DropDownList("selectTransporter", new SelectList(listTranporter, "TransporterID", "TransporterName"), new { multiple = "multiple", placeholder = "Đơn vị vận chuyển" })
+                                            </label>
+                                            <div style="clear:both"></div>
+                                        </div>
+                                    </section>
+                                    @*<section style="float:left;">
+                                        <div class="divlabel" style="width:100px;">
+                                            <label class="label" style="float:left;">Tỉnh/thành phố</label>
+                                        </div>
+                                        <div class="divfile" style="width:620px;">
+                                            <label class="select">
+                                                @Html.DropDownList("selectTerritoryProvince", new SelectList(listTerritory, "TerritoryID", "TerritoryName"), new { multiple = "multiple", placeholder = "Tỉnh thành", onclick = "ChangeDis()" })
+                                            </label>
+                                            <div style="clear:both"></div>
+                                        </div>
+                                    </section>*@
+                                    <section style="float:left;">
+                                        <div class="divlabel" style="width:100px;">
+                                            <label class="label" style="float:left;">Địa bàn vận chuyển</label>
+                                        </div>
+                                        <div class="divfile" style="width:620px;">
+                                            <label class="select">
+                                                @Html.DropDownList("selectTerritory", new SelectList(listTerritoryDis, "TerritoryID", "TerritoryName"), new { multiple = "multiple", placeholder = "Áp dụng cho tất cả địa bàn" })
+                                            </label>
+                                            <div style="clear:both"></div>
+                                        </div>
+                                    </section>
+                                    <section style="float:left;">
+                                        <div class="divlabel" style="width:100px;">
+                                            <label class="label" style="float:left;">Nhà cung cấp</label>
+                                        </div>
+                                        <div class="divfile" style="width:620px;">
+                                            <label class="select">
+                                                @Html.DropDownList("selectMerchant", new SelectList(listMerchant, "MerchantID", "MerchantName"), new { multiple = "multiple", placeholder = "Áp dụng cho các gian hàng" })
+                                            </label>
+                                            <div style="clear:both"></div>
+                                        </div>
+                                    </section>
+                                </fieldset>
+                                <footer>
+                                    <button type="button" class="k-button k-button-icontext btn_custom" id="btnSaveData" style="float:left" onclick="onSaveData(this)">Lưu</button>
+                                    <img src="@Url.Content("~/Content/Bootstrap/loading.gif")" class="hide" id="loadingSaveRole" style="margin-top: 5px;" />
+                                </footer>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="s3">
+                        <div class="bordered">
+                            <form class="smart-form" name="form4">
+                                <section style="float: left; margin-top: 20px; width: 97%; ">
+                                    <div class="divlabel" style="width: 144px; margin-left: 29px;">
+                                        <label class="label" style="float: left; width: 70%;">Kiểm tra theo</label>
+                                    </div>
+                                    <div class="divfile" style="float:left">
+                                        <label class="select">
+                                            @Html.DropDownList("selectTypePromotion", new SelectList(new List<Object>
+                                       {
+                                           //new {value=0,text="--Chọn loại kiểm tra--"},
+                                           new {value=1,text="Tiền đơn hàng"},
+                                           new {value=2,text="Số lượng đơn hàng"}
+                                       }, "value", "text", 1), new { onclick = "ChangeProType()" })
+                                        </label>
+                                        <div style="clear:both"></div>
+                                    </div>
+                                </section>
+                                <div id="divAmt">
+                                    <fieldset style="float: left; width: 370px; padding-left: 0; padding-right: 0;">
+                                        <section style="float:left;">
+                                            <div class=" divlabel">
+                                                <label class="label" style="float:right"> Tiền ĐH  Min NPP(*)</label>
+                                            </div>
+                                            <div class="divfile">
+                                                <label class="input" style="float:right;width:240px;">
+                                                    @Html.TextBox("DecaMinOrdAmt", "", new { @class = "input-xs popup_text_left", placeholder = "Tiền ĐH  Min Deca", @style = "text-align:right", @required = "required" })
+                                                    @*<b class="tooltip tooltip-top-right">Mã HTVC</b>*@
+                                                </label>
+                                                <div style="clear:both"></div>
+                                            </div>
+                                        </section>
+                                        <section style="float:left;">
+                                            <div class=" divlabel">
+                                                <label class="label" style="float:right"> Tiền ĐH  Max NPP(*)</label>
+                                            </div>
+                                            <div class="divfile">
+                                                <label class="input" style="float:right;width:240px;">
+                                                    @Html.TextBox("DecaMaxOrdAmt", "", new { @class = "input-xs popup_text_left", placeholder = "Tiền ĐH  Max Deca", @style = "text-align:right" })
+                                                    @*<b class="tooltip tooltip-top-right">Tên HTVC</b>*@
+                                                </label>
+                                                <div style="clear:both"></div>
+                                            </div>
+                                        </section>
+                                        <section style="float:left;">
+                                            <div class=" divlabel">
+                                                <label class="label" style="float:right">Mức hỗ trợ NPP(*)</label>
+                                            </div>
+                                            <div class="divfile">
+                                                <label class="input" style="float:right;width:240px;">
+                                                    @Html.TextBox("DecaPercent", "", new { @class = "input-xs popup_text_left", placeholder = "Mức hỗ trợ Deca", @style = "text-align:right" })
+                                                    @*<b class="tooltip tooltip-top-right">Tên HTVC</b>*@
+                                                </label>
+                                                <div style="clear:both"></div>
+                                            </div>
+                                        </section>
+                                    </fieldset>
+                                    <fieldset id="popupContent" style="float: left; width: 370px; padding-left: 0; padding-right: 0; border:none">
+                                        <section style="float:left;">
+                                            <div class=" divlabel">
+                                                <label class="label" style="float:right">Tiền ĐH  Min NCC(*)</label>
+                                            </div>
+                                            <div class="divfile">
+                                                <label class="input" style="float:right;width:240px;">
+                                                    @Html.TextBox("MerchantMinOrdAmt", "", new { @class = "input-xs popup_text_left", placeholder = "Tiền ĐH  Min NCC", @style = "text-align:right" })
+                                                    @*<b class="tooltip tooltip-top-right">Tên HTVC</b>*@
+                                                </label>
+                                                <div style="clear:both"></div>
+                                            </div>
+                                        </section>
+
+                                        <section style="float:left;">
+                                            <div class=" divlabel">
+                                                <label class="label" style="float:right">Tiền ĐH  Max NCC(*)</label>
+                                            </div>
+                                            <div class="divfile">
+                                                <label class="input" style="float:right;width:240px;">
+                                                    @Html.TextBox("MerchantMaxOrdAmt", "", new { @class = "input-xs popup_text_left", placeholder = "Tiền ĐH  Max NCC", @style = "text-align:right" })
+                                                    @*<b class="tooltip tooltip-top-right">Tên HTVC</b>*@
+                                                </label>
+                                                <div style="clear:both"></div>
+                                            </div>
+                                        </section>
+                                        <section style="float:left;">
+                                            <div class=" divlabel">
+                                                <label class="label" style="float:right">Mức hỗ trợ NCC(*)</label>
+                                            </div>
+                                            <div class="divfile">
+                                                <label class="input" style="float:right;width:240px;">
+                                                    @Html.TextBox("MerchantPercent", "", new { @class = "input-xs popup_text_left", placeholder = "Mức hỗ trợ NCC", @style = "text-align:right" })
+                                                    @*<b class="tooltip tooltip-top-right">Tên HTVC</b>*@
+                                                </label>
+                                                <div style="clear:both"></div>
+                                            </div>
+                                        </section>
+                                    </fieldset>
+                                    <section style="float:left; margin-left:77px">
+                                        <div class=" divlabel">
+                                            <label class="label" style="float:right">Ghi chú</label>
+                                        </div>
+
+                                    </section>
+                                    <section style="float:left; width:612px; margin-left:11px">
+                                        <div class="divfile">
+                                            <label class="textarea textarea-resizable" style="float:right;width:100%;">
+                                                @Html.TextArea("conNote", new { placeholder = "Ghi chú", @style = "min-height:56px;width:100%;margin-right:91px" })
+                                                @*<b class="tooltip tooltip-top-right">Ghi chú</b>*@
+                                            </label>
+                                            <div style="clear:both"></div>
+                                        </div>
+                                    </section>
+                                    <footer>
+                                        <button type="button" class="k-button k-button-icontext btn_custom" id="btnSaveDataAmt" style="float:left" onclick="onSaveDataAmt(this)">Lưu</button>
+                                        <img src="@Url.Content("~/Content/Bootstrap/loading.gif")" class="hide" id="loadingSaveRole" style="margin-top: 5px;" />
+                                    </footer>
+                                </div>
+                                <div id="divQty">
+                                    <fieldset style="float: left; width: 370px; padding-left: 0; padding-right: 0;">
+                                        <section style="float:left;">
+                                            <div class=" divlabel">
+                                                <label class="label" style="float:right"> SLĐH Min NPP(*)</label>
+                                            </div>
+                                            <div class="divfile">
+                                                <label class="input" style="float:right;width:240px;">
+                                                    @Html.TextBox("DecaMinOrdQty", "", new { @class = "input-xs popup_text_left", placeholder = "SLĐH Min Deca", @style = "text-align:right", @required = "required" })
+                                                    @*<b class="tooltip tooltip-top-right">Mã HTVC</b>*@
+                                                </label>
+                                                <div style="clear:both"></div>
+                                            </div>
+                                        </section>
+                                        <section style="float:left;">
+                                            <div class=" divlabel">
+                                                <label class="label" style="float:right"> SLĐH  Max NPP(*)</label>
+                                            </div>
+                                            <div class="divfile">
+                                                <label class="input" style="float:right;width:240px;">
+                                                    @Html.TextBox("DecaMaxOrdQty", "", new { @class = "input-xs popup_text_left", placeholder = "SLĐH Max Deca", @style = "text-align:right" })
+                                                    @*<b class="tooltip tooltip-top-right">Tên HTVC</b>*@
+                                                </label>
+                                                <div style="clear:both"></div>
+                                            </div>
+                                        </section>
+                                        <section style="float:left;">
+                                            <div class=" divlabel">
+                                                <label class="label" style="float:right">Mức hỗ trợ NPP(*)</label>
+                                            </div>
+                                            <div class="divfile">
+                                                <label class="input" style="float:right;width:240px;">
+                                                    @Html.TextBox("DecaPercentQty", "", new { @class = "input-xs popup_text_left", placeholder = "Mức hỗ trợ Deca", @style = "text-align:right" })
+                                                    @*<b class="tooltip tooltip-top-right">Tên HTVC</b>*@
+                                                </label>
+                                                <div style="clear:both"></div>
+                                            </div>
+                                        </section>
+                                       
+                                    </fieldset>
+                                    <fieldset id="popupContent" style="float: left; width: 370px; padding-left: 0; padding-right: 0; border:none">
+                                        <section style="float:left;">
+                                            <div class=" divlabel">
+                                                <label class="label" style="float:right">SLĐH  Min NCC(*)</label>
+                                            </div>
+                                            <div class="divfile">
+                                                <label class="input" style="float:right;width:240px;">
+                                                    @Html.TextBox("MerchantMinOrdQty", "", new { @class = "input-xs popup_text_left", placeholder = "SLĐH Min NCC", @style = "text-align:right" })
+                                                    @*<b class="tooltip tooltip-top-right">Tên HTVC</b>*@
+                                                </label>
+                                                <div style="clear:both"></div>
+                                            </div>
+                                        </section>
+                                        <section style="float:left;">
+                                            <div class=" divlabel">
+                                                <label class="label" style="float:right"> SLĐH  Max NCC(*)</label>
+                                            </div>
+                                            <div class="divfile">
+                                                <label class="input" style="float:right;width:240px;">
+                                                    @Html.TextBox("MerchantMaxOrdQty", "", new { @class = "input-xs popup_text_left", placeholder = "SLĐH Max NCC", @style = "text-align:right" })
+                                                    @*<b class="tooltip tooltip-top-right">Tên HTVC</b>*@
+                                                </label>
+                                                <div style="clear:both"></div>
+                                            </div>
+                                        </section>
+                                        <section style="float:left;">
+                                            <div class=" divlabel">
+                                                <label class="label" style="float:right">Mức hỗ trợ NCC(*)</label>
+                                            </div>
+                                            <div class="divfile">
+                                                <label class="input" style="float:right;width:240px;">
+                                                    @Html.TextBox("MerchantPercentQty", "", new { @class = "input-xs popup_text_left", placeholder = "Mức hỗ trợ NCC", @style = "text-align:right" })
+                                                    @*<b class="tooltip tooltip-top-right">Tên HTVC</b>*@
+                                                </label>
+                                                <div style="clear:both"></div>
+                                            </div>
+                                        </section>
+                                    </fieldset>
+                                    <section style="float:left; margin-left:77px">
+                                        <div class=" divlabel">
+                                            <label class="label" style="float:right">Ghi chú</label>
+                                        </div>
+
+                                    </section>
+                                    <section style="float:left; width:612px; margin-left:11px">
+                                        <div class="divfile">
+                                            <label class="textarea textarea-resizable" style="float:right;width:100%;">
+                                                @Html.TextArea("conNoteQty", new { placeholder = "Ghi chú", @style = "min-height:56px;width:100%;margin-right:91px" })
+                                                @*<b class="tooltip tooltip-top-right">Ghi chú</b>*@
+                                            </label>
+                                            <div style="clear:both"></div>
+                                        </div>
+                                    </section>
+                                    <footer>
+                                        <button type="button" class="k-button k-button-icontext btn_custom" id="btnSaveDataQty" style="float:left" onclick="onSaveDataQty(this)">Lưu</button>
+                                        <img src="@Url.Content("~/Content/Bootstrap/loading.gif")" class="hide" id="loadingSaveRole" style="margin-top: 5px;" />
+                                    </footer>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
