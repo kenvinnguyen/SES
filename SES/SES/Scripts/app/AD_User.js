@@ -6,7 +6,11 @@ $(document).ready(function () {
 
     //active menu
     resetMenu();
-    activeMenu(1, 2, 1, '2_1', 'menu_HOAdminAuthUser');    
+
+    $("ul#menuLeft").find('#ul_root_1').addClass('open');
+    $("ul#menuLeft").find('#ul_root_1').css('display', 'block');
+    $("ul#menuLeft").find('#ul_root_1 ul#ul_item_1').css('display', 'block');
+    $("#menu_AD_User").parent().addClass('active');
 
     document.title = "Người dùng";
 
@@ -337,7 +341,7 @@ function onOpenPopup(key, obj) {
             $("#DisplayName").focus();
         }, 500);        
         //selectedTabstrip(0);
-        $.post(r + "/HOAdminAuthUser/GetUserByID", { userID: id }, function (data) {
+        $.post(r + "/AD_User/GetUserByID", { userID: id }, function (data) {
             showLoading();
             
             if (data.success) {
@@ -464,7 +468,7 @@ function hideTabStrip() {
 //Cap nhat phan quyen
 function onUpdatePermissionData() {
     $("#divLoading").show();
-    $.post(r + "/HOAdminAuthUser/ExecPermissionData", { userID: "" }, function (data) {        
+    $.post(r + "/AD_User/ExecPermissionData", { userID: "" }, function (data) {        
         if (data.success) {
             alertBox("Cập nhật thành công", "", true, 3000);
         }
@@ -487,7 +491,7 @@ function onResetPassword(obj) {
             if (ButtonPressed === "OK") {
                 $("#divLoading").show();
                 $(obj).attr('disabled', true);
-                $.post(r + "/HOAdminAuthUser/ResetPasswordUser", { userID: userID }, function (data) {
+                $.post(r + "/AD_User/ResetPasswordUser", { userID: userID }, function (data) {
                     if (data.success) {
                         alertBox("Thông báo!", "Khôi phục thành công", true, 3000);
                     }
@@ -518,7 +522,7 @@ function onSaveRole() {
     var id = $("#UserID").val();
     $("#loadingSaveRole").removeClass('hide');
     $("#btnSaveRole").attr('disabled', true);
-    $.post(r + "/HOAdminAuthUser/AddUserToGroup", { id: id, data: text.toString() }, function (data) {
+    $.post(r + "/AD_User/AddUserToGroup", { id: id, data: text.toString() }, function (data) {
         if (data.success) {
             //selectedTabstrip(2);
             generateSelect2("selectRole");

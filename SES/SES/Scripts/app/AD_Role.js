@@ -7,7 +7,11 @@ var contentTab;
 $(document).ready(function () {
     //active menu
     resetMenu();
-    activeMenu(1, 2, 1, '2_1', 'menu_HOAdminAuthRole');
+
+    $("ul#menuLeft").find('#ul_root_1').addClass('open');
+    $("ul#menuLeft").find('#ul_root_1').css('display', 'block');
+    $("ul#menuLeft").find('#ul_root_1 ul#ul_item_2').css('display', 'block');
+    $("#menu_AD_Role").parent().addClass('active');
 
     document.title = "Nhóm người dùng";
     //tabstrip
@@ -239,7 +243,7 @@ function onOpenPopup(key, obj) {
             onBindDataToForm(dataItem);
             //showTabstrip();
             showLoading();
-            $.post(r + "/HOAdminAuthRole/GetByID", { id: id }, function (data) {
+            $.post(r + "/AD_Role/GetByID", { id: id }, function (data) {
                 if (data.success) {
                     var value = data.data;
                     var active = value.IsActive == true ? "True" : "False";
@@ -373,7 +377,7 @@ function onSaveUser() {
     }
     $("#loadingSaveUser").removeClass('hide');
     $("#btnSaveUser").attr('disabled', true);
-    $.post(r + "/HOAdminAuthRole/AddUserToGroup", { id: id, data: text.toString() }, function (data) {
+    $.post(r + "/AD_Role/AddUserToGroup", { id: id, data: text.toString() }, function (data) {
         if (data.success) {
             generateSelect2("selectUser");
             setTimeout(function () {
@@ -406,7 +410,7 @@ function generateFuncTreeList(action) {
     }
     $("#treelist").show();
     showLoading();
-    $.post(r + "/HOAdminAuthRole/GetMenu", { action: action, roleID: $("#RoleID").val() }, function (data) {
+    $.post(r + "/AD_Role/GetMenu", { action: action, roleID: $("#RoleID").val() }, function (data) {
         if (data.success) {
             var obj = $("#treelist").data('kendoTreeView');
             if (typeof obj == 'undefined') {
@@ -539,7 +543,7 @@ function SavePermission(obj) {
     }
     $("#loadingSavePermission").removeClass('hide');
     $(obj).attr('disabled', true);
-    $.post(r + "/HOAdminAuthRole/SavePermission", { RoleID: $("#RoleID").val(), Action: $("#selectAction").val(), MenuIDs: selectedMenu }, function (data) {
+    $.post(r + "/AD_Role/SavePermission", { RoleID: $("#RoleID").val(), Action: $("#selectAction").val(), MenuIDs: selectedMenu }, function (data) {
         if (data.success) {
             alertBox("Lưu thành công", "", true, 3000);
         }

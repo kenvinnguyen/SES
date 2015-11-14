@@ -93,8 +93,7 @@ namespace SES.Models
         public DateTime? RowUpdatedAt { get; set; }
         public string RowUpdatedUser { get; set; }
         public int IsNew { get; set; }
-        public bool Status { get; set; }
-
+    
         public List<DC_OCM_Merchant> GetList(int page, int pageSize, string whereCondition)
         {
             List<SqlParameter> param = new List<SqlParameter>();
@@ -113,7 +112,7 @@ namespace SES.Models
                 item.RowUpdatedUser = !row.IsNull("RowUpdatedUser") ? row["RowUpdatedUser"].ToString() : "";
                 item.RowCreatedUser = !row.IsNull("RowCreatedUser") ? row["RowCreatedUser"].ToString() : "";
                 //item.Note = !row.IsNull("Note") ? row["Note"].ToString() : "";
-                item.Status = !row.IsNull("Status") ? Convert.ToBoolean(row["Status"].ToString()) : false;
+                //item.Status = !row.IsNull("Status") ? Convert.ToBoolean(row["Status"].ToString()) : false;
 
                 lst.Add(item);
             }

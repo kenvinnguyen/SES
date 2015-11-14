@@ -21,12 +21,12 @@ $(document).ready(function () {
     });
 
     //phan quyen
-    $("#menu_HOAdminAuthRole").click(function () {
-        onLoadPage(r + "/HOAdminAuthRole/PartialRole");
+    $("#menu_AD_Role").click(function () {
+        onLoadPage(r + "/AD_Role/PartialRole");
     });
     //nguoi dung
-    $("#menu_HOAdminAuthUser").click(function () {
-        onLoadPage(r + "/HOAdminAuthUser/PartialUser");
+    $("#menu_AD_User").click(function () {
+        onLoadPage(r + "/AD_User/PartialUser");
     });
     //thong bao
     $("#menu_HOAdminAuthAnnouncement").click(function () {
@@ -48,15 +48,7 @@ $(document).ready(function () {
     $("#menu_AdminMasterTerritory").click(function () {
         onLoadPage(r + "/AdminMasterTerritory/PartialOthersTerritory");
     });
-    //$("#menu_AdminMasterTerritory").click(function () {
-    //    onLoadPage(r + "/AdminMasterTerritory/IndexRegion");
-    //});
-    //$("#menu_AdminMasterTerritory").click(function () {
-    //    onLoadPage(r + "/AdminMasterTerritory/IndexProvince");
-    //});
-    //$("#menu_AdminMasterTerritory").click(function () {
-    //    onLoadPage(r + "/AdminMasterTerritory/IndexDistrict");
-    //});
+   
     //Kho ấn phẩm
     $("#menu_ListPublication").click(function () {
         onLoadPage(r + "/ListPublication/PartialRole");
@@ -100,8 +92,8 @@ $(document).ready(function () {
     $("#menu_Customer").click(function () {
         onLoadPage(r + "/Customer/PartialCustomer");
     });
-    $("#menu_Vendor").click(function () {
-        onLoadPage(r + "/Vendor/PartialVendor");
+    $("#menu_PO_VendorInfo").click(function () {
+        onLoadPage(r + "/PO_VendorInfo/PartialVendor");
     });
     $("#menu_Promotion").click(function () {
         onLoadPage(r + "/Promotion/PartialPromotion");

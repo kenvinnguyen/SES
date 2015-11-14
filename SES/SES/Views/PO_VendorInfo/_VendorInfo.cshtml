@@ -8,7 +8,7 @@
     var listActiveStatus = dict.ContainsKey("activestatus") ? (List<ActiveStatus>)dict["activestatus"] : new List<ActiveStatus>();
     var listProvince = dict.ContainsKey("listProvince") ? (List<Master_Territory>)dict["listProvince"] : new List<Master_Territory>();
 }
-<script src="@Url.Content("~/Scripts/app/Vendor.js")"></script>
+<script src="@Url.Content("~/Scripts/app/PO_VendorInfo.js")"></script>
 <div class="jarviswidget" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-deletebutton="false">
     <header>
         @*<span class="widget-icon"> <i class="fa fa-search"></i> </span>*@
@@ -86,7 +86,7 @@
                             {
                                 toolBar.Custom()
                                         .Text("Xuất Excel")
-                                        .HtmlAttributes(new { @class = "btn btn-primary export", @style = "background-color:#428bca; color:white;" }).Url(Url.Action("Export", "Vendor", new { filter = "~", sort = "~" }));
+                                        .HtmlAttributes(new { @class = "btn btn-primary export", @style = "background-color:#428bca; color:white;" }).Url(Url.Action("Export", "PO_VendorInfo", new { filter = "~", sort = "~" }));
                             }
 
                         })
@@ -104,7 +104,7 @@
                         {
                             model.Id(p => p.VendorID);
                         })
-                        .Read(read => read.Action("Read", "Vendor"))
+                                .Read(read => read.Action("Read", "PO_VendorInfo"))
                     )
                 )
             </div>
@@ -113,7 +113,7 @@
     </div>
     <div id="popup" class="row" style="margin:0 auto">
         <div class="bordered">
-            @using (Html.BeginForm("Create", "Vendor", FormMethod.Post, new { @class = "smart-form", id = "formPopup", enctype = "multipart/form-data" }))
+            @using (Html.BeginForm("Create", "PO_VendorInfo", FormMethod.Post, new { @class = "smart-form", id = "formPopup", enctype = "multipart/form-data" }))
             {
                 @Html.Hidden("CreatedAt");
                 @Html.Hidden("CreatedBy");

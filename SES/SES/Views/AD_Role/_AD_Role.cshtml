@@ -3,7 +3,7 @@
     ViewBag.Title = "Nhóm";
 }
 
-@Scripts.Render("~/bundles/appHOAdminAuthRole")
+@Scripts.Render("~/bundles/appAD_Role")
 
 @{
     var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
@@ -155,7 +155,7 @@
                             model.Id(p => p.RoleID);
                         })
                         .Events(e => { e.RequestEnd("onRequestEnd"); e.RequestStart("onRequestStart"); })
-                        .Read(read => read.Action("Read", "HOAdminAuthRole"))
+                        .Read(read => read.Action("Read", "AD_Role"))
                     )
                     )
                 </div>
@@ -182,7 +182,7 @@
             <div id="tabUser" class="tab-content">
                 <div class="tab-pane fade in active" id="s1">
                     <div>
-                        @using (Html.BeginForm("Create", "HOAdminAuthRole", FormMethod.Post, new { @class = "smart-form", id = "formPopup", enctype = "multipart/form-data" }))
+                        @using (Html.BeginForm("Create", "AD_Role", FormMethod.Post, new { @class = "smart-form", id = "formPopup", enctype = "multipart/form-data" }))
                         {
                             @Html.Hidden("RowCreatedAt")
                             @Html.Hidden("RowCreatedBy")

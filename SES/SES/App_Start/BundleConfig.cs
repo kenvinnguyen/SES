@@ -28,12 +28,12 @@ namespace SES
             //nguoi dung
             bundles.Add(new ScriptBundle("~/bundles/appUser").Include(
                 "~/Scripts/app/app.js",
-                "~/Scripts/app/HOAdminAuthUser.js"));
+                "~/Scripts/app/AD_User.js"));
            
             //phan quyen nguoi dung
-            bundles.Add(new ScriptBundle("~/bundles/appHOAdminAuthRole").Include(
+            bundles.Add(new ScriptBundle("~/bundles/appAD_Role").Include(
                 "~/Scripts/app/app.js",
-                "~/Scripts/app/HOAdminAuthRole.js"));
+                "~/Scripts/app/AD_Role.js"));
            
             //thong bao
             bundles.Add(new ScriptBundle("~/bundles/appHOAdminAuthAnnouncement").Include(

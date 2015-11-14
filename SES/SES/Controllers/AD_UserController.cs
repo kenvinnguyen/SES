@@ -22,7 +22,7 @@ namespace SES.Controllers
 {
     [Authorize]
     [NoCache]
-    public class HOAdminAuthUserController : CustomController
+    public class AD_UserController : CustomController
     {
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -90,7 +90,7 @@ namespace SES.Controllers
             }
             catch (Exception e)
             {
-                log.Error("HOAdminAuthUser - Create - " + e.Message);
+                log.Error("AD_User - Create - " + e.Message);
                 return Json(new { success = false, message = e.Message });
             }
             finally { db.Close(); }
@@ -181,7 +181,7 @@ namespace SES.Controllers
             }
             catch (Exception e)
             {
-                log.Error("HOAdminAuthUser - Import - " + e.Message);
+                log.Error("AD_User - Import - " + e.Message);
                 return Json(new { success = false, message = e.Message });
             }
         }
@@ -199,7 +199,7 @@ namespace SES.Controllers
                 //dict["listrole"] = dbConn.Select<Auth_Role>("SELECT * FROM Auth_Role WHERE IsActive = 1");
                 dict["listrole"] = new Auth_Role().GetDataForDropDownList();
                 dbConn.Close();                
-                return PartialView("_HOAdminAuthUser", dict);
+                return PartialView("_AD_User", dict);
             }
             else
                 return RedirectToAction("NoAccess", "Error");
@@ -289,7 +289,7 @@ namespace SES.Controllers
             }
             catch (Exception e)
             {
-                log.Error("HOAdminAuthUser - ResetPasswordUser - " + e.Message);
+                log.Error("AD_User - ResetPasswordUser - " + e.Message);
                 return Json(new { success = false, message = e.Message });
             }
             finally { db.Close(); }

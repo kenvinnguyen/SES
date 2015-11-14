@@ -17,7 +17,7 @@ namespace SES.Controllers
 {
     [Authorize]
     [NoCache]
-    public class HOAdminAuthRoleController : CustomController
+    public class AD_RoleController : CustomController
     {
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -240,7 +240,7 @@ namespace SES.Controllers
                 dict["activestatus"] = new CommonLib().GetActiveStatus();
                 dict["user"] = dbConn.Select<Auth_User>(p => p.IsActive == true);
                 dbConn.Close();
-                return PartialView("_HOAdminAuthRole", dict);
+                return PartialView("_AD_Role", dict);
             }
             else
                 return RedirectToAction("NoAccess", "Error");

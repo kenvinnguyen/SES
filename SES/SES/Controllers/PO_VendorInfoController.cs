@@ -20,7 +20,7 @@ using System.Data.SqlClient;
 using System.Globalization;
 namespace SES.Controllers
 {
-    public class VendorController : CustomController
+    public class PO_VendorInfoController : CustomController
     {
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public ActionResult PartialVendor()
@@ -33,7 +33,7 @@ namespace SES.Controllers
                 dict["activestatus"] = new CommonLib().GetActiveStatus();
                 dict["listProvince"] = dbConn.Select<Master_Territory>("SELECT TerritoryID, TerritoryID +'-'+ TerritoryName as TerritoryName FROM Master_Territory WHERE Level='Province'");
                 dbConn.Close();
-                return PartialView("_Vendor", dict);
+                return PartialView("_VendorInfo", dict);
             }
             else
                 return RedirectToAction("NoAccess", "Error");

@@ -7,9 +7,9 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using DecaInsight.Service;
+using SES.Service;
 
-namespace DecaInsight.Models
+namespace SES.Models
 {
     public class DC_LG_DeliverFee_Support
     {

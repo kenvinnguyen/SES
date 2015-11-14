@@ -8,10 +8,10 @@ $(document).ready(function () {
 
     resetMenu();
 
-    $("ul#menuLeft").find('li:last-child').addClass('open');
-    $("ul#menuLeft").find('li:last-child ul#ul_root_6').css('display', 'block');
-    $("ul#menuLeft").find('li:last-child ul#ul_root_6 ul#ul_item_2').css('display', 'block');
-    $("#menu_Vendor").parent().addClass('active');
+    $("ul#menuLeft").find('#ul_root_4').addClass('open');
+    $("ul#menuLeft").find('#ul_root_4').css('display', 'block');
+    $("ul#menuLeft").find('#ul_root_4 ul#ul_item_5').css('display', 'block');
+    $("#menu_PO_VendorInfo").parent().addClass('active');
 
     document.title = "Thông tin NCC";
     //fillter & form popup

@@ -88,7 +88,7 @@
         <div id="logo-group">
 
             <span id="logo">
-                <a href="@Url.Content("~/")"><img src="@Url.Content("~/img/logo_SEStop.png")" alt="SmartAdmin"></a>
+                <a href="@Url.Content("~/")"><img src="@Url.Content("~/img/logo-blue.png")" alt="SmartAdmin"></a>
             </span>
 
         </div>
@@ -155,20 +155,20 @@
     <aside id="left-panel">
 
         <!-- User info -->
-        <div class="login-info">
-            <span>
-                <!-- User image size is adjusted inside CSS, it should stay as it -->
+        @*<div class="login-info">
+        <span>
+            <!-- User image size is adjusted inside CSS, it should stay as it -->
 
-                <a href="javascript:void(0);" id="show-shortcut" data-action="toggleShortcut">
-                    <img src="@Url.Content("~/img/avatars/male.png")" alt="me" class="online" />
-                    <span>
-                        @User.Identity.Name
-                    </span>
-                    <i class="fa fa-angle-down"></i>
-                </a>
+           @* <a href="javascript:void(0);" id="show-shortcut" data-action="toggleShortcut">
+                <img src="@Url.Content("~/img/avatars/male.png")" alt="me" class="online" />
+                <span>
+                    @User.Identity.Name
+                </span>
+                <i class="fa fa-angle-down"></i>
+            </a>
 
-            </span>
-        </div>
+        </span>
+    </div>*@
         <!-- end user info -->
         <!-- NAVIGATION : This navigation is also responsive
 
