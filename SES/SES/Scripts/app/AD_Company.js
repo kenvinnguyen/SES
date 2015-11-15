@@ -6,7 +6,11 @@ var contentTab;
 $(document).ready(function () {
     //active menu
     resetMenu();
-    $("#menu_Company").parent().addClass('active');
+
+    $("ul#menuLeft").find('#ul_root_2').addClass('open');
+    $("ul#menuLeft").find('#ul_root_2').css('display', 'block');
+    $("ul#menuLeft").find('#ul_root_2 ul#ul_item_7').css('display', 'block');
+    $("#menu_AD_Company").parent().addClass('active');
 
     document.title = "Công ty";
     //fillter & form popup

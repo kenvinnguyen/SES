@@ -11,15 +11,11 @@ $(document).ready(function () {
         onLoadPage(r + "/Home/Partial");
         hideLoading();
     });
-    //Công ty
-    $("#menu_Company").click(function () {
-        onLoadPage(r + "/Company/PartialCompany");
-    });
+   
     //Nhân viên bán hàng
     $("#menu_SalesPerson").click(function () {
         onLoadPage(r + "/SalesPerson/PartialSalesPerson");
     });
-
     //phan quyen
     $("#menu_AD_Role").click(function () {
         onLoadPage(r + "/AD_Role/PartialRole");
@@ -28,9 +24,13 @@ $(document).ready(function () {
     $("#menu_AD_User").click(function () {
         onLoadPage(r + "/AD_User/PartialUser");
     });
-    //thong bao
-    $("#menu_HOAdminAuthAnnouncement").click(function () {
-        onLoadPage(r + "/HOAdminAuthAnnouncement/TreeView");
+    //Công ty
+    $("#menu_AD_Company").click(function () {
+        onLoadPage(r + "/AD_Company/PartialCompany");
+    });
+    //Thong Bao
+    $("#menu_AD_Announcement").click(function () {
+        onLoadPage(r + "/AD_Announcement/PartialAnnouncement");
     });
     //location
     $("#menu_Location").click(function () {
@@ -131,8 +131,6 @@ $(document).ready(function () {
 
     function resetMenu() {
         $("#menuLeft").find('li').removeClass('active').removeClass('open');
-        //$("#menuLeft").find('ul').css('display', 'none');
-        //$("#menuLeft").find('em').removeClass('fa-minus-square-o').addClass('fa-plus-square-o');
     }
     function resetMenuHomePage() {
         $("#menuLeft").find('li').removeClass('active').removeClass('open');

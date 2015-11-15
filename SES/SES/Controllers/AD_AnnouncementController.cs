@@ -23,7 +23,7 @@ namespace SES.Controllers
 {
     [Authorize]
     [NoCache]
-    public class HOAdminAuthAnnouncementController : CustomController
+    public class AD_AnnouncementController : CustomController
     {
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -96,7 +96,7 @@ namespace SES.Controllers
             }
             catch (Exception ex)
             {
-                log.Error("HOAdminAuthAnnouncement - Create - " + ex.Message);
+                log.Error("AD_Announcement - Create - " + ex.Message);
                 return Json(new { success = false, message = ex.Message });
             }
             finally
@@ -142,7 +142,7 @@ namespace SES.Controllers
 
         //=====================================================================================================        
 
-        public ActionResult TreeView()
+        public ActionResult PartialAnnouncement()
         {
             if (userAsset.ContainsKey("View") && userAsset["View"])
             {
@@ -151,7 +151,7 @@ namespace SES.Controllers
                 dict["asset"] = userAsset;
                 dict["activestatus"] = new CommonLib().GetActiveStatus();
                 dbConn.Close();
-                return PartialView("_HOAdminAuthAnnouncementTree", dict);
+                return PartialView("_AD_Announcement", dict);
             }
             else
                 return RedirectToAction("NoAccess", "Error");

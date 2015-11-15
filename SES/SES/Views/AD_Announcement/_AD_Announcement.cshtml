@@ -5,7 +5,7 @@
 }
 
 <script src="@Url.Content("~/Scripts/app/app.js")"></script>
-<script src="@Url.Content("~/Scripts/app/HOAdminAuthAnnouncement.js")"></script>
+<script src="@Url.Content("~/Scripts/app/AD_Announcement.js")"></script>
 
 @{
     var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
@@ -99,7 +99,7 @@
     <div class="row">
         <div id="popupImport">
             <div style="float:left;">
-                <form id="importform" action="@Url.Content("~/HOAdminAuthAnnouncement/Import")" method="post" enctype="multipart/form-data" style="margin-bottom:0px;">
+                <form id="importform" action="@Url.Content("~/AD_Announcement/Import")" method="post" enctype="multipart/form-data" style="margin-bottom:0px;">
                     <input type="file" name="FileUpload" />
                 </form>
             </div>
@@ -177,7 +177,7 @@
                             model.Id(p => p.AnnouncementID);
                         })
                         .Events(e => { e.RequestEnd("onRequestEnd"); e.RequestStart("onRequestStart"); })
-                                .Read(read => read.Action("Read", "HOAdminAuthAnnouncement"))
+                                .Read(read => read.Action("Read", "AD_Announcement"))
                     )
                     )
                 </div>
@@ -189,7 +189,7 @@
 
     <div id="popup" class="row" style="margin:0 auto">
 
-        @using (Html.BeginForm("Create", "HOAdminAuthAnnouncement", FormMethod.Post, new { @class = "smart-form", id = "formPopup", enctype = "multipart/form-data" }))
+        @using (Html.BeginForm("Create", "AD_Announcement", FormMethod.Post, new { @class = "smart-form", id = "formPopup", enctype = "multipart/form-data" }))
         {
             @Html.Hidden("CreatedAt");
             @Html.Hidden("CreatedBy");

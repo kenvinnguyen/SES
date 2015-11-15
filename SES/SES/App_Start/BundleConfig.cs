@@ -26,7 +26,7 @@ namespace SES
              "~/Scripts/app/app.js"));
            
             //nguoi dung
-            bundles.Add(new ScriptBundle("~/bundles/appUser").Include(
+            bundles.Add(new ScriptBundle("~/bundles/appAD_User").Include(
                 "~/Scripts/app/app.js",
                 "~/Scripts/app/AD_User.js"));
            
@@ -35,15 +35,6 @@ namespace SES
                 "~/Scripts/app/app.js",
                 "~/Scripts/app/AD_Role.js"));
            
-            //thong bao
-            bundles.Add(new ScriptBundle("~/bundles/appHOAdminAuthAnnouncement").Include(
-           "~/Scripts/app/app.js",
-           "~/Scripts/app/HOAdminAuthAnnouncement.js"));
-
-            //cac doan script duoc su dung lai
-            bundles.Add(new ScriptBundle("~/bundles/appHOAdminAuthAnnouncement").Include(
-          "~/Scripts/app/app.js",
-          "~/Scripts/app/HOAdminAuthAnnouncement.js"));
             //Phan cap vung mien
             bundles.Add(new ScriptBundle("~/bundles/appAdminMasterTerritory").Include(
                 "~/Scripts/app/app.js",

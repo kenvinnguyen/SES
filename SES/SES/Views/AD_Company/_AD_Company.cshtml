@@ -5,7 +5,7 @@
 }
 
 
-@Scripts.Render("~/Scripts/app/Company.js")
+@Scripts.Render("~/Scripts/app/AD_Company.js")
 @Scripts.Render("~/Scripts/app/app.js")
 @{
     var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
@@ -134,7 +134,7 @@
                             {
                                 toolBar.Custom()
                                         .Text("Xuất Excel")
-                                        .HtmlAttributes(new { @class = "btn btn-primary export", @style = "background-color:#428bca; color:white;" }).Url(Url.Action("Export", "Company", new { filter = "~", sort = "~", CompanyID = "~" }));
+                                        .HtmlAttributes(new { @class = "btn btn-primary export", @style = "background-color:#428bca; color:white;" }).Url(Url.Action("Export", "AD_Company", new { filter = "~", sort = "~", CompanyID = "~" }));
                             }
                         })
                     .Events(events => { events.DataBound("onDatabound"); })
@@ -152,7 +152,7 @@
                             model.Id(p => p.CompanyID);
                         })
                         //.Events(e => { e.RequestEnd("onRequestEnd"); e.RequestStart("onRequestStart"); })
-                        .Read(read => read.Action("Read", "Company"))
+                        .Read(read => read.Action("Read", "AD_Company"))
                     )
                     )
                 </div>
@@ -162,7 +162,7 @@
 
     <div id="popup" class="row" style="margin:0 auto">
         <div class="bordered">
-            @using (Html.BeginForm("Create", "Company", FormMethod.Post, new { @class = "smart-form", id = "formPopup", enctype = "multipart/form-data" }))
+            @using (Html.BeginForm("Create", "AD_Company", FormMethod.Post, new { @class = "smart-form", id = "formPopup", enctype = "multipart/form-data" }))
             {
                 @Html.Hidden("CreatedAt");
                 @Html.Hidden("CreatedBy");

@@ -10,11 +10,11 @@ $(document).ready(function () {
 
     //active menu
     resetMenu();
-    $("ul#menuLeft").find('li:eq(1)').addClass('open');
-    $("ul#menuLeft").find('li:eq(1) ul#ul_root_2').css('display', 'block');
-    $("ul#menuLeft").find('li:eq(1) ul#ul_root_2 ul#ul_item_1').css('display', 'block');
-    $("ul#menuLeft").find('li:eq(1) ul#ul_root_2 ul#ul_item_1 ul#ul_item2_2').css('display', 'block');
-    $("#menu_HOAdminAuthAnnouncement").parent().addClass('active');
+    $("ul#menuLeft").find('#ul_root_2').addClass('open');
+    $("ul#menuLeft").find('#ul_root_2').css('display', 'block');
+    $("ul#menuLeft").find('#ul_root_2 ul#ul_item_8').css('display', 'block');
+
+    $("#menu_AD_Announcement").parent().addClass('active');
 
     document.title = "Thông báo";
     loadToolbarStyle();
@@ -415,7 +415,7 @@ function onOpenPopup(key, obj) {
             $("#Title").focus();
         }, 500);
         showLoading();
-        $.post(r + "/HOAdminAuthAnnouncement/GetByID", { id: id }, function (data) {
+        $.post(r + "/AD_Announcement/GetByID", { id: id }, function (data) {
             if (data.success) {
                
                 var value = data.data;
@@ -482,7 +482,7 @@ function deleteSelected() {
         }, function (ButtonPressed) {
             if (ButtonPressed === "Có") {
                 
-                $.post(r + "/HOAdminAuthAnnouncement/Deactive", { data: checkedIds.toString() }, function (data) {
+                $.post(r + "/AD_Announcement/Deactive", { data: checkedIds.toString() }, function (data) {
                     if (data.success) {
                         
                         //$('#grid').attr('data-kendogrid-selected', '');
@@ -610,7 +610,7 @@ function onSaveForm() {
     var data = { AnnouncementID: AnnouncementID, Title: Title, HTMLContentView: editor_data, TextContent: TextContent, Status: Status, CreatedAt: CreatedAt };
     $("#loadingSaveForm").removeClass('hide');
     $("#btnSaveForm").attr('disabled', true);
-    $.post(r + "/HOAdminAuthAnnouncement/Create",
+    $.post(r + "/AD_Announcement/Create",
         { data: data }
         , function (data) {
         if (data.success) {

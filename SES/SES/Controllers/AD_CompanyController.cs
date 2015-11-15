@@ -21,7 +21,7 @@ using Dapper;
 
 namespace SES.Controllers
 {
-    public class CompanyController : CustomController
+    public class AD_CompanyController : CustomController
     {
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         //
@@ -36,7 +36,7 @@ namespace SES.Controllers
                 dict["activestatus"] = new CommonLib().GetActiveStatus();
                 dict["listCompany"] = dbConn.Select<Company>(p => p.Status == true);
                 dbConn.Close();
-                return PartialView("_Company", dict);
+                return PartialView("_AD_Company", dict);
             }
             else
                 return RedirectToAction("NoAccess", "Error");

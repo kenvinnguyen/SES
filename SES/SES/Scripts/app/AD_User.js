@@ -7,9 +7,9 @@ $(document).ready(function () {
     //active menu
     resetMenu();
 
-    $("ul#menuLeft").find('#ul_root_1').addClass('open');
-    $("ul#menuLeft").find('#ul_root_1').css('display', 'block');
-    $("ul#menuLeft").find('#ul_root_1 ul#ul_item_1').css('display', 'block');
+    $("ul#menuLeft").find('#ul_root_2').addClass('open');
+    $("ul#menuLeft").find('#ul_root_2').css('display', 'block');
+    $("ul#menuLeft").find('#ul_root_2 ul#ul_item_1').css('display', 'block');
     $("#menu_AD_User").parent().addClass('active');
 
     document.title = "Người dùng";
