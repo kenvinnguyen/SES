@@ -4,8 +4,8 @@
     var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
     var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
     var listActiveStatus = dict.ContainsKey("activestatus") ? (List<ActiveStatus>)dict["activestatus"] : new List<ActiveStatus>();
-    var listWareHouse = dict.ContainsKey("listWH") ? (List<DC_AD_WH>)dict["listWH"] : new List<DC_AD_WH>();
-    var listWareHouseLocation = dict.ContainsKey("listWHL") ? (List<DC_AD_WHL>)dict["listWHL"] : new List<DC_AD_WHL>();
+    var listWareHouse = dict.ContainsKey("listWH") ? (List<WareHouse>)dict["listWH"] : new List<WareHouse>();
+    var listWareHouseLocation = dict.ContainsKey("listWHL") ? (List<WareHouseLocation>)dict["listWHL"] : new List<WareHouseLocation>();
     var listUnit = dict.ContainsKey("listUnit") ? (List<DC_AD_Unit>)dict["listUnit"] : new List<DC_AD_Unit>();
     //var listMerchant = dict.ContainsKey("SONumber") ? dict["SONumber"].ToString() : "";
     var listSONumber = dict["SONumber"] != null ? dict["SONumber"].ToString() : "";

@@ -35,8 +35,8 @@ namespace SES.Controllers
                 dict["asset"] = userAsset;
                 dict["activestatus"] = new CommonLib().GetActiveStatus();
                 dict["user"] = dbConn.Select<Auth_User>(p => p.IsActive == true);
-                dict["listWH"] = dbConn.Select<DC_AD_WH>(p => p.Status == true);
-                dict["listWHL"] = dbConn.Select<DC_AD_WHL>(p => p.Status == true);
+                dict["listWH"] = dbConn.Select<WareHouse>(p => p.Status == true);
+                dict["listWHL"] = dbConn.Select<WareHouseLocation>(p => p.Status == true);
                 dict["listUnit"] = dbConn.Select<DC_AD_Unit>(p => p.Status == true);
                 dbConn.Close();
 
@@ -140,7 +140,7 @@ namespace SES.Controllers
             IDbConnection dbConn = new OrmliteConnection().openConn();
             try
             {
-                var data = dbConn.Select<DC_AD_WH>("Select * from DC_AD_WH");
+                var data = dbConn.Select<WareHouse>("Select * from WareHouse");
                 return Json(new { success = true, data = data });
             }
             catch (Exception e)
@@ -214,7 +214,7 @@ namespace SES.Controllers
                         //expenseSheet.Cells[rowData, i++].Value = item.RowLastUpdatedTime;
                     }
                     expenseSheet = excelPkg.Workbook.Worksheets["Warehouse"];
-                    var listWH = dbConn.Select<DC_AD_WH>("SELECT * FROM DC_AD_WH WHERE Status = 1");
+                    var listWH = dbConn.Select<WareHouse>("SELECT * FROM WareHouse WHERE Status = 1");
                     rowData = 1;
                     foreach (var item in listWH)
                     {
@@ -223,7 +223,7 @@ namespace SES.Controllers
                         expenseSheet.Cells[rowData, i++].Value = item.WHName + "/" + item.WHID;
                     }
                     expenseSheet = excelPkg.Workbook.Worksheets["Location"];
-                    var listWHL = dbConn.Select<DC_AD_WHL>("SELECT * FROM DC_AD_WHL WHERE Status = 1");
+                    var listWHL = dbConn.Select<WareHouseLocation>("SELECT * FROM WareHouseLocation WHERE Status = 1");
                     rowData = 1;
                     foreach (var item in listWHL)
                     {

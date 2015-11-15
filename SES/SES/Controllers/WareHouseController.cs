@@ -33,7 +33,7 @@ namespace SES.Controllers
                 dict["asset"] = userAsset;
                 dict["activestatus"] = new CommonLib().GetActiveStatus();
                 dict["user"] = dbConn.Select<Auth_User>(p => p.IsActive == true);
-                dict["listWH"] = dbConn.Select<DC_AD_WH>(p => p.Status == true);
+                dict["listWH"] = dbConn.Select<WareHouse>(p => p.Status == true);
                 dbConn.Close();
                 return PartialView("_WareHouse", dict);
             }
@@ -49,7 +49,7 @@ namespace SES.Controllers
             {
                 whereCondition = new KendoApplyFilter().ApplyFilter(request.Filters[0]);
             }
-            var data = dbConn.Select<DC_AD_WH>(whereCondition).ToList();
+            var data = dbConn.Select<WareHouse>(whereCondition).ToList();
             return Json(data.ToDataSourceResult(request));
         }
         public ActionResult ReadWHL([DataSourceRequest]DataSourceRequest request)
@@ -61,7 +61,7 @@ namespace SES.Controllers
             {
                 whereCondition = new KendoApplyFilter().ApplyFilter(request.Filters[0]);
             }
-            var data = dbConn.Select<DC_AD_WHL>(whereCondition).ToList();
+            var data = dbConn.Select<WareHouseLocation>(whereCondition).ToList();
             return Json(data.ToDataSourceResult(request));
         }
         public ActionResult ReadUnit([DataSourceRequest]DataSourceRequest request)
@@ -76,12 +76,12 @@ namespace SES.Controllers
             var data = dbConn.Select<DC_AD_Unit>(whereCondition).ToList();
             return Json(data.ToDataSourceResult(request));
         }
-        public ActionResult CreateWH(DC_AD_WH item)
+        public ActionResult CreateWH(WareHouse item)
         {
             IDbConnection db = new OrmliteConnection().openConn();
             try
             {
-                var isExist = db.SingleOrDefault<DC_AD_WH>("SELECT WHID, Id FROM dbo.DC_AD_WH Where WHID ='" + item.WHID + "'");
+                var isExist = db.SingleOrDefault<WareHouse>("SELECT WHID, Id FROM dbo.DC_AD_WH Where WHID ='" + item.WHID + "'");
                 if (userAsset.ContainsKey("Insert") && userAsset["Insert"] && item.CreatedAt == null && item.CreatedBy == null)
                 {
                     if (isExist != null)
@@ -89,7 +89,7 @@ namespace SES.Controllers
                         return Json(new { success = false, message = "Kho đã tồn tại." });
                     }
                     string id = "";
-                    var checkID = db.SingleOrDefault<DC_AD_WH>("SELECT WHID, Id FROM dbo.DC_AD_WH ORDER BY Id DESC");
+                    var checkID = db.SingleOrDefault<WareHouse>("SELECT WHID, Id FROM dbo.DC_AD_WH ORDER BY Id DESC");
                     if (checkID != null)
                     {
                         var nextNo = int.Parse(checkID.WHID.Substring(2, checkID.WHID.Length - 2)) + 1;
@@ -109,13 +109,13 @@ namespace SES.Controllers
                     item.UpdatedAt = DateTime.Parse("1900-01-01");
                     item.UpdatedBy = "";
                     item.Status = item.Status;
-                    db.Insert<DC_AD_WH>(item);
+                    db.Insert<WareHouse>(item);
 
                     return Json(new { success = true, Code = item.WHID, createdate = item.CreatedAt, createdby = item.CreatedBy });
                 }
                 else if (userAsset.ContainsKey("Update") && userAsset["Update"] && isExist != null)
                 {
-                    var success = db.Execute(@"UPDATE DC_AD_WH SET Status = @Status, Address=@Address,WHKeeper=@WHKeeper,
+                    var success = db.Execute(@"UPDATE WareHouse SET Status = @Status, Address=@Address,WHKeeper=@WHKeeper,
                     Note = @Note,  UpdatedAt = @UpdatedAt, UpdatedBy = @UpdatedBy, WHName=@WHName
                     WHERE WHID = '" + item.WHID + "'", new
                     {
@@ -145,12 +145,12 @@ namespace SES.Controllers
             }
             finally { db.Close(); }
         }
-        public ActionResult CreateWHL(DC_AD_WHL item)
+        public ActionResult CreateWHL(WareHouseLocation item)
         {
             IDbConnection db = new OrmliteConnection().openConn();
             try
             {
-                var isExist = db.SingleOrDefault<DC_AD_WHL>("SELECT WHLID, Id FROM dbo.DC_AD_WHL Where WHLID ='" + item.WHLID + "'");
+                var isExist = db.SingleOrDefault<WareHouseLocation>("SELECT WHLID, Id FROM dbo.WareHouseLocation Where WHLID ='" + item.WHLID + "'");
                 if (userAsset.ContainsKey("Insert") && userAsset["Insert"] && item.CreatedAt == null && item.CreatedBy == null)
                 {
                     if (isExist != null)
@@ -158,7 +158,7 @@ namespace SES.Controllers
                         return Json(new { success = false, message = "Vị trí kho đã tồn tại." });
                     }
                     string id = "";
-                    var checkID = db.SingleOrDefault<DC_AD_WHL>("SELECT WHLID, Id FROM dbo.DC_AD_WHL ORDER BY Id DESC");
+                    var checkID = db.SingleOrDefault<WareHouseLocation>("SELECT WHLID, Id FROM dbo.WareHouseLocation ORDER BY Id DESC");
                     if (checkID != null)
                     {
                         var nextNo = int.Parse(checkID.WHLID.Substring(3, checkID.WHLID.Length - 3)) + 1;
@@ -177,13 +177,13 @@ namespace SES.Controllers
                     item.UpdatedAt = DateTime.Parse("1900-01-01");
                     item.UpdatedBy = "";
                     item.Status = item.Status;
-                    db.Insert<DC_AD_WHL>(item);
+                    db.Insert<WareHouseLocation>(item);
 
                     return Json(new { success = true, Code = item.WHLID, createdate = item.CreatedAt, createdby = item.CreatedBy });
                 }
                 else if (userAsset.ContainsKey("Update") && userAsset["Update"] && isExist != null)
                 {
-                    var success = db.Execute(@"UPDATE DC_AD_WHL SET Status = @Status,
+                    var success = db.Execute(@"UPDATE WareHouseLocation SET Status = @Status,
                     Note = @Note,  UpdatedAt = @UpdatedAt, UpdatedBy = @UpdatedBy, WHLName = @WHLName, WHID = @WHID
                     WHERE WHLID = '" + item.WHLID + "'", new
                         {
@@ -290,15 +290,15 @@ namespace SES.Controllers
                     string fileName = "ThongTinKho_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".xlsx";
                     string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
-                    var data = new List<DC_AD_WH>();
+                    var data = new List<WareHouse>();
                     if (request.Filters.Any())
                     {
                         var where = new KendoApplyFilter().ApplyFilter(request.Filters[0]);
-                        data = dbConn.Select<DC_AD_WH>(where);
+                        data = dbConn.Select<WareHouse>(where);
                     }
                     else
                     {
-                        data = dbConn.Select<DC_AD_WH>();
+                        data = dbConn.Select<WareHouse>();
                     }
 
                     ExcelWorksheet expenseSheet = excelPkg.Workbook.Worksheets["Data"];
@@ -361,15 +361,15 @@ namespace SES.Controllers
                     string fileName = "ViTriKho_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".xlsx";
                     string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
-                    var data = new List<DC_AD_WHL>();
+                    var data = new List<WareHouseLocation>();
                     if (request.Filters.Any())
                     {
                         var where = new KendoApplyFilter().ApplyFilter(request.Filters[0],"data.");
-                        data = data = dbConn.Query<DC_AD_WHL>("p_SelectDC_AD_WHL_Export", new { WhereCondition = where }, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                        data = data = dbConn.Query<WareHouseLocation>("p_SelectWareHouseLocation_Export", new { WhereCondition = where }, commandType: System.Data.CommandType.StoredProcedure).ToList();
                     }
                     else
                     {
-                        data = data = dbConn.Query<DC_AD_WHL>("p_SelectDC_AD_WHL_Export", new { WhereCondition = "1=1" }, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                        data = data = dbConn.Query<WareHouseLocation>("p_SelectWareHouseLocation_Export", new { WhereCondition = "1=1" }, commandType: System.Data.CommandType.StoredProcedure).ToList();
                     }
 
                     ExcelWorksheet expenseSheet = excelPkg.Workbook.Worksheets["Data"];
@@ -405,7 +405,7 @@ namespace SES.Controllers
                         }
                     }
                     expenseSheet = excelPkg.Workbook.Worksheets["Kho"];
-                    var listWH = dbConn.Select<DC_AD_WH>("SELECT * FROM DC_AD_WH WHERE Status = 1");
+                    var listWH = dbConn.Select<WareHouse>("SELECT * FROM WareHouse WHERE Status = 1");
                     rowData = 1;
                     foreach (var item in listWH)
                     {
@@ -680,7 +680,7 @@ namespace SES.Controllers
                                 }
                                 else
                                 {
-                                    var checkexists = dbConn.SingleOrDefault<DC_AD_WHL>("SELECT * FROM DC_AD_WHL WHERE WHLID = '" + ID + "'");
+                                    var checkexists = dbConn.SingleOrDefault<WareHouseLocation>("SELECT * FROM WareHouseLocation WHERE WHLID = '" + ID + "'");
                                     if (checkexists != null)
                                     {
                                         checkexists.WHLID = ID;
@@ -690,12 +690,12 @@ namespace SES.Controllers
                                         checkexists.Status = Boolean.Parse(Status);
                                         checkexists.UpdatedAt = DateTime.Now;
                                         checkexists.UpdatedBy = currentUser.UserID;
-                                        dbConn.Update<DC_AD_WHL>(checkexists);
+                                        dbConn.Update<WareHouseLocation>(checkexists);
                                     }
                                     else
                                     {
                                         string id = "";
-                                        var checkID = dbConn.SingleOrDefault<DC_AD_WHL>("SELECT WHLID, Id FROM dbo.DC_AD_WHL ORDER BY Id DESC");
+                                        var checkID = dbConn.SingleOrDefault<WareHouseLocation>("SELECT WHLID, Id FROM dbo.WareHouseLocation ORDER BY Id DESC");
                                         if (checkID != null)
                                         {
                                             var nextNo = int.Parse(checkID.WHLID.Substring(3, checkID.WHLID.Length - 3)) + 1;
@@ -705,7 +705,7 @@ namespace SES.Controllers
                                         {
                                             id = "WHL00000001";
                                         }
-                                        var item = new DC_AD_WHL();
+                                        var item = new WareHouseLocation();
                                         item.WHLID = id;
                                         item.WHLName = !string.IsNullOrEmpty(Name) ? Name.Trim() : "";
                                         item.Note = !string.IsNullOrEmpty(Note) ? Note.Trim() : "";
@@ -715,7 +715,7 @@ namespace SES.Controllers
                                         item.UpdatedAt = DateTime.Parse("1900-01-01");
                                         item.UpdatedBy = "";
                                         item.Status = Boolean.Parse(Status);
-                                        dbConn.Insert<DC_AD_WHL>(item);
+                                        dbConn.Insert<WareHouseLocation>(item);
                                     }
                                     total++;
                                 }
@@ -807,7 +807,7 @@ namespace SES.Controllers
                                 }
                                 else
                                 {
-                                    var checkexists = dbConn.SingleOrDefault<DC_AD_WH>("SELECT * FROM DC_AD_WH WHERE WHID = '" + ID + "'");
+                                    var checkexists = dbConn.SingleOrDefault<WareHouse>("SELECT * FROM DC_AD_WH WHERE WHID = '" + ID + "'");
                                     if (checkexists != null)
                                     {
                                         checkexists.WHID = ID;
@@ -818,12 +818,12 @@ namespace SES.Controllers
                                         checkexists.Status = Boolean.Parse(Status);
                                         checkexists.UpdatedAt = DateTime.Now;
                                         checkexists.UpdatedBy = currentUser.UserID;
-                                        dbConn.Update<DC_AD_WH>(checkexists);
+                                        dbConn.Update<WareHouse>(checkexists);
                                     }
                                     else
                                     {
                                         string id = "";
-                                        var checkID = dbConn.SingleOrDefault<DC_AD_WH>("SELECT WHID, Id FROM dbo.DC_AD_WH ORDER BY Id DESC");
+                                        var checkID = dbConn.SingleOrDefault<WareHouse>("SELECT WHID, Id FROM dbo.DC_AD_WH ORDER BY Id DESC");
                                         if (checkID != null)
                                         {
                                             var nextNo = int.Parse(checkID.WHID.Substring(2, checkID.WHID.Length - 2)) + 1;
@@ -833,7 +833,7 @@ namespace SES.Controllers
                                         {
                                             id = "WH00000001";
                                         }
-                                        var item = new DC_AD_WH();
+                                        var item = new WareHouse();
                                         item.WHID = id;
                                         item.WHName = !string.IsNullOrEmpty(Name) ? Name.Trim() : "";
                                         item.Note = !string.IsNullOrEmpty(Note) ? Note.Trim() : "";
@@ -844,7 +844,7 @@ namespace SES.Controllers
                                         item.UpdatedAt = DateTime.Parse("1900-01-01");
                                         item.UpdatedBy = "";
                                         item.Status = Boolean.Parse(Status);
-                                        dbConn.Insert<DC_AD_WH>(item);
+                                        dbConn.Insert<WareHouse>(item);
                                     }
                                     total++;
                                 }

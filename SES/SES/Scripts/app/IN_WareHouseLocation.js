@@ -1,5 +1,14 @@
-﻿
+﻿var numHeight = 290;
+
 $(document).ready(function () {
+
+    resetMenu();
+
+    $("ul#menuLeft").find('#ul_root_3').addClass('open');
+    $("ul#menuLeft").find('#ul_root_3').css('display', 'block');
+    $("ul#menuLeft").find('#ul_root_3 ul#ul_item_3').css('display', 'block');
+    $("#menu_IN_WareHouseLocation").parent().addClass('active');
+
     //fillter & form popup
     $("#selectStatus_search").select2();
     $("#s2id_selectStatus_search").css('width', '100%');
@@ -294,4 +303,11 @@ function doSearchWHL() {
     }
 
     grid.dataSource.filter(filter);
+}
+function resizeOtherGrid(number, gridE) {
+
+    var h_search = $(".divSearch").height();
+    var h = parseInt($(window).height()) - h_search;
+    var content = gridE.find(".k-grid-content");
+    content.height(h - number);
 }

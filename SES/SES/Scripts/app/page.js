@@ -32,6 +32,17 @@ $(document).ready(function () {
     $("#menu_AD_Announcement").click(function () {
         onLoadPage(r + "/AD_Announcement/PartialAnnouncement");
     });
+
+    //2.Kho
+    $("#menu_IN_WareHouse").click(function () {
+        //debugger;
+        onLoadPage(r + "/IN_WareHouse/PartialWH");
+    });
+    //3.Vi Tri Kho
+    $("#menu_IN_WareHouseLocation").click(function () {
+        //debugger;
+        onLoadPage(r + "/IN_WareHouseLocation/PartialWHL");
+    });
     //location
     $("#menu_Location").click(function () {
         onLoadPage(r + "/Location/PartialLocation");
@@ -49,13 +60,15 @@ $(document).ready(function () {
         onLoadPage(r + "/AdminMasterTerritory/PartialOthersTerritory");
     });
    
+
     //Kho ấn phẩm
     $("#menu_ListPublication").click(function () {
         onLoadPage(r + "/ListPublication/PartialRole");
     });
+
     //Kho và đơn vị tính
     $("#menu_WareHouse").click(function () {
-        onLoadPage(r + "/WareHouse/PartialRole");
+        onLoadPage(r + "/WareHouse/PartialWH");
     });
     //Mu hàng
     $('#menu_SalesOrder').click(function () {

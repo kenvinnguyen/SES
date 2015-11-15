@@ -12,7 +12,7 @@ using SES.Service;
 
 namespace SES.Models
 {
-    public class DC_AD_WHL
+    public class WareHouseLocation
     {
         [AutoIncrement]
         public int Id { get; set; }

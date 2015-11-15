@@ -4,8 +4,12 @@ var indexTabstripActive = -1;
 var contentTab;
 $(document).ready(function () {
    
-    resetMenu()
-    $("#menu_WareHouse").parent().addClass('active');
+    resetMenu();
+
+    $("ul#menuLeft").find('#ul_root_3').addClass('open');
+    $("ul#menuLeft").find('#ul_root_3').css('display', 'block');
+    $("ul#menuLeft").find('#ul_root_3 ul#ul_item_2').css('display', 'block');
+    $("#menu_IN_WareHouse").parent().addClass('active');
 
     document.title = "Danh mục kho";
     //fillter & form popup

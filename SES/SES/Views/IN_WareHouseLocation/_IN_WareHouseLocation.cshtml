@@ -2,7 +2,7 @@
 @{
     ViewBag.Title = "Danh mục ấn phẩm";
 }
-<script src="~/Scripts/app/WareHouseLocation.js"></script>
+<script src="~/Scripts/app/IN_WareHouseLocation.js"></script>
 @{
     var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
     var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
@@ -58,7 +58,7 @@
 
     <div class="jarviswidget">
         <header>
-            <h2 style="color:#6fb3e0">Danh mục ấn phẩm</h2>
+            <h2 style="color:#6fb3e0">Vị Trí Kho</h2>
         </header>
         <div class="row">
             <article class="col-sm-12">
@@ -91,7 +91,7 @@
                             {
                                 toolBar.Custom()
                                         .Text("Xuất Excel")
-                                        .HtmlAttributes(new { @class = "btn btn-primary export", @style = "background-color:#428bca; color:white;" }).Url(Url.Action("ExportWHL", "WareHouse", new { filter = "~", sort = "~" }));
+                                        .HtmlAttributes(new { @class = "btn btn-primary export", @style = "background-color:#428bca; color:white;" }).Url(Url.Action("ExportWHL", "IN_WareHouseLocation", new { filter = "~", sort = "~" }));
                             }
                             if (asset.ContainsKey("Import") && asset["Import"])
                             {
@@ -116,7 +116,7 @@
                             model.Id(p => p.Id);
                         })
                         //.Events(e => { e.RequestEnd("onRequestEnd"); e.RequestStart("onRequestStart"); })
-                        .Read(read => read.Action("ReadWHL", "WareHouse"))
+                        .Read(read => read.Action("ReadWHL", "IN_WareHouseLocation"))
                     )
                     )
                 </div>
@@ -125,7 +125,7 @@
     </div>
     <div id="popupWHL" class="row" style="margin:0 auto">
         <div class="bordered">
-            @using (Html.BeginForm("CreateWHL", "WareHouse", FormMethod.Post, new { @class = "smart-form", id = "formPopupWHL", enctype = "multipart/form-data" }))
+            @using (Html.BeginForm("CreateWHL", "IN_WareHouseLocation", FormMethod.Post, new { @class = "smart-form", id = "formPopupWHL", enctype = "multipart/form-data" }))
             {
                 @Html.Hidden("CreatedAt", "", new { @id = "CreatedAtWHL" });
                 @Html.Hidden("CreatedBy", "", new { @id = "CreatedByWHL" });
@@ -193,7 +193,7 @@
     <div class="row">
         <div id="popupImportWHL">
             <div style="float:left;">
-                <form id="importformWHL" action="@Url.Content("~/WareHouse/ImportWHL")" method="post" enctype="multipart/form-data" style="margin-bottom:0px;">
+                <form id="importformWHL" action="@Url.Content("~/IN_WareHouseLocation/ImportWHL")" method="post" enctype="multipart/form-data" style="margin-bottom:0px;">
                     <input type="file" name="FileUpload" />
                 </form>
             </div>

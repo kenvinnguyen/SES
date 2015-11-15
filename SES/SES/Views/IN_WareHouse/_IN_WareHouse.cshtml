@@ -1,17 +1,17 @@
 ﻿@using SES.Models;
+
 @{
-    ViewBag.Title = "Danh mục ấn phẩm";
+    ViewBag.Title = "Kho";
 }
-<script src="~/Scripts/app/WareHouseLocation.js"></script>
+@Scripts.Render("~/Scripts/app/IN_WareHouse.js")
 @{
     var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
     var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
     var listActiveStatus = dict.ContainsKey("activestatus") ? (List<ActiveStatus>)dict["activestatus"] : new List<ActiveStatus>();
     var listRole = dict.ContainsKey("listrole") ? (List<Auth_Role>)dict["listrole"] : new List<Auth_Role>();
-    var listWareHouse = dict.ContainsKey("listWH") ? (List<WareHouse>)dict["listWH"] : new List<WareHouse>();
 }
-
 <section>
+    <!--Tìm kiếm-->
     @if (Auth_Action.AssetResult(asset, "Search"))
     {
         <div class="row divSearch">
@@ -26,11 +26,11 @@
                             <form class="smart-form">
                                 <fieldset>
                                     <div class="row">
-                                        @if (Auth_Action.AssetResult(asset, "WHLName"))
+                                        @if (Auth_Action.AssetResult(asset, "WHName"))
                                         {
                                             <section class="col col-3">
                                                 <label class="input">
-                                                    <input type="text" class="input-xs" id="txtWHLname" placeholder="Vị trí kho">
+                                                    <input type="text" class="input-xs" id="txtWHName" placeholder="Tên kho">
                                                 </label>
                                             </section>
                                         }
@@ -38,12 +38,12 @@
                                         {
                                             <section class="col col-3search">
                                                 <label class="select">
-                                                    @Html.DropDownList("selectStatus_searchWHL", new SelectList(listActiveStatus, "StatusValue", "StatusName"), "-- Chọn trạng thái --")
+                                                    @Html.DropDownList("selectStatus_search", new SelectList(listActiveStatus, "StatusValue", "StatusName"), "-- Chọn trạng thái --")
                                                 </label>
                                             </section>
                                         }
                                         <section class="col col-3search">
-                                            <a class="k-button k-button-icontext btn_customSearch" href="javascript:void(0);" onclick="doSearchWHL()">Tìm kiếm</a>
+                                            <a class="k-button k-button-icontext btn_customSearch" href="javascript:void(0);" onclick="doSearch()">Tìm kiếm</a>
                                         </section>
                                     </div>
                                 </fieldset>
@@ -53,9 +53,9 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     }
-
+    <!---->
     <div class="jarviswidget">
         <header>
             <h2 style="color:#6fb3e0">Danh mục ấn phẩm</h2>
@@ -63,18 +63,41 @@
         <div class="row">
             <article class="col-sm-12">
                 <div class="widget-body">
-                    @(Html.Kendo().Grid<SES.Models.WareHouseLocation>()
-                    .Name("gridWHL")
+                    @(Html.Kendo().Grid<SES.Models.WareHouse>()
+                    .Name("gridWH")
                     .Columns(columns =>
                     {
-                        columns.Bound(p => p.WHLID).HtmlAttributes(new { data_id = "#=WHLID#", onclick = "onOpenPopupWHL(1,this)", @style = "color:\\#428bca;cursor:pointer;text-decoration:underline" }).Title("Mã kho").Width(110);
-                        columns.Bound(p => p.WHLName).Title("Vị trí kho").HtmlAttributes(new { data_column = "WHName" }).Width(150);
-                        columns.ForeignKey(p => p.WHID, (System.Collections.IEnumerable)listWareHouse, "WHID", "WHName").Title("Tên kho").Width(150);
-                        //columns.Bound(p => p.WHID).Title("Tên kho").HtmlAttributes(new { data_column = "WHID" }).Width(150);
-                        columns.Bound(p => p.Note).Title("Ghi chú").HtmlAttributes(new { data_column = "Note" }).Width(130);
-                        columns.Bound(p => p.Status).Title("Trạng thái").HtmlAttributes(new { data_column = "Status" }).Width(130).ClientTemplate("#if(kendo.toString(Status)){#" + "#='Đang hoạt động'#" + "#}else{#" + "#='Ngưng hoạt động'#" + "#} #");
+                        if (asset.ContainsKey("Update") && asset["Update"])
+                        {
+                            columns.Bound(p => p.WHID).HtmlAttributes(new { data_id = "#=WHID#", onclick = "onOpenPopup(1,this)", @style = "color:\\#428bca;cursor:pointer;text-decoration:underline" }).Title("Mã kho").Width(110);
+                        }
+                        else
+                        {
+                            columns.Bound(p => p.WHName).Title("Tên kho").Width(100);
+                        }
+                        if (Auth_Action.AssetResult(asset, "WHName"))
+                        {
+                            columns.Bound(p => p.WHName).Title("Tên kho").HtmlAttributes(new { data_column = "WHName" }).Width(150);
+                        }
+                        if (Auth_Action.AssetResult(asset, "Address"))
+                        {
+                            columns.Bound(p => p.Address).Title("Địa chỉ").HtmlAttributes(new { data_column = "Address" }).Width(150);
+                        }
+                        if (Auth_Action.AssetResult(asset, "WHKeeper"))
+                        {
+                            columns.Bound(p => p.WHKeeper).Title("Thủ kho").HtmlAttributes(new { data_column = "WHKeeper" }).Width(150);
+                        }
+                        if (Auth_Action.AssetResult(asset, "Note"))
+                        {
+                            columns.Bound(p => p.Note).Title("Ghi chú").Width(150);
+                        }
+                        
+                        if (Auth_Action.AssetResult(asset, "Status"))
+                        {
+                            columns.Bound(p => p.Status).Title("Trạng thái").HtmlAttributes(new { data_column = "Status" }).Width(130).ClientTemplate("#if(kendo.toString(Status)){#" + "#='Đang hoạt động'#" + "#}else{#" + "#='Ngưng hoạt động'#" + "#} #");
+                        }
                         columns.Bound(p => p.CreatedBy).Title("Người tạo").Width(110);
-                        columns.Bound(p => p.CreatedAt).Width(110).Format("{0:dd/MM/yyyy}").HtmlAttributes(new { style = "text-align:right" }).Title("Ngày tạo");
+                        columns.Bound(p => p.CreatedAt).Width(110).Format("{0:dd/MM/yyyy}").HtmlAttributes(new { style = "text-align:right" }).Title("Ngày tạo").Width(110);
                         columns.Bound(p => p.UpdatedBy).Title("Người cập nhập").Width(110);
                         //columns.Bound(p => p.UpdatedAt).Title("Ngày cập nhập").Width(110);
                         columns.Bound(o => o.UpdatedAt).Title("Ngày cập nhập").Format("{0:dd/MM/yyyy}").Width(110).ClientTemplate("#if(kendo.toString(UpdatedAt,'dd/MM/yyyy') != '01/01/1900'){#" + "#= kendo.toString(UpdatedAt,'dd/MM/yyyy') #" + "#}#");
@@ -85,23 +108,23 @@
                             {
                                 toolBar.Custom()
                                         .Text("Thêm mới")
-                                        .HtmlAttributes(new { id = "btnInsertWHL", @class = "btn btn-success", @style = "background-color:#87b87f; color:white;", onclick = "onOpenPopupWHL(0,this)", @href = "javascript:void(0)" });
+                                        .HtmlAttributes(new { id = "btnInsert", @class = "btn btn-success", @style = "background-color:#87b87f; color:white;", onclick = "onOpenPopup(0,this)", @href = "javascript:void(0)" });
                             }
                             if (asset.ContainsKey("Export") && asset["Export"])
                             {
                                 toolBar.Custom()
                                         .Text("Xuất Excel")
-                                        .HtmlAttributes(new { @class = "btn btn-primary export", @style = "background-color:#428bca; color:white;" }).Url(Url.Action("ExportWHL", "WareHouse", new { filter = "~", sort = "~" }));
+                                        .HtmlAttributes(new { @class = "btn btn-primary export", @style = "background-color:#428bca; color:white;" }).Url(Url.Action("ExportWH", "IN_WareHouse", new { filter = "~", sort = "~" }));
                             }
                             if (asset.ContainsKey("Import") && asset["Import"])
                             {
                                 toolBar.Custom()
                                         .Text("Nhập Excel")
-                                        .HtmlAttributes(new { @class = "btn btn-info", @style = "background-color:#9585bf; color:white;", onclick = "openImportWHL()", @href = "javascript:void(0)" });
+                                        .HtmlAttributes(new { @class = "btn btn-info", @style = "background-color:#9585bf; color:white;", onclick = "openImport()", @href = "javascript:void(0)" });
                             }
 
                         })
-                    .Events(events => { events.DataBound("onDataboundWHL"); })
+                    .Events(events => { events.DataBound("onDatabound"); })
                     .Pageable(pager => pager.PageSizes(new[] { 20, 100, 200, 300 }))
                     .Resizable(r => r.Columns(true))
                     .Navigatable()
@@ -113,54 +136,46 @@
                         .PageSize(100)
                         .Model(model =>
                         {
-                            model.Id(p => p.Id);
+                            model.Id(p => p.WHID);
                         })
                         //.Events(e => { e.RequestEnd("onRequestEnd"); e.RequestStart("onRequestStart"); })
-                        .Read(read => read.Action("ReadWHL", "WareHouse"))
+                                .Read(read => read.Action("ReadWH", "IN_WareHouse"))
                     )
                     )
                 </div>
             </article>
         </div>
+
     </div>
-    <div id="popupWHL" class="row" style="margin:0 auto">
+    <!--From tạo mới, cập nhật-->
+    <div id="popup" class="row" style="margin:0 auto">
         <div class="bordered">
-            @using (Html.BeginForm("CreateWHL", "WareHouse", FormMethod.Post, new { @class = "smart-form", id = "formPopupWHL", enctype = "multipart/form-data" }))
+            @using (Html.BeginForm("CreateWH", "IN_WareHouse", FormMethod.Post, new { @class = "smart-form", id = "formPopup", enctype = "multipart/form-data" }))
             {
-                @Html.Hidden("CreatedAt", "", new { @id = "CreatedAtWHL" });
-                @Html.Hidden("CreatedBy", "", new { @id = "CreatedByWHL" });
+                @Html.Hidden("CreatedAt");
+                @Html.Hidden("CreatedBy");
                 <fieldset style="float: left; width: 370px; padding-left: 0px; padding-right: 0px;">
                     <section style="display:none; float:left;"></section>
                     <section style="float:left;">
                         <div style="float: left; width: 120px; margin-left:0;">
-                            <label class="label" style="float:right">Vị trí kho (*)</label>
+                            <label class="label" style="float:right;">Tên kho (*)</label>
                         </div>
                         <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
                             <label class="input" style="float:right;width:240px;">
-                                @Html.TextBox("WHLName", "", new { @class = "input-xs popup_text_right", placeholder = "Vị trí kho" })
-                                <b class="tooltip tooltip-top-right">Vị trí kho </b>
+                                @Html.TextBox("WHName", "", new { @class = "input-xs popup_text_right", placeholder = "Tên kho" })
+                                <b class="tooltip tooltip-top-right">Tên kho</b>
                             </label>
                             <div style="clear:both"></div>
                         </div>
                     </section>
                     <section style="float:left;">
                         <div style="float: left; width: 120px; margin-left:0;">
-                            <label class="label" style="float:right">Kho</label>
+                            <label class="label" style="float:right;">Thủ kho</label>
                         </div>
                         <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
-                            <label class="select" style="float: right">
-                                @Html.DropDownList("WHID", new SelectList(listWareHouse, "WHID", "WHName"), "Chọn kho", new { @id = "LocationID" })
-                            </label>
-                            <div style="clear:both"></div>
-                        </div>
-                    </section>
-                    <section style="float:left;">
-                        <div style="float: left; width: 120px; margin-left:0;">
-                            <label class="label" style="float:right">Ghi chú</label>
-                        </div>
-                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
-                            <label class="textarea textarea-resizable" style="float:right;width:240px;">
-                                @Html.TextArea("Note", "", new { @class = "input-xs popup_text_left", placeholder = "Ghi chú", @id = "NoteWHL" })
+                            <label class="input" style="float:right;width:240px;">
+                                @Html.TextBox("WHKeeper", "", new { @class = "input-xs popup_text_right", placeholder = "Thủ kho" })
+                                
                             </label>
                             <div style="clear:both"></div>
                         </div>
@@ -177,9 +192,31 @@
                             <div style="clear:both"></div>
                         </div>
                     </section>
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right">Địa chỉ</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="textarea textarea-resizable" style="float:right;width:240px;">
+                                @Html.TextArea("Address", "", new { @class = "input-xs popup_text_left", placeholder = "Địa chỉ" })
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
+                    <section style="float:left;">
+                        <div style="float: left; width: 120px; margin-left:0;">
+                            <label class="label" style="float:right">Ghi chú</label>
+                        </div>
+                        <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                            <label class="textarea textarea-resizable" style="float:right;width:240px;">
+                                @Html.TextArea("Note", "", new { @class = "input-xs popup_text_left", placeholder = "Ghi chú" })
+                            </label>
+                            <div style="clear:both"></div>
+                        </div>
+                    </section>
                 </fieldset>
                 @*<fieldset id="popupContent" style="float: left; width: 370px; border: none; padding-right:0;">
-
+                    
                 </fieldset>*@
                 <div style="clear:both"></div>
                 <footer>
@@ -189,18 +226,18 @@
             }
         </div>
     </div>
-
-    <div class="row">
-        <div id="popupImportWHL">
-            <div style="float:left;">
-                <form id="importformWHL" action="@Url.Content("~/WareHouse/ImportWHL")" method="post" enctype="multipart/form-data" style="margin-bottom:0px;">
-                    <input type="file" name="FileUpload" />
-                </form>
+    <!--Import-->
+        <div class="row">
+            <div id="popupImport">
+                <div style="float:left;">
+                    <form id="importform" action="@Url.Content("~/WareHouse/ImportWH")" method="post" enctype="multipart/form-data" style="margin-bottom:0px;">
+                        <input type="file" name="FileUpload" />
+                    </form>
+                </div>
+                <div style="float:right;">
+                    <a class="k-button k-button-icontext btn_custom" href="javascript:void(0);" onclick="beginImport()">Nhập</a>
+                </div>
+                <div style="clear:both"></div>
             </div>
-            <div style="float:right;">
-                <a class="k-button k-button-icontext btn_custom" href="javascript:void(0);" onclick="beginImportWHL()">Nhập</a>
-            </div>
-            <div style="clear:both"></div>
         </div>
-    </div>
 </section>

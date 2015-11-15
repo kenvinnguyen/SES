@@ -3,7 +3,7 @@
 @{
     ViewBag.Title = "Kho";
 }
-@Scripts.Render("~/Scripts/app/WareHouse.js")
+@Scripts.Render("~/Scripts/app/IN_WareHouse.js")
 @{
     var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
     var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
@@ -63,7 +63,7 @@
         <div class="row">
             <article class="col-sm-12">
                 <div class="widget-body">
-                    @(Html.Kendo().Grid<SES.Models.DC_AD_WH>()
+                    @(Html.Kendo().Grid<SES.Models.WareHouse>()
                     .Name("gridWH")
                     .Columns(columns =>
                     {
