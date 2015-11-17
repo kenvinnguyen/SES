@@ -1,0 +1,133 @@
+﻿
+@using SES.Models;
+
+@{
+    ViewBag.Title = "Danh mục ấn phẩm";
+}
+
+@Scripts.Render("~/Scripts/app/OP_SalesOrder.js")
+@{
+    var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
+    var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
+    var listActiveStatus = dict.ContainsKey("activestatus") ? (List<ActiveStatus>)dict["activestatus"] : new List<ActiveStatus>();
+    var listWareHouse = dict.ContainsKey("listWH") ? (List<WareHouse>)dict["listWH"] : new List<WareHouse>();
+    var listWareHouseLocation = dict.ContainsKey("listWHL") ? (List<WareHouseLocation>)dict["listWHL"] : new List<WareHouseLocation>();
+    var listMerchant = dict.ContainsKey("listVendor") ? (List<Vendor>)dict["listVendor"] : new List<Vendor>();
+}
+<section>
+    @if (Auth_Action.AssetResult(asset, "Search"))
+    {
+        <div class="row divSearch">
+            <div class="col-sm-12">
+                <div class="jarviswidget" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-deletebutton="false">
+                    <header>
+                        @*<span class="widget-icon"> <i class="fa fa-search"></i> </span>*@
+                        <h2 style="color:#6fb3e0">Tìm kiếm</h2>
+                    </header>
+                    <div>
+                        <div class="widget-body no-padding">
+                            <form class="smart-form">
+                                <fieldset>
+                                    <div class="row">
+                                        @if (Auth_Action.AssetResult(asset, "Name"))
+                                        {
+                                            <section class="col col-3">
+                                                <label class="input">
+                                                    <input type="text" class="input-xs" id="txtNumberSO" placeholder="Số SO">
+                                                </label>
+                                            </section>
+                                        }
+                                        <section class="col col-3">
+                                            <label class="input">
+                                                <input id="SODate" placeholder="Ngày tạo SO" class="input-xs">
+                                            </label>
+                                        </section>
+                                        @if (Auth_Action.AssetResult(asset, "Status"))
+                                        {
+                                            <section class="col col-3search">
+                                                <label class="select">
+                                                    @Html.DropDownList("selectStatus_search", new SelectList(listActiveStatus, "StatusValue", "StatusName"), "-- Chọn trạng thái --")
+                                                </label>
+                                            </section>
+                                        }
+                                        <section class="col col-3search">
+                                            <a class="k-button k-button-icontext btn_customSearch" href="javascript:void(0);" onclick="doSearch()">Tìm kiếm</a>
+                                        </section>
+                                    </div>
+                                </fieldset>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <!--Gird-->
+    <div class="jarviswidget">
+        <header>
+            <h2 style="color:#6fb3e0">Danh mục ấn phẩm</h2>
+        </header>
+        <div class="row">
+            <article class="col-sm-12">
+                <div class="widget-body">
+                    @(Html.Kendo().Grid<SES.Models.SOHeader>()
+                    .Name("gridHeader")
+                    .Columns(columns =>
+                    {
+                        columns.Bound(p => p.SONumber).HtmlAttributes(new { data_id = "#=SONumber#", onclick = "onOpenPopupDetail(this)", @style = "color:\\#428bca;cursor:pointer;text-decoration:underline" }).Title("Mã yêu cầu").Width(110);
+                        columns.Bound(p => p.SONumber).Hidden();
+                        columns.Bound(p => p.SODate).Title("Ngày tạo yêu cầu").Width(130).Format("{0:dd/MM/yyyy}");
+                        columns.Bound(p => p.TotalQty).Title("Số lượng").Width(90).HtmlAttributes(new { @style = "text-align:right;" }).Format("{0:N0}"); 
+                        columns.Bound(p => p.TotalAmt).Title("Tổng tiền").Width(90).HtmlAttributes(new { @style="text-align:right;"}).Format("{0:N0}");
+                        columns.Bound(p => p.Note).Title("Ghi chú").Width(180);
+                        columns.Bound(p => p.Status).Title("Trạng thái").Width(90);
+                        columns.ForeignKey(p => p.MerchantID, (System.Collections.IEnumerable)listMerchant, "VendorID", "VendorName").Title("NCC").Width(150);
+                        columns.ForeignKey(p => p.WHID, (System.Collections.IEnumerable)listWareHouse, "WHID", "WHName").Title("Kho").Width(130);
+                        columns.ForeignKey(p => p.WHLID, (System.Collections.IEnumerable)listWareHouseLocation, "WHLID", "WHLName").Title("Vị trí kho").Width(150);           
+                        columns.Bound(p => p.CreatedBy).Title("Người tạo").Width(110);
+                        columns.Bound(p => p.CreatedAt).Width(110).Format("{0:dd/MM/yyyy}").HtmlAttributes(new { style = "text-align:right" }).Title("Ngày tạo").Width(110);
+                        columns.Bound(p => p.UpdatedBy).Title("Người cập nhập").Width(110);
+                        columns.Bound(o => o.UpdatedAt).Title("Ngày cập nhập").Format("{0:dd/MM/yyyy}").Width(110).ClientTemplate("#if(kendo.toString(UpdatedAt,'dd/MM/yyyy') != '01/01/1900'){#" + "#= kendo.toString(UpdatedAt,'dd/MM/yyyy') #" + "#}#");
+
+                    })
+                    .ToolBar(toolBar =>
+                    {
+                        if (asset.ContainsKey("Insert") && asset["Insert"])
+                        {
+                            toolBar.Custom()
+                                    .Text("Thêm mới")
+                                    .HtmlAttributes(new { id = "btnInsertHeader", @class = "btn btn-success", @style = "background-color:#87b87f; color:white;", onclick = "Create()", @href = "javascript:void(0)" });
+                        }
+                        if (asset.ContainsKey("Export") && asset["Export"])
+                        {
+                            toolBar.Custom()
+                                    .Text("Xuất Excel")
+                                    .HtmlAttributes(new { @class = "btn btn-primary export", @style = "background-color:#428bca; color:white;" }).Url(Url.Action("Export", "ListPublication", new { filter = "~", sort = "~", Code = "~" }));
+                        }
+
+                    })
+                    .Events(events => { events.DataBound("onDataboundHeader"); })
+                    .Pageable(pager => pager.PageSizes(new[] { 20, 100, 200, 300 }))
+                    .Resizable(r => r.Columns(true))
+                    .Navigatable()
+                    .Scrollable()
+                    .Sortable()
+                    .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .Batch(true)
+                        .PageSize(100)
+                        .Model(model =>
+                        {
+                            model.Id(p => p.Id);
+                        })
+                        //.Events(e => { e.RequestEnd("onRequestEnd"); e.RequestStart("onRequestStart"); })
+                        .Read(read => read.Action("ReadHeader", "OP_SalesOrder"))
+                    )
+                    )
+                </div>
+            </article>
+        </div>
+    </div>
+
+</section>

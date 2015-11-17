@@ -1,0 +1,209 @@
+﻿@using SES.Models;
+
+@{
+    var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
+    var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
+    var listActiveStatus = dict.ContainsKey("activestatus") ? (List<ActiveStatus>)dict["activestatus"] : new List<ActiveStatus>();
+    var listWareHouse = dict.ContainsKey("listWH") ? (List<WareHouse>)dict["listWH"] : new List<WareHouse>();
+    var listWareHouseLocation = dict.ContainsKey("listWHL") ? (List<WareHouseLocation>)dict["listWHL"] : new List<WareHouseLocation>();
+    var listUnit = dict.ContainsKey("listUnit") ? (List<DC_AD_Unit>)dict["listUnit"] : new List<DC_AD_Unit>();
+    //var listMerchant = dict.ContainsKey("SONumber") ? dict["SONumber"].ToString() : "";
+    var listSONumber = dict["SONumber"] != null ? dict["SONumber"].ToString() : "";
+
+}
+<script src="~/Scripts/app/OP_SalesOrder.js"></script>
+<section>
+    <div class="jarviswidget">
+        <header>
+            <h2 style="color:#6fb3e0">Danh sách yêu cầu</h2>
+        </header>
+        <div>
+            <form class="smart-form" id="formHeader" method="post" enctype="multipart/form-data" action="@Url.Content("~/OP_SalesOrder/ConfirmCreate")">
+                <h4 style="color: #dd5a43;">Thông tin chung</h4>
+                <fieldset>
+                    <div class="row">
+                        <span class="col-sm-8" id="SONum">
+                            <section class="col-sm-6" style="padding:0">
+                                <label class="label" style="float: left; width: 27%; color: #9D9D9D">Mã SO (*)</label>
+                                <label class="input" style="float: left; width: 230px;">
+                                    <input type="text" class="input-xs" name="SONumber" id="SONumber" readonly="readonly" value="@listSONumber">
+                                </label>
+                            </section>
+                            <section class="col-sm-6" style="padding:0">
+                                <label class="label" style="float: left; width: 27%; color: #9D9D9D">Số lượng (*)</label>
+                                <label class="input" style="float: left; width: 50px;">
+                                    <span class="input-xs" id="TotalQty"></span>
+                                </label>
+                                <label class="label" style="float: left; width: 27%; color: #9D9D9D">Tổng tiền (*)</label>
+                                <label class="input" style="float: left; width: 100px;">
+                                    <span class="input-xs" id="TotalAmt"></span>
+                                </label>
+                            </section>
+                        </span>
+                        <span class="col-sm-8">
+                            <span class="col-sm-6" style="padding:0 0 0 0 0px;">
+                                <label class="label" style="float: left; width: 27%; color: #9D9D9D;">Ngày tạo (*)</label>
+                                @*@(Html.Kendo().DatePicker()
+                                        .Name("SODate").Format("MM/dd/yyyy HH:mm")
+                                        .HtmlAttributes(new { style = "width:230px;", name = "SODate" })
+                                    )*@
+                                <label class="input" style="float: left; width: 230px;">
+                                    <input class="input-xs input-mask-date" type="text" name="SODate" id="SODate" placeholder="ngày/tháng/năm" /></td>
+                                </label>
+                            </span>
+                            <section class="col-sm-6" style="padding:0">
+                                <label class="label" style="float: left; width: 22%; color: #9D9D9D">Kho (*)</label>
+                                <label class="select" style="float: left; width: 260px;">
+                                    @Html.DropDownList("WHID", new SelectList(listWareHouse, "WHID", "WHName"), "Chọn kho")
+                                </label>
+                            </section>
+
+                            <section class="col col-6" style="padding:0">
+                                <label class="label" style="float: left; width: 27%; color: #9D9D9D">Nhà cung cấp (*)</label>
+                                <label class="input" style="float:left; width:230px;">
+                                    @(Html.Kendo().AutoComplete()
+                                      .Name("MerchantID")
+                                      .DataTextField("MerchantID")
+                                      .Filter("contains")
+                                      .MinLength(4)
+                                            //.Events(e =>
+                                            //  {
+                                            //      e.Select("onSelect1");
+                                            //  })
+                                     .HtmlAttributes(new { style = "width:230px; height: 23px;", @placeholder = "Nhập 4 ký tự", @class = "required", name = "MerchantID" })
+                                      .DataSource(source =>
+                                      {
+                                          source.Read(read =>
+                                          {
+                                              read.Action("GetMerchant", "OP_SalesOrder")
+                                                  .Data("onDataMerchant");
+                                          })
+                                          .ServerFiltering(true);
+                                      })
+                                                .Template("<span class=\"k-state-default\"><p>#:data.MerchantID# - #:data.MerchantName#</p></span>")
+                                    )
+                                </label>
+                            </section>
+                            <section class="col col-6" style="padding:0">
+                                <label class="label" style="float: left; width: 22%; color: #9D9D9D">Vị trí kho (*)</label>
+                                <label class="select" style="float:left; width:260px;">
+                                    @Html.DropDownList("WHLID", new SelectList(listWareHouseLocation, "WHLID", "WHLName"), "Chọn kho trí kho")
+                                </label>
+                            </section>
+                        </span>
+                        <span class="col-sm-3" style="width:33%;">
+                            <section class="col-sm-12" style="padding:0">
+                                <label class="label" style="float: left; width: 22%; color: #9D9D9D">Ghi chú (*)</label>
+                                <label class="input" style="float:left; width:260px;">
+                                    <textarea class="input-xs" id="Note" name="Note" placeholder="Ghi chú" style="height:45px; width:253px;"></textarea>
+                                </label>
+                            </section>
+
+                        </span>
+
+                    </div>
+                </fieldset>
+                <h4 style="color: #dd5a43;">Thông tin chi tiết</h4>
+                <fieldset>
+                    <div class="row">
+                        <span class="col-sm-8">
+                            <section class="col col-6" style="padding:0">
+                                <label class="label" style="float: left; width: 27%; color: #9D9D9D">Ấn phẩm (*)</label>
+                                <label class="input" style="float:left; width:230px;">
+                                    <label class="input-xs">
+                                        @(Html.Kendo().AutoComplete()
+                                    .Name("ItemCode")
+                                    .DataTextField("Code")
+                                    .Filter("contains")
+                                    .MinLength(4)
+                                                //.Events(e =>
+                                                //  {
+                                                //      e.Select("onSelect1");
+                                                //  })
+                                    .HtmlAttributes(new { style = "width:230px; height: 23px;", @placeholder = "Nhập 4 ký tự", @class = "required", name = "ItemCode" })
+                                      .DataSource(source =>
+                                      {
+                                          source.Read(read =>
+                                          {
+                                              read.Action("GetItem", "OP_SalesOrder")
+                                                  .Data("onDataItem");
+                                          })
+                                          .ServerFiltering(true);
+                                      })
+                                                .Template("<span class=\"k-state-default\"><p>#:data.Code# - #:data.Name# - #:data.Size#</p></span>")
+                                        )
+                                    </label>
+                                </label>
+                            </section>
+                            <section class="col col-6" style="padding:0">
+                                <label class="label" style="float: left; width: 22%; color: #9D9D9D">Số lượng (*)</label>
+                                <label class="input" style="float:left; width:130px;">
+                                    @Html.TextBox("Qty", "1", new { @class = "input-xs popup_text_right" })
+                                </label>
+                            </section>
+                        </span>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+    <div class="jarviswidget">
+        <header>
+            <h2 style="color:#6fb3e0">Chi tiết</h2>
+        </header>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="widget-body">
+                    @(Html.Kendo().Grid<SES.Models.SODetail>()
+                    .Name("gridDetail")
+                    .Columns(columns =>
+                    {
+                        columns.Bound(p => p.Id).HeaderTemplate("<input style='text-align:center;opacity:1;' type='checkbox' id= 'checkAllItem'/>").ClientTemplate("<input style='text-align:center' onClick='getValueItem(this)' class='checkOrderItem' type='checkbox' id= '#=Id#'/>").Width(40).Filterable(false).Sortable(false);
+                        columns.Bound(p => p.SONumber).Title("Mã SO").Width(130);
+                        columns.Bound(p => p.ItemName).Title("Ấn phẩm").Width(130);
+                        columns.Bound(p => p.UnitName).Title("Đơn vị tính").Width(130);
+                        columns.Bound(p => p.Qty).Title("Số lượng").Width(90).HtmlAttributes(new { @style = "text-align:right;" }).Format("{0:N0}");
+                        columns.Bound(p => p.Price).Title("Giá").Width(90).HtmlAttributes(new { @style = "text-align:right;" }).Format("{0:N0}");
+                        columns.Bound(p => p.TotalAmt).Title("Tổng tiền").Width(90).HtmlAttributes(new { @style = "text-align:right;" }).Format("{0:N0}"); 
+                        columns.Bound(p => p.Status).Title("Trạng thái").Width(90);
+                        columns.Bound(p => p.Note).Title("Ghi chú").Width(180);
+                        columns.Bound(p => p.CreatedBy).Title("Người tạo").Width(110);
+                        columns.Bound(p => p.CreatedAt).Width(110).Format("{0:dd/MM/yyyy}").HtmlAttributes(new { style = "text-align:right" }).Title("Ngày tạo").Width(110);
+                        columns.Bound(p => p.UpdatedBy).Title("Người cập nhập").Width(110);
+                        columns.Bound(o => o.UpdatedAt).Title("Ngày cập nhập").Format("{0:dd/MM/yyyy}").Width(110).ClientTemplate("#if(kendo.toString(UpdatedAt,'dd/MM/yyyy') != '01/01/1900'){#" + "#= kendo.toString(UpdatedAt,'dd/MM/yyyy') #" + "#}#");
+
+                    })
+                    .ToolBar(toolBar =>
+                    {
+                        if (asset.ContainsKey("Insert") && asset["Insert"])
+                        {
+                            toolBar.Custom()
+                            .Text("Lưu")
+                            .HtmlAttributes(new { id = "btnInsert", @class = "btn btn-success", @style = "background-color:#428bca; color:white;", onclick = "CreateHeader()", @href = "javascript:void(0)" });
+                        }
+
+                    })
+                    .Events(events => { events.DataBound("onDataboundDetail"); })
+                    .Pageable(pager => pager.PageSizes(new[] { 20, 100, 200, 300 }))
+                    .Resizable(r => r.Columns(true))
+                    .Navigatable()
+                    .Scrollable()
+                    .Sortable()
+                    .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .Batch(true)
+                        .PageSize(100)
+                        .Model(model =>
+                        {
+                            model.Id(p => p.Id);
+                        })
+                        //.Events(e => { e.RequestEnd("onRequestEnd"); e.RequestStart("onRequestStart"); })
+                        .Read(read => read.Action("ReadDetail", "OP_SalesOrder").Data("onDataSONumber")
+                        )
+                    )
+                    )
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
