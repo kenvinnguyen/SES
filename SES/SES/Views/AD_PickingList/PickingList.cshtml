@@ -1,0 +1,147 @@
+﻿
+@using DecaInsight.Models;
+@Scripts.Render("~/Scripts/app/AD_PickingList.js")
+
+@{
+    var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
+    var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
+    var listActiveStatus = dict.ContainsKey("activestatus") ? (List<ActiveStatus>)dict["activestatus"] : new List<ActiveStatus>();
+    var listWareHouse = dict.ContainsKey("listWH") ? (List<DC_AD_WH>)dict["listWH"] : new List<DC_AD_WH>();
+    var listWareHouseLocation = dict.ContainsKey("listWHL") ? (List<DC_AD_WHL>)dict["listWHL"] : new List<DC_AD_WHL>();
+    var listPrinter = dict.ContainsKey("ListPrinter") ? (List<DC_AD_Printer>)dict["ListPrinter"] : new List<DC_AD_Printer>();
+    var listUnit = dict.ContainsKey("listUnit") ? (List<DC_AD_Unit>)dict["listUnit"] : new List<DC_AD_Unit>();
+}
+<section>
+    @if (Auth_Action.AssetResult(asset, "Search"))
+    {
+        <div class="row divSearch">
+            <div class="col-sm-12">
+                <div class="jarviswidget" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-deletebutton="false">
+                    <header>
+                        <h2 style="color:#6fb3e0">Tìm kiếm</h2>
+                    </header>
+                    <div>
+                        <div class="widget-body no-padding">
+                            <form class="smart-form">
+                                <fieldset>
+                                    <div class="row">
+                                        @if (Auth_Action.AssetResult(asset, "Name"))
+                                        {
+                                            <section class="col col-3">
+                                                <label class="input">
+                                                    <input type="text" class="input-xs" id="txtPickingID" placeholder="Số picking">
+                                                </label>
+                                            </section>
+                                        }
+                                        
+                                        <section class="col col-3search">
+                                            <a class="k-button k-button-icontext btn_customSearch" href="javascript:void(0);" onclick="doSearch()">Tìm kiếm</a>
+                                        </section>
+                                        </div>
+                                    </fieldset>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    }
+    <div class="jarviswidget">
+        <header>
+            <h2 style="color:#6fb3e0">Danh sách picking</h2>
+        </header>
+        <div class="row">
+            <article class="col-sm-12">
+                <div class="widget-body">
+                    @(Html.Kendo().Grid<DecaInsight.Models.DC_AD_Picking_Header>()
+                    .Name("grid")
+                    .Columns(columns =>
+                    {
+                        columns.Bound(p => p.PickingNumber).HeaderTemplate("<input style='text-align:center;opacity:1;' type='checkbox' id= 'checkboxcheckAll'  onClick='checkAll(this)' />").ClientTemplate("<input style='text-align:center' class='checkrowid' type='checkbox' id='#=PickingNumber#'  />").Width(30).Filterable(false).Sortable(false);
+
+                        columns.Bound(p => p.PickingNumber).HtmlAttributes(new { data_id = "#=PickingNumber#", onclick = "onOpenPopupDetail(this)", @style = "color:\\#428bca;cursor:pointer;text-decoration:underline" }).Title("Mã Picking").Width(110);
+                        columns.Bound(p => p.PickingNumber).Hidden();
+                        columns.Bound(p => p.PickingDate).Title("Ngày tạo yêu cầu").Width(130).Format("{0:dd/MM/yyyy}");
+                        columns.Bound(p => p.TotalQty).Title("Số lượng").Width(90).HtmlAttributes(new { @style = "text-align:right;" }).Format("{0:N0}");
+                        columns.Bound(p => p.TotalAmt).Title("Tổng tiền").Width(90).HtmlAttributes(new { @style = "text-align:right;" }).Format("{0:N0}");
+                        columns.Bound(p => p.Note).Title("Ghi chú").Width(180);
+                        columns.Bound(p => p.Status).Title("Trạng thái").Width(90);
+                        columns.ForeignKey(p => p.PrinterID, (System.Collections.IEnumerable)listPrinter, "PrinterID", "PrinterName").Title("Nhà in").Width(150);
+                        columns.Bound(p => p.CreatedBy).Title("Người tạo").Width(110);
+                        columns.Bound(p => p.CreatedAt).Width(110).Format("{0:dd/MM/yyyy}").HtmlAttributes(new { style = "text-align:right" }).Title("Ngày tạo").Width(110);
+                        columns.Bound(p => p.UpdatedBy).Title("Người cập nhật").Width(110);
+                        columns.Bound(o => o.UpdatedAt).Title("Ngày cập nhật").Format("{0:dd/MM/yyyy}").Width(110).ClientTemplate("#if(kendo.toString(UpdatedAt,'dd/MM/yyyy') != '01/01/1900'){#" + "#= kendo.toString(UpdatedAt,'dd/MM/yyyy') #" + "#}#");
+
+                    })
+                    .ToolBar(toolBar =>
+                    {
+                        if (asset.ContainsKey("Update") && asset["Update"])
+                        {
+                            toolBar.Custom()
+                                    .Text("Xác nhận giao hàng")
+                                    .HtmlAttributes(new { id = "btnUpdateComplete", @class = "btn btn-success", @style = "background-color:#87b87f; color:white;", onclick = "PackingComplete()", @href = "javascript:void(0)" });
+                        }
+                        if (asset.ContainsKey("Update") && asset["Update"])
+                        {
+                            toolBar.Custom()
+                                    .Text("Xuất kho")
+                                    .HtmlAttributes(new { id = "btnOutWarHouse", @class = "btn btn-success", @style = "background-color:#87b87f; color:white;", onclick = "PickingOut()", @href = "javascript:void(0)" });
+                        }
+
+                    })
+                    .Events(events => { events.DataBound("onDatabound"); })
+                    .Pageable(pager => pager.PageSizes(new[] { 20, 100, 200, 300 }))
+                    .Resizable(r => r.Columns(true))
+                    .Navigatable()
+                    .Scrollable()
+                    .Sortable()
+                    .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .Batch(true)
+                        .PageSize(100)
+                        .Model(model =>
+                        {
+                            model.Id(p => p.Id);
+                        })
+                        .Read(read => read.Action("ReadHeader", "AD_PickingList"))
+                    )
+                    )
+                </div>
+            </article>
+        </div>
+    </div>
+    <div id="popupTransaction" class="row" style="margin:0 auto">
+        <div class="bordered smart-form ">
+            <fieldset style="float:left;width:400px">
+                <section style="float:left;">
+                    <div style="float: left; width: 120px; margin-left:0;">
+                        <label class="label" style="float:right">Chọn kho (*)</label>
+                    </div>
+                    <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                        <label class="label" style="float:right;width:240px;">
+                            @Html.DropDownList("WHID", new SelectList(listWareHouse, "WHID", "WHName"), "Chọn kho", new { onclick = "ChangeLocation();" })
+                        </label>
+                        <div style="clear:both"></div>
+                    </div>
+                </section>
+                <section style="float:left;">
+                    <div style="float: left; width: 120px; margin-left:0;">
+                        <label class="label" style="float:right">Chọn vị trí kho (*)</label>
+                    </div>
+                    <div style="float: left; width: 240px; margin-right: 0; margin-left: 10px;">
+                        <label class="label" style="float:right;width:240px;">
+                            @Html.DropDownList("WHLID", new SelectList(listWareHouseLocation, "WHLID", "WHLName"), "Chọn vị trí kho")
+                        </label>
+                        <div style="clear:both"></div>
+                    </div>
+                </section>
+            </fieldset>
+            <div style="clear:both"></div>
+            <footer>
+                <button type="button" class="k-button k-button-icontext btn_custom" style="float:left;" onclick="Save()">Lưu</button>
+                <img src="@Url.Content("~/Content/Bootstrap/loading.gif")" class="hide" id="loading" style="margin-top: -14px;" />
+            </footer>
+        </div>
+    </div>
+</section>

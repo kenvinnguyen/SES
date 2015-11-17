@@ -1,5 +1,6 @@
 ﻿using Kendo.Mvc.UI;
 using ServiceStack.DataAnnotations;
+using SES.Service;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,11 +9,10 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using SES.Service;
 
 namespace SES.Models
 {
-    public class DC_AD_SO_Header
+    public class SOHeader
     {
         [AutoIncrement]
         public int Id { get; set; }
@@ -34,7 +34,7 @@ namespace SES.Models
         [Ignore]
         public string WHLName { get; set; }
     }
-    public class DC_AD_SO_Detail
+    public class SODetail
     {
         [AutoIncrement]
         public int Id { get; set; }
@@ -53,7 +53,14 @@ namespace SES.Models
         public string Status { get; set; }
         public string Note { get; set; }
 
-    }
+<<<<<<< .mine        [Ignore]
+        public string Size { get; set; }
+        [Ignore]
+        public string Type { get; set; }
+        [Ignore]
+        public string ShapeTemplate { get; set; }
+        public DataSourceResult GetPage(DataSourceRequest request, string whereCondition, string SONumber)
+=======    }
     public class DC_OCM_Merchant
     {
         [AutoIncrement]
@@ -95,16 +102,34 @@ namespace SES.Models
         public int IsNew { get; set; }
     
         public List<DC_OCM_Merchant> GetList(int page, int pageSize, string whereCondition)
-        {
+>>>>>>> .theirs        {
             List<SqlParameter> param = new List<SqlParameter>();
-            param.Add(new SqlParameter("@Page", page));
-            param.Add(new SqlParameter("@PageSize", pageSize));
+            param.Add(new SqlParameter("@Page", request.Page));
+            param.Add(new SqlParameter("@PageSize", request.PageSize));
             param.Add(new SqlParameter("@WhereCondition", whereCondition));
-            DataTable dt = new SqlHelper().ExecuteQuery("p_get_Merchant", param);
-            var lst = new List<DC_OCM_Merchant>();
+            param.Add(new SqlParameter("@Sort", CustomModel.GetSortStringFormRequest(request)));
+            //param.Add(new SqlParameter("@SONumber", SONumber));
+            DataTable dt = new SqlHelper().ExecuteQuery("p_Select_DC_AD_SO_Detail_DynamicView", param);
+            var lst = new List<SODetail>();
             foreach (DataRow row in dt.Rows)
             {
-                var item = new DC_OCM_Merchant();
+<<<<<<< .mine                var item = new SODetail();
+                item.ItemName = !row.IsNull("ItemName") ? row["ItemName"].ToString() : "";
+                item.ItemCode = !row.IsNull("ItemCode") ? row["ItemCode"].ToString() : "";
+                item.UnitName = !row.IsNull("UnitName") ? row["UnitName"].ToString() : "";
+                item.Qty = !row.IsNull("Qty") ? int.Parse(row["Qty"].ToString()) : 0;
+                item.Price = !row.IsNull("Price") ? double.Parse(row["Price"].ToString()) : 0;
+                item.Size = !row.IsNull("Size") ? row["Size"].ToString() : "";
+                item.Type = !row.IsNull("Type") ? row["Type"].ToString() : "";
+                item.ShapeTemplate = !row.IsNull("ShapeTemplate") ? row["ShapeTemplate"].ToString() : "";
+                item.UpdatedAt = !row.IsNull("UpdatedAt") ? DateTime.Parse(row["UpdatedAt"].ToString()) : DateTime.Parse("01/01/1900");
+                item.CreatedAt = !row.IsNull("CreatedAt") ? DateTime.Parse(row["CreatedAt"].ToString()) : DateTime.Parse("01/01/1900");
+                item.TotalAmt = !row.IsNull("TotalAmt") ? double.Parse(row["TotalAmt"].ToString()) : 0;
+                item.CreatedBy = !row.IsNull("CreatedBy") ? row["CreatedBy"].ToString() : "";
+                item.UpdatedBy = !row.IsNull("UpdatedBy") ? row["UpdatedBy"].ToString() : "";
+                item.UnitID = !row.IsNull("UnitID") ? row["UnitID"].ToString() : "";
+                item.SONumber = !row.IsNull("SONumber") ? row["SONumber"].ToString() : "";
+=======                var item = new DC_OCM_Merchant();
                 item.MerchantID = !row.IsNull("MerchantID") ? row["MerchantID"].ToString() : "";
                 item.MerchantName = !row.IsNull("MerchantName") ? row["MerchantName"].ToString() : "";
                 item.RowUpdatedAt = !row.IsNull("RowUpdatedAt") ? DateTime.Parse(row["RowUpdatedAt"].ToString()) : DateTime.Parse("1900-01-01");
@@ -113,11 +138,41 @@ namespace SES.Models
                 item.RowCreatedUser = !row.IsNull("RowCreatedUser") ? row["RowCreatedUser"].ToString() : "";
                 //item.Note = !row.IsNull("Note") ? row["Note"].ToString() : "";
                 //item.Status = !row.IsNull("Status") ? Convert.ToBoolean(row["Status"].ToString()) : false;
-
+>>>>>>> .theirs
                 lst.Add(item);
             }
-
-            return lst;
+            request.Filters = null;
+            DataSourceResult result = new DataSourceResult();
+            result.Data = lst;
+            result.Total = dt.Rows.Count > 0 ? Convert.ToInt32(dt.Rows[0]["RowCount"]) : 0;
+            return result;
         }
+    }
+    public class DC_OCM_Merchant
+    {
+        [AutoIncrement]
+        public int PKMerchantID { get; set; }
+        public string MerchantID { get; set; }
+        public string MerchantName { get; set; }
+        [Ignore]
+        public int Qty { get; set; }
+        [Ignore]
+        public double Price { get; set; }
+        [Ignore]
+        public double TotalAmt { get; set; }
+        [Ignore]
+        public string ItemName { get; set; }
+        [Ignore]
+        public string PrinterName { get; set; }
+        [Ignore]
+        public DateTime TransactionDate { get; set; }
+    }
+
+    public class DC_Parameter
+    {
+        [AutoIncrement]
+        public int Id { get; set; }
+        public string Type { get; set; }
+        public string Value { get; set; }
     }
 }

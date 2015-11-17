@@ -55,15 +55,15 @@ namespace SES.Controllers
             {
                 whereCondition = new KendoApplyFilter().ApplyFilter(request.Filters[0]);
             }
-            var data = dbConn.Select<DC_AD_Items>(whereCondition).ToList();
+            var data = dbConn.Select<Products>(whereCondition).ToList();
             return Json(data.ToDataSourceResult(request));
         }
-        public ActionResult Create(DC_AD_Items item)
+        public ActionResult Create(Products item)
         {
             IDbConnection db = new OrmliteConnection().openConn();
             try
             {
-                var isExist = db.SingleOrDefault<DC_AD_Items>("SELECT Code, Id FROM dbo.DC_AD_Items Where Code ='"+item.Code+"'");
+                var isExist = db.SingleOrDefault<Products>("SELECT Code, Id FROM dbo.Products Where Code ='"+item.Code+"'");
                 if (userAsset.ContainsKey("Insert") && userAsset["Insert"] && item.CreatedAt == null && item.CreatedBy == null)
                 {
                     if (isExist != null)
@@ -71,7 +71,7 @@ namespace SES.Controllers
                         return Json(new { success = false, message = "Ấn phẩm đã tồn tại." });
                     }
                     string id = "";
-                    var checkID = db.SingleOrDefault<DC_AD_Items>("SELECT Code, Id FROM dbo.DC_AD_Items ORDER BY Id DESC");
+                    var checkID = db.SingleOrDefault<Products>("SELECT Code, Id FROM dbo.Products ORDER BY Id DESC");
                     if (checkID != null)
                     {
                         var nextNo = int.Parse(checkID.Code.Substring(2, checkID.Code.Length - 2)) + 1;
@@ -97,13 +97,13 @@ namespace SES.Controllers
                     item.UpdatedAt = DateTime.Parse("1900-01-01");
                     item.UpdatedBy = "";
                     item.Status = item.Status;
-                    db.Insert<DC_AD_Items>(item);
+                    db.Insert<Products>(item);
                         
                     return Json(new { success = true, Code = item.Code, createdat = item.CreatedAt, createdby = item.CreatedBy });
                 }
                 else if (userAsset.ContainsKey("Update") && userAsset["Update"] && isExist != null)
                 {
-                    var success = db.Execute(@"UPDATE DC_AD_Items SET Status = @Status, VATPrice = @VATPrice, Size= @Size, Unit=@Unit,Type=@Type, WHID=@WHID, WHLID=@WHLID, 
+                    var success = db.Execute(@"UPDATE Products SET Status = @Status, VATPrice = @VATPrice, Size= @Size, Unit=@Unit,Type=@Type, WHID=@WHID, WHLID=@WHLID, 
                     ShapeTemplate = @ShapeTemplate, UpdatedAt = @UpdatedAt,UpdatedBy =@UpdatedBy, Price=@Price,[Desc]=@Desc, Name = @Name  WHERE Code = '" + item.Code + "'", new
                     {
                         Status = item.Status,
@@ -136,7 +136,7 @@ namespace SES.Controllers
                     //item.UpdatedAt = DateTime.Now;
                     //item.UpdatedBy = currentUser.UserID;
                     //item.Status = item.Status;
-                    //db.Update<DC_AD_Items>(item);
+                    //db.Update<Products>(item);
                     return Json(new { success = true });
                 }
                 else
@@ -176,17 +176,17 @@ namespace SES.Controllers
                     string fileName = "ThongTinKho_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".xlsx";
                     string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
-                    var data = new List<DC_AD_Items>();
+                    var data = new List<Products>();
                     if (request.Filters.Any())
                     {
                         var where = new KendoApplyFilter().ApplyFilter(request.Filters[0], "data.");
-                        //data = dbConn.Select<DC_AD_Items>(where);
-                        data = dbConn.Query<DC_AD_Items>("p_SelectDC_AD_Item_Export", new { WhereCondition = where}, commandType:System.Data.CommandType.StoredProcedure).ToList();
+                        //data = dbConn.Select<Products>(where);
+                        data = dbConn.Query<Products>("p_SelectDC_AD_Item_Export", new { WhereCondition = where}, commandType:System.Data.CommandType.StoredProcedure).ToList();
                     }
                     else
                     {
-                        //data = dbConn.Select<DC_AD_Items>();
-                        data = dbConn.Query<DC_AD_Items>("p_SelectDC_AD_Item_Export", new { WhereCondition = "1=1" }, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                        //data = dbConn.Select<Products>();
+                        data = dbConn.Query<Products>("p_SelectDC_AD_Item_Export", new { WhereCondition = "1=1" }, commandType: System.Data.CommandType.StoredProcedure).ToList();
                     }
 
                     ExcelWorksheet expenseSheet = excelPkg.Workbook.Worksheets["Data"];
@@ -279,7 +279,7 @@ namespace SES.Controllers
         //            whereCondition = new KendoApplyFilter().ApplyFilter(request.Filters[0]);
         //        }
         //        IDbConnection db = new OrmliteConnection().openConn();
-        //        var lstResult = db.Select<DC_AD_Items>(whereCondition).ToList();
+        //        var lstResult = db.Select<Products>(whereCondition).ToList();
         //        int rowNum = 2;
         //        foreach (var item in lstResult)
         //        {
@@ -396,7 +396,7 @@ namespace SES.Controllers
                                     }
                                     else
                                     {
-                                        var checkexists = dbConn.SingleOrDefault<DC_AD_Items>("SELECT * FROM DC_AD_Items WHERE Code = '" + ID + "'");
+                                        var checkexists = dbConn.SingleOrDefault<Products>("SELECT * FROM Products WHERE Code = '" + ID + "'");
                                         if (checkexists != null)
                                         {
                                             checkexists.Code = ID;
@@ -412,12 +412,12 @@ namespace SES.Controllers
                                             checkexists.Status = Boolean.Parse(Status);
                                             checkexists.UpdatedAt = DateTime.Now;
                                             checkexists.UpdatedBy = currentUser.UserID;
-                                            dbConn.Update<DC_AD_Items>(checkexists);
+                                            dbConn.Update<Products>(checkexists);
                                         }
                                         else
                                         {
                                             string id = "";
-                                            var checkID = dbConn.SingleOrDefault<DC_AD_Items>("SELECT Code, Id FROM dbo.DC_AD_Items ORDER BY Id DESC");
+                                            var checkID = dbConn.SingleOrDefault<Products>("SELECT Code, Id FROM dbo.Products ORDER BY Id DESC");
                                             if (checkID != null)
                                             {
                                                 var nextNo = int.Parse(checkID.Code.Substring(2, checkID.Code.Length - 2)) + 1;
@@ -427,7 +427,7 @@ namespace SES.Controllers
                                             {
                                                 id = "AD00000001";
                                             }
-                                            var item = new DC_AD_Items();
+                                            var item = new Products();
                                             item.Code = ID;
                                             item.Name = Name;
                                             item.Size = Name;
@@ -444,7 +444,7 @@ namespace SES.Controllers
                                             item.UpdatedAt = DateTime.Parse("1900-01-01");
                                             item.UpdatedBy = "";
                                             item.Status = Boolean.Parse(Status);
-                                            dbConn.Insert<DC_AD_Items>(item);
+                                            dbConn.Insert<Products>(item);
                                         }
                                         total++;
                                     }

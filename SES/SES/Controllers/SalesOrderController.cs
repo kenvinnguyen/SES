@@ -19,6 +19,7 @@ using ServiceStack.OrmLite.SqlServer;
 using System.Data.SqlClient;
 using Dapper;
 using System.Globalization;
+using DecaInsight.Models;
 
 namespace SES.Controllers
 {
@@ -47,21 +48,21 @@ namespace SES.Controllers
         public ActionResult ReadHeader ([DataSourceRequest] DataSourceRequest request)
         {
             var dbConn = new OrmliteConnection().openConn();
-            var data = new List<DC_AD_SO_Header>();
+            var data = new List<SOHeader>();
             if(request.Filters.Any())
             {
                 var where = new KendoApplyFilter().ApplyFilter(request.Filters[0]);
-                data = dbConn.Select<DC_AD_SO_Header>(where);
+                data = dbConn.Select<SOHeader>(where);
             }
             else{
-                data = dbConn.Select<DC_AD_SO_Header>();
+                data = dbConn.Select<SOHeader>();
             }
             return Json(data.ToDataSourceResult(request));
         }
         public ActionResult ReadDetail([DataSourceRequest] DataSourceRequest request, string text)
         {
             var dbConn = new OrmliteConnection().openConn();
-            var data = dbConn.Select<DC_AD_SO_Detail>("SELECT * FROM DC_AD_SO_Detail WHERE SONumber ='" + text + "'");
+            var data = dbConn.Select<SODetail>("SELECT * FROM SODetail WHERE SONumber ='" + text + "'");
             return Json(data.ToDataSourceResult(request));
         }
         public ActionResult PartialDetail(string id)
@@ -96,7 +97,7 @@ namespace SES.Controllers
                     if (string.IsNullOrEmpty(SONumber))
                     {
                         string datetimeSO = DateTime.Now.ToString("yyMMdd");
-                        var existSO = dbConn.SingleOrDefault<DC_AD_SO_Header>("SELECT id, SONumber FROM DC_AD_SO_Header ORDER BY Id DESC");
+                        var existSO = dbConn.SingleOrDefault<SOHeader>("SELECT id, SONumber FROM SOHeader ORDER BY Id DESC");
                         if (existSO != null)
                         {
                             var nextNo = Int32.Parse(existSO.SONumber.Substring(8, 5)) + 1;
@@ -110,11 +111,11 @@ namespace SES.Controllers
                     DateTime fromDateValue;
                     var formats = new[] { "dd/MM/yyyy", "yyyy-MM-dd" };
                     
-                    var header = new DC_AD_SO_Header();
-                    var detail = new DC_AD_SO_Detail();
-                    var itemcode = dbConn.SingleOrDefault<DC_AD_Items>("SELECT * FROM DC_AD_Items WHERE Code = '" + Request["ItemCode"] + "'");
+                    var header = new SOHeader();
+                    var detail = new SODetail();
+                    var itemcode = dbConn.SingleOrDefault<Products>("SELECT * FROM Products WHERE Code = '" + Request["ItemCode"] + "'");
                     var itemunit = dbConn.SingleOrDefault<DC_AD_Unit>("SELECT * FROM DC_AD_Unit WHERE UnitID = '" + itemcode.Unit + "'");
-                    var checkheader =  dbConn.SingleOrDefault<DC_AD_SO_Header>("SELECT * FROM DC_AD_SO_Header Where SONumber = '" + SONumber + "' AND MerchantID = '" + Request["MerchantID"] + "'");
+                    var checkheader =  dbConn.SingleOrDefault<SOHeader>("SELECT * FROM SOHeader Where SONumber = '" + SONumber + "' AND MerchantID = '" + Request["MerchantID"] + "'");
                     if (checkheader == null)
                     {
                         if (!string.IsNullOrEmpty(Request["SODate"]))
@@ -141,11 +142,11 @@ namespace SES.Controllers
                         header.CreatedAt = DateTime.Now;
                         header.UpdatedBy = "";
                         header.UpdatedAt = DateTime.Parse("1900-01-01");
-                        dbConn.Insert<DC_AD_SO_Header>(header);
+                        dbConn.Insert<SOHeader>(header);
                     }
                     else
                     {
-                        var success = dbConn.Execute(@"UPDATE DC_AD_SO_Header Set TotalQty = @TotalQty, TotalAmt =@TotalAmt ,UpdatedAt = @UpdatedAt, UpdatedBy =  @UpdatedBy
+                        var success = dbConn.Execute(@"UPDATE SOHeader Set TotalQty = @TotalQty, TotalAmt =@TotalAmt ,UpdatedAt = @UpdatedAt, UpdatedBy =  @UpdatedBy
                         WHERE SONumber = '" + SONumber + "'", new
                         {
                             TotalQty = checkheader.TotalQty + int.Parse(Request["Qty"]),
@@ -158,7 +159,7 @@ namespace SES.Controllers
                             return Json(new { success = false, message = "Không thể lưu" });
                         }
                     }
-                    var checkdetail = dbConn.SingleOrDefault<DC_AD_SO_Detail>("SELECT * FROM DC_AD_SO_Detail WHERE SONumber = '" + SONumber + "' AND ItemCode = '" + Request["ItemCode"] + "'");
+                    var checkdetail = dbConn.SingleOrDefault<SODetail>("SELECT * FROM SODetail WHERE SONumber = '" + SONumber + "' AND ItemCode = '" + Request["ItemCode"] + "'");
                     if (checkdetail == null)
                     {
                         detail.SONumber = SONumber;
@@ -175,11 +176,11 @@ namespace SES.Controllers
                         detail.CreatedAt = DateTime.Now;
                         detail.UpdatedBy = "";
                         detail.UpdatedAt = DateTime.Parse("1900-01-01");
-                        dbConn.Insert<DC_AD_SO_Detail>(detail);
+                        dbConn.Insert<SODetail>(detail);
                     }
                     else
                     {
-                        var success = dbConn.Execute(@"UPDATE DC_AD_SO_Detail Set Qty = @Qty, TotalAmt =@TotalAmt ,UpdatedAt = @UpdatedAt, UpdatedBy =  @UpdatedBy, Price = @Price
+                        var success = dbConn.Execute(@"UPDATE SODetail Set Qty = @Qty, TotalAmt =@TotalAmt ,UpdatedAt = @UpdatedAt, UpdatedBy =  @UpdatedBy, Price = @Price
                         WHERE SONumber = '" + SONumber + "' AND ItemCode = '" + Request["ItemCode"] + "'", new
                         {
                             Qty = checkdetail.Qty + int.Parse(Request["Qty"]),
@@ -213,7 +214,7 @@ namespace SES.Controllers
             try
             {
                 var dbConn = new OrmliteConnection().openConn();
-                var data = dbConn.Select<DC_AD_SO_Header>("SELECT * FROM DC_AD_SO_Header WHERE SONumber ='" + id + "'").FirstOrDefault();
+                var data = dbConn.Select<SOHeader>("SELECT * FROM SOHeader WHERE SONumber ='" + id + "'").FirstOrDefault();
                 return Json(data, JsonRequestBehavior.AllowGet);
                 //return Json(new { succsess = true, dataItem = data });
             }
@@ -229,7 +230,7 @@ namespace SES.Controllers
             {
                 string SONumber = String.Empty;
                 string datetimeSO = DateTime.Now.ToString("yyMMdd");
-                var existSO = dbConn.SingleOrDefault<DC_AD_SO_Header>("SELECT id, SONumber FROM DC_AD_SO_Header ORDER BY Id DESC");
+                var existSO = dbConn.SingleOrDefault<SOHeader>("SELECT id, SONumber FROM SOHeader ORDER BY Id DESC");
                 if (existSO != null)
                 {
                     var nextNo = Int32.Parse(existSO.SONumber.Substring(8, 5)) + 1;
@@ -263,10 +264,10 @@ namespace SES.Controllers
         {
             using (var dbConn = new OrmliteConnection().openConn())
             {
-                var data = new List<DC_AD_Items>();
+                var data = new List<Products>();
                 if (text.Length >= 4)
                 {
-                    data = dbConn.Query<DC_AD_Items>("SELECT TOP 5 Name, Code, size FROM DC_AD_Items WHERE Name COLLATE Latin1_General_CI_AI LIKE N'%" + text + "%'");
+                    data = dbConn.Query<Products>("SELECT TOP 5 Name, Code, size FROM Products WHERE Name COLLATE Latin1_General_CI_AI LIKE N'%" + text + "%'");
                 }
                 return Json(data, JsonRequestBehavior.AllowGet);
             }

@@ -1,0 +1,155 @@
+﻿
+@using DecaInsight.Models;
+@Scripts.Render("~/Scripts/app/AD_PickingList.js")
+@{
+    var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
+    var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
+    var listItem = dict.ContainsKey("listItem") ? (List<DC_AD_Items>)dict["listItem"] : new List<DC_AD_Items>();
+    var listUnit = dict.ContainsKey("listUnit") ? (List<DC_AD_Unit>)dict["listUnit"] : new List<DC_AD_Unit>();
+    var PickingNumber = dict["PickingNumber"] != null ? dict["PickingNumber"].ToString() : "";
+}
+<section>
+    <div class="jarviswidget">
+        <header>
+            <h2 style="color:#6fb3e0">Thông tin chung</h2>
+        </header>
+        <div>
+            <span class="smart-form">
+                <fieldset>
+                    <div class="row">
+                        <div style="float:left;width:33%">
+                            <div style="float: left; width:100%; margin-bottom:15px;">
+                                <section>
+                                    <label class="label" style="float: left; width: 18%; color: #9D9D9D">Mã Picking</label>
+                                    <label class="input" style="float: left; width: 65%; ">
+                                        <input style="background: #f0fff0;" type="text" class="input-xs" name="PickingNumber" id="PickingNumber" readonly="readonly" value="@PickingNumber">
+                                    </label>
+                                </section>
+                            </div>
+                            <div style="float: left; width: 100%; margin-bottom: 15px;">
+                                <section>
+                                    <label class="label" style="float: left; width: 18%; color: #9D9D9D">Nhà in</label>
+                                    <label class="input" style="float: left; width: 65%; ">
+                                        <input style="background: #f0fff0;" type="text" class="input-xs" name="PrinterName" id="PrinterName" readonly="readonly">
+                                    </label>
+                                </section>
+                            </div>
+                        </div>
+                        <div style="float:left;width:33%">
+                            <div style="float: left; width:100%; margin-bottom:15px;">
+                                <section>
+                                    <label class="label" style="float: left; width: 18%; color: #9D9D9D">Số lượng</label>
+                                    <label class="input" style="float: left; width: 65%; ">
+                                        <input style="background: #f0fff0;" type="text" class="input-xs" name="TotalQty" id="TotalQty" readonly="readonly" >
+                                    </label>
+                                </section>
+                            </div>
+                            <div style="float: left; width: 100%; margin-bottom: 15px;">
+                                <section>
+                                    <label class="label" style="float: left; width: 18%; color: #9D9D9D">Ngày tạo</label>
+                                    <label class="input" style="float: left; width: 65%; ">
+                                        <input style="background: #f0fff0;" type="text" class="input-xs" name="PickingDate" id="PickingDate" readonly="readonly">
+                                    </label>
+                                </section>
+                            </div>
+                        </div>
+                        <div style="float:left;width:33%">
+                            <div style="float: left; width:100%; margin-bottom:15px;">
+                                <section>
+                                    <label class="label" style="float: left; width: 18%; color: #9D9D9D">Tổng tiền</label>
+                                    <label class="input" style="float: left; width: 65%; ">
+                                        <input style="background: #f0fff0;" type="text" class="input-xs" name="TotalAmt" id="TotalAmt" readonly="readonly">
+                                    </label>
+                                </section>
+                            </div>
+                            <div style="float: left; width: 100%; margin-bottom: 15px;">
+                                <section>
+                                    <label class="label" style="float: left; width: 18%; color: #9D9D9D">Trạng thái</label>
+                                    <label class="input" style="float: left; width: 65%; ">
+                                        <input style="background: #f0fff0;" type="text" class="input-xs" name="Status" id="Status" readonly="readonly">
+                                    </label>
+                                </section>
+                            </div>
+                        </div>
+
+                        
+                    </div>
+                </fieldset>
+            </span>
+        </div>
+    </div>
+    <div class="jarviswidget">
+        <header>
+            <h2 style="color:#6fb3e0">Thông tin chi tiết</h2>
+        </header>
+        <div class="row">
+            <article class="col-sm-12">
+                <div class="widget-body">
+                    @(Html.Kendo().Grid<DecaInsight.Models.DC_AD_Picking_Detail>()
+                    .Name("gridDetail")
+                    .Columns(columns =>
+                    {
+                        columns.Bound(p => p.PickingNumber).HeaderTemplate("<input style='text-align:center;opacity:1;' type='checkbox' id= 'checkboxcheckAll'  onClick='checkAll(this)' />").ClientTemplate("<input style='text-align:center' class='checkrowid' type='checkbox' id='#=PickingNumber#'  />").Width(30).Filterable(false).Sortable(false);
+
+                        //columns.Bound(p => p.PickingNumber).HtmlAttributes(new { data_id = "#=PickingNumber#", onclick = "onOpenPopupDetail(this)", @style = "color:\\#428bca;cursor:pointer;text-decoration:underline" }).Title("Mã Picking").Width(110);
+                        columns.Bound(p => p.SONumber).Title("Mã SO").Width(120);
+                        //columns.Bound(p => p.PickingDate).Title("Ngày tạo yêu cầu").Width(130).Format("{0:dd/MM/yyyy}");
+                        columns.Bound(p => p.Qty).Title("Số lượng").Width(90).HtmlAttributes(new { @style = "text-align:right;background-color: rgb(198, 239, 206);" }).Format("{0:N0}");
+                        columns.Bound(p => p.InvenNumber).Title("Tồn kho").Width(90).HtmlAttributes(new { @style = "text-align:right;" }).Format("{0:N0}");
+                        columns.Bound(p => p.Price).Title("Giá").Width(90).HtmlAttributes(new { @style = "text-align:right;" }).Format("{0:N0}");
+                        columns.Bound(p => p.TotalAmt).Title("Tổng tiền").Width(90).HtmlAttributes(new { @style = "text-align:right;" }).Format("{0:N0}");
+                        columns.ForeignKey(p => p.ItemCode, (System.Collections.IEnumerable)listItem, "Code", "Name").Title("Ấn phẩm").Width(150);
+                        columns.ForeignKey(p => p.UnitID, (System.Collections.IEnumerable)listUnit, "UnitID", "UnitName").Title("Đơn vị tính").Width(150);
+                        columns.Bound(p => p.Note).Title("Ghi chú").Width(180);
+                        columns.Bound(p => p.Status).Title("Trạng thái").Width(90);
+                        
+                        //columns.ForeignKey(p => p.WHID, (System.Collections.IEnumerable)listWareHouse, "WHID", "WHName").Title("Kho").Width(130);
+                        //columns.ForeignKey(p => p.WHLID, (System.Collections.IEnumerable)listWareHouseLocation, "WHLID", "WHLName").Title("Vị trí kho").Width(150);
+                        columns.Bound(p => p.CreatedBy).Title("Người tạo").Width(110);
+                        columns.Bound(p => p.CreatedAt).Width(110).Format("{0:dd/MM/yyyy}").HtmlAttributes(new { style = "text-align:right" }).Title("Ngày tạo").Width(110);
+                        columns.Bound(p => p.UpdatedBy).Title("Người cập nhật").Width(110);
+                        columns.Bound(o => o.UpdatedAt).Title("Ngày cập nhật").Format("{0:dd/MM/yyyy}").Width(110).ClientTemplate("#if(kendo.toString(UpdatedAt,'dd/MM/yyyy') != '01/01/1900'){#" + "#= kendo.toString(UpdatedAt,'dd/MM/yyyy') #" + "#}#");
+
+                    })
+                    .ToolBar(toolBar =>
+                    {
+                        toolBar.Save().CancelText("Hủy thay đổi").SaveText("Lưu lại").HtmlAttributes(new { @style = "background:#418bca; color:white;"});
+                    })
+                    .Events(events => { events.DataBound("onDataboundDetail"); })
+                    .Editable(editable => editable.Mode(GridEditMode.InCell))
+                    .Pageable(pager => pager.PageSizes(new[] { 20, 100, 200, 300 }))
+                    .Resizable(r => r.Columns(true))
+                    .Navigatable()
+                    .Scrollable()
+                    .Sortable()
+                    .DataSource(dataSource => dataSource
+                    .Ajax()
+                    .Batch(true)
+                    .PageSize(100)
+                    .Model(model =>
+                    {
+                        model.Id(p => p.Id);
+                        model.Field(p => p.SONumber).Editable(false);
+                        model.Field(p => p.PickingNumber).Editable(false);
+                        model.Field(p => p.TotalAmt).Editable(false);
+                        model.Field(p => p.Status).Editable(false);
+                        model.Field(p => p.CreatedAt).Editable(false);
+                        model.Field(p => p.CreatedBy).Editable(false);
+                        model.Field(p => p.Note).Editable(false);
+                        model.Field(p => p.UpdatedAt).Editable(false);
+                        model.Field(p => p.UpdatedBy).Editable(false);
+                        model.Field(p => p.InvenNumber).Editable(false);
+                        model.Field(p => p.Price).Editable(false);
+                        model.Field(p => p.UnitID).Editable(false);
+                        model.Field(p => p.ItemCode).Editable(false);
+                    })
+                    .Events(events => { events.Error("error_handler"); events.RequestEnd("onRequestEnd"); })
+                    .Read(read => read.Action("ReadDetail", "AD_PickingList").Data("onDataPickingNumber"))
+                    .Update(read => read.Action("UpdateDetail", "AD_PickingList").Data("onDataPickingNumber"))
+                    )
+                    )
+                </div>
+            </article>
+        </div>
+    </div>
+</section>
