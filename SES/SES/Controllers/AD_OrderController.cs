@@ -35,8 +35,8 @@ namespace SES.Controllers
                 dict["asset"] = userAsset;
                 dict["activestatus"] = new CommonLib().GetActiveStatus();
                 //dict["user"] = dbConn.Select<Auth_User>(p => p.IsActive == true);
-                dict["listWH"] = dbConn.Select<DC_AD_WH>(p => p.Status == true);
-                dict["listWHL"] = dbConn.Select<DC_AD_WHL>(p => p.Status == true);
+                dict["listWH"] = dbConn.Select<WareHouse>(p => p.Status == true);
+                dict["listWHL"] = dbConn.Select<WareHouseLocation>(p => p.Status == true);
                 dict["listUnit"] = dbConn.Select<Products>(p => p.Status == true);
                 dict["listMerchant"] = dbConn.Select<DC_OCM_Merchant>();
                 dict["ListPrinter"] = dbConn.Select<DC_AD_Printer>(p => p.Status == true);
@@ -74,11 +74,11 @@ namespace SES.Controllers
                 IDbConnection dbConn = new OrmliteConnection().openConn();
                 var dict = new Dictionary<string, object>();
                 dict["asset"] = userAsset;
-                dict["listWH"] = dbConn.Select<DC_AD_WH>(p => p.Status == true);
-                dict["listWHL"] = dbConn.Select<DC_AD_WHL>(p => p.Status == true);
+                dict["listWH"] = dbConn.Select<WareHouse>(p => p.Status == true);
+                dict["listWHL"] = dbConn.Select<WareHouseLocation>(p => p.Status == true);
                 dict["listMerchant"] = dbConn.Select<DC_OCM_Merchant>("SELECT MerchantID, MerchantName FROM DC_OCM_Merchant");
-                dict["listWH"] = dbConn.Select<DC_AD_WH>(p => p.Status == true);
-                dict["listWHL"] = dbConn.Select<DC_AD_WHL>(p => p.Status == true);
+                dict["listWH"] = dbConn.Select<WareHouse>(p => p.Status == true);
+                dict["listWHL"] = dbConn.Select<WareHouseLocation>(p => p.Status == true);
                 dict["listUnit"] = dbConn.Select<Products>(p => p.Status == true);
                 dict["SONumber"] = id;
                 return PartialView("AD_Order_Detail", dict);
@@ -558,7 +558,7 @@ namespace SES.Controllers
             var dbConn = new OrmliteConnection().openConn();
             try
             {
-                var data = dbConn.Select<DC_AD_WHL>(s => s.WHID == WHID);
+                var data = dbConn.Select<WareHouseLocation>(s => s.WHID == WHID);
                 return Json(data, JsonRequestBehavior.AllowGet);
             }
             catch (Exception e)

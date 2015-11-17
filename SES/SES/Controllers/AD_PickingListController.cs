@@ -35,8 +35,8 @@ namespace DecaInsight.Controllers
                 var dict = new Dictionary<string, object>();
                 dict["asset"] = userAsset;
                 dict["activestatus"] = new CommonLib().GetActiveStatus();
-                dict["listWH"] = dbConn.Select<DC_AD_WH>(p => p.Status == true);
-                dict["listWHL"] = dbConn.Select<DC_AD_WHL>(p => p.Status == true);
+                dict["listWH"] = dbConn.Select<WareHouse>(p => p.Status == true);
+                dict["listWHL"] = dbConn.Select<WareHouseLocation>(p => p.Status == true);
                 dict["listUnit"] = dbConn.Select<DC_AD_Unit>(p => p.Status == true);
                 dict["ListPrinter"] = dbConn.Select<DC_AD_Printer>(p => p.Status == true);
                 dbConn.Close();

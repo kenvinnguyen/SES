@@ -211,7 +211,6 @@
     <Compile Include="Controllers\DeliveryFeeController.cs" />
     <Compile Include="Controllers\DeliveryFormulaController.cs" />
     <Compile Include="Controllers\DeliveryPromotionController.cs" />
-    <Compile Include="Controllers\CompanyController.cs" />
     <Compile Include="Controllers\PrinterController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="Controllers\RuleCheckController.cs" />
@@ -220,9 +219,6 @@
     <Compile Include="Controllers\TransporterController.cs" />
     <Compile Include="Controllers\DeliveryDiscountController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
-    <Compile Include="Controllers\HOAdminAuthAnnouncementController.cs" />
-    <Compile Include="Controllers\HOAdminAuthRoleController.cs" />
-    <Compile Include="Controllers\HOAdminAuthUserController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ListPublicationController.cs" />
     <Compile Include="Controllers\ReasonController.cs" />
@@ -260,8 +256,6 @@
     <Compile Include="Models\CustomModel.cs" />
     <Compile Include="Models\DC_AD_Items.cs" />
     <Compile Include="Models\DC_AD_Unit.cs" />
-    <Compile Include="Models\DC_AD_WH.cs" />
-    <Compile Include="Models\DC_AD_WHL.cs" />
     <Compile Include="Models\DC_DeliveryDiscountion.cs" />
     <Compile Include="Models\DC_LG_Promotion.cs" />
     <Compile Include="Models\DC_LG_DeliveryFee.cs" />
@@ -271,8 +265,15 @@
     <Compile Include="Models\DC_Reason.cs" />
     <Compile Include="Models\Master_Calendar.cs" />
     <Compile Include="Models\Master_Territory.cs" />
+    <Compile Include="Models\PO.cs" />
     <Compile Include="Models\Products.cs" />
+    <Compile Include="Models\Promotion.cs" />
+    <Compile Include="Models\Promotion_ApplyFor.cs" />
+    <Compile Include="Models\Promotion_Condition.cs" />
     <Compile Include="Models\SalesPerson.cs" />
+    <Compile Include="Models\Vendor.cs" />
+    <Compile Include="Models\WareHouse.cs" />
+    <Compile Include="Models\WareHouseLocation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\AccountMembershipService.cs" />
     <Compile Include="Service\CustomController.cs" />
