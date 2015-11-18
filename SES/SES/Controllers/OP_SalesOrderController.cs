@@ -23,10 +23,10 @@ using DecaInsight.Models;
 
 namespace SES.Controllers
 {
-    public class OP_SalesOrder : CustomController
+    public class OP_SalesOrderController : CustomController
     {
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public ActionResult PartialRole()
+        public ActionResult PartialSO()
         {
             if (userAsset.ContainsKey("View") && userAsset["View"])
             {
@@ -37,7 +37,7 @@ namespace SES.Controllers
                 //dict["user"] = dbConn.Select<Auth_User>(p => p.IsActive == true);
                 dict["listWH"] = dbConn.Select<WareHouse>(p => p.Status == true);
                 dict["listWHL"] = dbConn.Select<WareHouseLocation>(p => p.Status == true);
-                dict["listUnit"] = dbConn.Select<DC_AD_Unit>(p => p.Status == true);
+                dict["listUnit"] = dbConn.Select<Products>(p => p.Status == true);
                 dict["listVendor"] = dbConn.Select<Vendor>();
                 dbConn.Close();
                 return PartialView("SalesOrderHeader", dict);
@@ -77,7 +77,7 @@ namespace SES.Controllers
                 dict["listMerchant"] = dbConn.Select<DC_OCM_Merchant>("SELECT MerchantID, MerchantName FROM DC_OCM_Merchant");
                 dict["listWH"] = dbConn.Select<WareHouse>(p => p.Status == true);
                 dict["listWHL"] = dbConn.Select<WareHouseLocation>(p => p.Status == true);
-                dict["listUnit"] = dbConn.Select<DC_AD_Unit>(p => p.Status == true);
+                dict["listUnit"] = dbConn.Select<Products>(p => p.Status == true);
                 dict["SONumber"] = id;
                 return PartialView("SalesOrderDetail", dict);
             }

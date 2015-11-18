@@ -32,7 +32,10 @@ $(document).ready(function () {
     $("#menu_AD_Announcement").click(function () {
         onLoadPage(r + "/AD_Announcement/PartialAnnouncement");
     });
-
+    //Đơn bán hàng
+    $("#menu_OP_SalesOrder").click(function () {
+        onLoadPage(r + "/OP_SalesOrder/PartialSO");
+    });
     //2.Kho
     $("#menu_IN_WareHouse").click(function () {
         //debugger;

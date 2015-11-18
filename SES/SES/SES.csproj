@@ -2019,6 +2019,8 @@
     <Content Include="Views\Promotion\_Promotion.cshtml" />
     <Content Include="Views\PurchaseOrder\PurchaseOrder_Detail.cshtml" />
     <Content Include="Views\PurchaseOrder\PurchaseOrder_Header.cshtml" />
+    <Content Include="Views\SalesOrder\SalesOrderDetail.cshtml" />
+    <Content Include="Views\SalesOrder\SalesOrderHeader.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

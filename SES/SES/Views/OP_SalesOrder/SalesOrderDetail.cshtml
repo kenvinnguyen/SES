@@ -6,7 +6,7 @@
     var listActiveStatus = dict.ContainsKey("activestatus") ? (List<ActiveStatus>)dict["activestatus"] : new List<ActiveStatus>();
     var listWareHouse = dict.ContainsKey("listWH") ? (List<WareHouse>)dict["listWH"] : new List<WareHouse>();
     var listWareHouseLocation = dict.ContainsKey("listWHL") ? (List<WareHouseLocation>)dict["listWHL"] : new List<WareHouseLocation>();
-    var listUnit = dict.ContainsKey("listUnit") ? (List<DC_AD_Unit>)dict["listUnit"] : new List<DC_AD_Unit>();
+    var listUnit = dict.ContainsKey("listUnit") ? (List<Products>)dict["listUnit"] : new List<Products>();
     //var listMerchant = dict.ContainsKey("SONumber") ? dict["SONumber"].ToString() : "";
     var listSONumber = dict["SONumber"] != null ? dict["SONumber"].ToString() : "";
 

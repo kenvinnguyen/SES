@@ -24,6 +24,7 @@ namespace SES.Controllers
 {
     public class AD_CreateOrderController : CustomController
     {
+        /*
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public ActionResult PartialDetail(string id)
         {
@@ -293,12 +294,12 @@ namespace SES.Controllers
                 {
                     return Json(new { success = false, message = e.Message });
                 }
-
             }
             else
             {
                 return Json(new { success = false, message = "Bạn không có quyền xóa dữ liệu." });
             }
         }
+         */
 	}
 }

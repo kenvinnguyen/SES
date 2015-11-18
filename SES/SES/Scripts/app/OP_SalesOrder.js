@@ -106,7 +106,7 @@ function onDataItem() {
 function GetDetail() {
     debugger;
     var SONumber = $("#SONumber").val();
-    $.post(r + "/SalesOrder/GetBySONumber", { id: SONumber }, function (data) {
+    $.post(r + "/OP_SalesOrder/GetBySONumber", { id: SONumber }, function (data) {
         if (!data.succsess) {
             if (data.SONumber != null && data.SONumber != "") {
                 $("#MerchantID").val(data.MerchantID);
@@ -214,9 +214,9 @@ function alertBox(title, content, flag, timeout) {
     });
 }
 function Create() {
-    $.post(r + "/SalesOrder/CreateSONew", function (data) {
+    $.post(r + "/OP_SalesOrder/CreateSONew", function (data) {
         if (data.success) {
-            onLoadPage(r + "/SalesOrder/PartialDetail/" + data.SONumber);
+            onLoadPage(r + "/OP_SalesOrder/PartialDetail/" + data.SONumber);
         }
         else {
             alertBox("Báo lỗi! ", data.message, false, 3000);
@@ -228,5 +228,5 @@ function Create() {
 function onOpenPopupDetail(obj) {
     var row = $(obj).closest('tr');
     var SONumber = $(row).find("td:eq(1)").text();
-    onLoadPage(r + "/SalesOrder/PartialDetail/" +SONumber);
+    onLoadPage(r + "/OP_SalesOrder/PartialDetail/" + SONumber);
 }
