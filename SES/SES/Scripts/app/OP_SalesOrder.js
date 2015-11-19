@@ -1,166 +1,67 @@
-﻿$(document).ready(function () {
-    document.title = "Danh sách yêu cầu";
-    resetMenu()
-    $("#menu_SalesOrder").parent().addClass('active');
-    $("#selectStatus_search").select2();
-    $("#s2id_selectStatus_search").css('width', '100%');
-    $("#WHID").select2();
-    $("#s2id_WHID").css('width', '100%');
-    $("#WHLID").select2();
-    $("#s2id_WHLID").css('width', '100%');
-    if ($("#btnInsertHeader").length > 0) {
-        $(document).keypress(function (e) {
-            if (e.keyCode == 43) {  // 43 : +
-                Create();
+﻿resetMenu();
+$("ul#menuLeft").find('#ul_root_3').addClass('open');
+$("ul#menuLeft").find('#ul_root_3').css('display', 'block');
+$("ul#menuLeft").find('#ul_root_3 ul#ul_item_1').css('display', 'block');
+$("#menu_OP_SalesOrder").parent().addClass('active');
+var SONumber = "";
+document.title = "Tạo yêu cầu";
+$("a.k-grid-cancel-changes").css({ 'background-color': '#a0a0a0', 'color': 'white' });
+function onRequestStart(e) {
+    blockUI(false);
+}
+
+function error_handler(e) {
+    if (e.errors) {
+        var message = "";
+        $.each(e.errors, function (key, value) {
+            if ('errors' in value) {
+                $.each(value.errors, function () {
+                    message += this + "\n";
+                });
             }
         });
+        alertBox("Báo lỗi! ", message, false, 3000);
+    } else {
+        alertBox("Thành công! ", "Lưu thành công", true, 3000);
     }
-    $("#formHeader").validate({
-        // Rules for form validation
-        rules: {
-            WHID: {
-                required: true,
-                //alphanumeric: true
-            },
-            WHLID: {
-                required: true,
-            },
-            MerchantID: {
-                required: true,
-            },
-            ItemCode: {
-                required:true,
-            },
-            Qty: {
-                required: true,
-                number:true,
-            },
-            SODate: {
-                required: true,
-            },
-        },
+}
+function onRequestEnd(e) {
+    if (e.type == "update" && !e.response.Errors) {
+        alertBox("Thành công! ", "Cập nhật thành công", true, 3000);
+        onLoadPage(r + "/OP_SalesOrder/PartialCreate/" + SONumber);
+        //$("#grid").data("kendoGrid").dataSource.read();
+    }
+    if (e.type == "create" && !e.response.Errors) {
+        alertBox("Thành công! ", "Lưu thành công", true, 3000);
+        //$("#grid").data("kendoGrid").dataSource.read();
 
-        // Messages for form validation
-        messages: {
-            WHID: {
-                required: "Thông tin bắt buộc"
-            },
-            WHLID: {
-                required: "Thông tin bắt buộc"
-            },
-            MerchantID: {
-                required: "Thông tin bắt buộc"
-            },
-            ItemCode: {
-                required: "Thông tin bắt buộc"
-            },
-            Qty: {
-                required: "Thông tin bắt buộc",
-                number: "Số lượng phải là số"
-            },
-            SODate: {
-                required: "Thông tin bắt buộc",
-            },
-        },
-        errorPlacement: function (error, element) {
-            error.insertAfter(element);
-        },
-        submitHandler: function (form) {
-            $(form).ajaxSubmit({
-                beforeSend: function () { $("#loading").removeClass('hide'); },
-                success: function (data) {
-                    debugger;
-                    $("#gridDetail").data("kendoGrid").dataSource.read();
-                    $("#gridDetail").data("kendoGrid").dataSource.transport.options.read.url = r + "/SalesOrder/ReadDetail";
-                    if (data.success) {
-                        $('#ItemCode').val('');
-                        
-                        alertBox("Thành công!", " Lưu thành công", true, 3000);
-                        $("#loading").addClass('hide');
-                    }
-                    else {
-                        alertBox("Báo lỗi! ", data.message, false, 3000);
-                        $("#loading").addClass('hide');
-                        console.log(data.message);
-                    }
-                }
-            });
-            return false;
-        }
-    });
-});
-$('.input-mask-date').mask('99/99/9999');
-function CreateHeader() {
-    $('#formHeader').submit();
+    }
 }
-function onDataMerchant() {
-    return {
-        text: $("#MerchantID").val()
-    };
-}
-function onDataItem() {
-    return {
-        text: $("#ItemCode").val()
-    };
-}
-function GetDetail() {
-    debugger;
-    var SONumber = $("#SONumber").val();
-    $.post(r + "/OP_SalesOrder/GetBySONumber", { id: SONumber }, function (data) {
-        if (!data.succsess) {
-            if (data.SONumber != null && data.SONumber != "") {
-                $("#MerchantID").val(data.MerchantID);
-                //$("#MerchantID").val(data.MerchantID);
-                $("#MerchantID").attr('readonly', true);
-                $('#SODate').attr('readonly', true);
-                $("#Note").attr('readonly', true);
-                $('#WHID').prop('disabled', true).trigger('change');
-                $('#WHLID').prop('disabled', true).trigger('change');
-                $("#Note").val(data.Note);
-                $('#SODate').val(dateToString(data.SODate));
-                $('#WHID').val(data.WHID).trigger('change');
-                $('#WHLID').val(data.WHLID).trigger('change');
-                $("#TotalQty").text((data.TotalQty + "").replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
-                $("#TotalAmt").text((data.TotalAmt + "").replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
-                $("#SONum").show();
+function error_handlerDetail(e) {
+    if (e.errors) {
+        var message = "";
+        $.each(e.errors, function (key, value) {
+            if ('errors' in value) {
+                $.each(value.errors, function () {
+                    message += this + "\n";
+                });
             }
-        }
-    });
+        });
+        alertBox("Báo lỗi! ", message, false, 3000);
+    } else {
+        alertBox("Thành công! ", "Lưu thành công", true, 3000);
+    }
 }
-function dateToString(date) {
+function onRequestEndDetail(e) {
+    if (e.type == "update" && !e.response.Errors) {
+        alertBox("Thành công! ", "Cập nhật thành công", true, 3000);
+        $("#gridDetail").data("kendoGrid").dataSource.read();
+    }
+    if (e.type == "create" && !e.response.Errors) {
+        alertBox("Thành công! ", "Lưu thành công", true, 3000);
+        $("#gridDetail").data("kendoGrid").dataSource.read();
 
-    if (date != null) {
-        date = new Date(date.match(/\d+/)[0] * 1);
-        var day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
-        var month = (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1);
-        return day + '/' + month + '/' + date.getFullYear();
     }
-    else {
-        return "";
-    }
-}
-function onDataSONumber(){
-    return {
-        text: $("#SONumber").val()
-    };
-}
-function onDataboundHeader() {
-    resizeGrid();
-    var grid = $("#gridHeader").data("kendoGrid");
-    var requestObject = (new kendo.data.transports["aspnetmvc-server"]({ prefix: "" }))
-    .options.parameterMap({
-        page: grid.dataSource.page(),
-        sort: grid.dataSource.sort(),
-        filter: grid.dataSource.filter()
-    });
-    var $exportLink = grid.element.find('.export');
-    var href = $exportLink.attr('href');
-    if (href) {
-        href = href.replace(/sort=([^&]*)/, 'sort=' + requestObject.sort || '~');
-        href = href.replace(/filter=([^&]*)/, 'filter=' + (requestObject.filter || '~'));
-        $exportLink.attr('href', href);
-    }
-    $("#divLoading").hide();
 }
 function onDataboundDetail() {
     resizeGridDetail();
@@ -181,6 +82,25 @@ function onDataboundDetail() {
     $("#divLoading").hide();
     GetDetail();
 }
+function onDatabound() {
+    resizeGrid();
+    var grid = $("#grid").data("kendoGrid");
+    var requestObject = (new kendo.data.transports["aspnetmvc-server"]({ prefix: "" }))
+    .options.parameterMap({
+        page: grid.dataSource.page(),
+        sort: grid.dataSource.sort(),
+        filter: grid.dataSource.filter()
+    });
+    var $exportLink = grid.element.find('.export');
+    var href = $exportLink.attr('href');
+    if (href) {
+        href = href.replace(/sort=([^&]*)/, 'sort=' + requestObject.sort || '~');
+        href = href.replace(/filter=([^&]*)/, 'filter=' + (requestObject.filter || '~'));
+        $exportLink.attr('href', href);
+    }
+    $("#divLoading").hide();
+}
+
 function resizeGridDetail() {
     var offsetbottom = parseInt($(window).height()) - parseInt($('#gridDetail').offset().top);
     var gridElement = $("#gridDetail"),
@@ -192,9 +112,11 @@ function resizeGridDetail() {
     });
     dataArea.height(offsetbottom - otherElementsHeight - 40);
 }
+
+
 function resizeGrid() {
-    var offsetbottom = parseInt($(window).height()) - parseInt($('#gridHeader').offset().top);
-    var gridElement = $("#gridHeader"),
+    var offsetbottom = parseInt($(window).height()) - parseInt($('#grid').offset().top);
+    var gridElement = $("#grid"),
     dataArea = gridElement.find(".k-grid-content"),
     otherElements = gridElement.children().not(".k-grid-content"),
     otherElementsHeight = 0;
@@ -203,6 +125,19 @@ function resizeGrid() {
     });
     dataArea.height(offsetbottom - otherElementsHeight - 40);
 }
+function onRequestStartDetail(e) {
+    blockUI(false);
+}
+
+function blockUI(isMark) {
+    if (isMark) {
+        $(document).ajaxStart($.blockUI({ message: '<i class="fa fa-spinner fa-3x fa-lg fa-spin txt-color-blueDark"></i>', theme: false })).ajaxStop($.unblockUI);
+    }
+    else {
+        $(document).ajaxStart($.blockUI({ message: '<i class="fa fa-spinner fa-3x fa-lg fa-spin txt-color-blueDark"></i>', theme: false, overlayCSS: { backgroundColor: 'transparent' } })).ajaxStop($.unblockUI);
+    }
+}
+
 function alertBox(title, content, flag, timeout) {
     //var icon = flag ? "fa-thumbs-up" : "fa-thumbs-down";
     $.smallBox({
@@ -213,20 +148,142 @@ function alertBox(title, content, flag, timeout) {
         timeout: timeout
     });
 }
-function Create() {
-    $.post(r + "/OP_SalesOrder/CreateSONew", function (data) {
-        if (data.success) {
-            onLoadPage(r + "/OP_SalesOrder/PartialDetail/" + data.SONumber);
-        }
-        else {
-            alertBox("Báo lỗi! ", data.message, false, 3000);
-            $("#loading").addClass('hide');
-            console.log(data.message);
+function KeyCode(e) {
+    if (window.event.keyCode > 31 || window.event.keyCode < 90) {
+        return false;
+    }
+}
+function SaveAll() {
+    if ($('#grid').data('kendoGrid').dataSource.hasChanges() == true) {
+        $('#formHeader').submit();
+    }
+    else {
+        alertBox("Báo lỗi! ", "Vui lòng nhập số lượng để tạo.", false, 3000);
+    }
+}
+function Cancel() {
+    $('#grid').data('kendoGrid').cancelChanges();
+}
+function UpdateDetail() {
+    if ($('#gridDetail').data('kendoGrid').dataSource.hasChanges() == true && $("#VendorID").val() != "") {
+        $('#gridDetail').data('kendoGrid').saveChanges();
+    }
+    else {
+        alertBox("Báo lỗi! ", "Bạn không có quyền cập nhật.", false, 3000);
+    }
+}
+
+function CancelDetail() {
+    $('#gridDetail').data('kendoGrid').cancelChanges();
+}
+$("#formHeader").validate({
+    errorPlacement: function (error, element) {
+        error.insertAfter(element);
+    },
+    submitHandler: function (form) {
+        $(form).ajaxSubmit({
+            beforeSend: function () { $("#loading").removeClass('hide'); },
+            success: function (data) {
+                if (data.success) {
+                    SONumber = data.SONumber;
+                    $('#grid').data('kendoGrid').saveChanges();
+                    //$('#grid').data('kendoGrid').dataSource.hasChanges() == false;
+                    //onLoadPage(r + "/AD_CreateOrder/PartialCreate/" + data.SONumber);
+                }
+                else {
+                    alertBox("Báo lỗi! ", data.message, false, 3000);
+                    $("#loading").addClass('hide');
+                    console.log(data.message);
+                    console.log(checkGird);
+                }
+            }
+        });
+        return false;
+    }
+});
+
+function GetSONumber() {
+    return { SONumber: SONumber };
+}
+
+function GetSONumberDetail() {
+    return { SONumber: $("#SONumber").val() };
+}
+function GetDetail() {
+    debugger;
+    var SONumber = $("#SONumber").val();
+    $.post(r + "/OP_SalesOrder/GetBySONumber", { id: SONumber }, function (data) {
+        if (!data.succsess) {
+            if (data.SONumber != null && data.SONumber != "") {
+                //$("#MerchantID").val(data.MerchantID);
+                //$("#MerchantID").attr('readonly', true);
+                $('#SODate').attr('readonly', true);
+                $("#Note").attr('readonly', true);
+                //$('#WHID').prop('disabled', true).trigger('change');
+                // $('#WHLID').prop('disabled', true).trigger('change');
+                $("#Note").val(data.Note);
+                $('#SODate').val(dateToString(data.SODate));
+                $('#WHID').val(data.WHID).trigger('change');
+                $('#WHLID').val(data.WHLID).trigger('change');
+                $("#TotalQty").val((data.TotalQty + "").replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+                $("#TotalAmt").val((data.TotalAmt + "").replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+                $("#SONum").show();
+            }
         }
     });
 }
-function onOpenPopupDetail(obj) {
-    var row = $(obj).closest('tr');
-    var SONumber = $(row).find("td:eq(1)").text();
-    onLoadPage(r + "/OP_SalesOrder/PartialDetail/" + SONumber);
+function dateToString(date) {
+
+    if (date != null) {
+        date = new Date(date.match(/\d+/)[0] * 1);
+        var day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+        var month = (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1);
+        return day + '/' + month + '/' + date.getFullYear();
+    }
+    else {
+        return "";
+    }
+}
+
+function checkAllDetail(e) {
+    var x = $(e).prop('checked');
+    $('#gridDetail').find(".checkrowid").each(function () {
+        $(this).prop('checked', x);
+    });
+}
+function DeleteDetail() {
+    var listrowid = "";
+    $("#gridDetail").find(".checkrowid").each(function () {
+        if ($(this).prop('checked') == true) {
+            listrowid += $(this).attr("id") + '@@@@';
+        }
+    });
+    if (listrowid == "" || listrowid == null) {
+        alertBox("Báo lỗi!", "Chọn dữ liệu để xóa.", false, 3000);
+        return;
+    }
+    else if ($("#VendorID").val() == "") {
+        alertBox("Báo lỗi!", "Bạn không có quyền xóa.", false, 3000);
+        return;
+    }
+    else if (listrowid != null && listrowid != "") {
+        var c = confirm("Bạn có chắc chắn muôn xóa.");
+        if (c == true) {
+            $.post(r + "/OP_SalesOrder/DeleteDetail", { data: listrowid, SONumber: $("#SONumber").val(), }, function (data) {
+                if (data.success) {
+                    alertBox("Thành công!", " Xóa thành công", true, 3000);
+                    $("#gridDetail").data("kendoGrid").dataSource.read();
+                    $('#checkboxcheckAllDetail').prop('checked', false);
+                }
+                else {
+                    alertBox("Báo lỗi! ", data.message, false, 3000);
+                    $("#gridDetail").data("kendoGrid").dataSource.read();
+                }
+            });
+        }
+        else {
+            return false;
+        }
+    }
+
 }

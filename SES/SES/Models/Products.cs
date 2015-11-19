@@ -51,8 +51,9 @@ namespace SES.Models
         public double QtyOut { get; set; }
         [Ignore]
         public double QtyAvailable { get; set; }
-        //[Required]
-        //public int Qty { get; set; }
+        [Ignore]
+        [Required]
+        public int Qty { get; set; }
 
         public List<Products> GetStockReportInOut(int page, int pageSize, string whereCondition, DateTime from, DateTime end)
         {

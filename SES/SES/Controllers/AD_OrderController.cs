@@ -220,7 +220,7 @@ namespace SES.Controllers
                     {
                         header.SONumber = SONumber;
                         header.SODate = !string.IsNullOrEmpty(Request["SODate"]) ? DateTime.Parse(DateTime.ParseExact(Request["SODate"], "dd/MM/yyyy", CultureInfo.InvariantCulture).ToString("yyyy-MM-dd")) : DateTime.Now;
-                        header.MerchantID = !string.IsNullOrEmpty(Request["MerchantID"]) ? Request["MerchantID"] : "";
+                        header.VendorID = !string.IsNullOrEmpty(Request["MerchantID"]) ? Request["MerchantID"] : "";
                         header.Note = !string.IsNullOrEmpty(Request["Note"]) ? Request["Note"] : "";
                         header.TotalQty = dbConn.Select<SODetail>(s =>s.SONumber == SONumber).Sum(s => s.Qty);
                         header.WHID = Request["WHID"];

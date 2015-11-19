@@ -259,6 +259,7 @@
     <Compile Include="Models\DC_LG_Transporter_Location.cs" />
     <Compile Include="Models\DC_LG_Transporter_Location_Territory.cs" />
     <Compile Include="Models\DC_RuleCheck.cs" />
+    <Compile Include="Models\INUnit.cs" />
     <Compile Include="Models\Master_Announcement.cs" />
     <Compile Include="Models\CustomModel.cs" />
     <Compile Include="Models\DC_AD_Items.cs" />
@@ -2021,6 +2022,8 @@
     <Content Include="Views\PurchaseOrder\PurchaseOrder_Header.cshtml" />
     <Content Include="Views\SalesOrder\SalesOrderDetail.cshtml" />
     <Content Include="Views\SalesOrder\SalesOrderHeader.cshtml" />
+    <Content Include="Views\OP_SalesOrder\_OP_CreateOrderIndex.cshtml" />
+    <Content Include="Views\OP_SalesOrder\_OP_CreateOrder.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

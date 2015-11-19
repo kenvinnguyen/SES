@@ -18,7 +18,7 @@ namespace SES.Models
         public int Id { get; set; }
         public string SONumber { set; get; }
         public DateTime SODate { get; set; }
-        public string MerchantID { get; set; }
+        public string VendorID { get; set; }
         public string WHID { get; set; }
         public string WHLID { get; set; }
         public int TotalQty { get; set; }

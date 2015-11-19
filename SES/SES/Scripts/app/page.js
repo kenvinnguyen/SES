@@ -33,9 +33,8 @@ $(document).ready(function () {
         onLoadPage(r + "/AD_Announcement/PartialAnnouncement");
     });
     //Đơn bán hàng
-    $("#menu_OP_SalesOrder").click(function () {
-        onLoadPage(r + "/OP_SalesOrder/PartialSO");
-    });
+    $('#menu_OP_SalesOrder').click(function () {
+        onLoadPage(r + "/OP_SalesOrder/PartialDetail");
     //2.Kho
     $("#menu_IN_WareHouse").click(function () {
         //debugger;
