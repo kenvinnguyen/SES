@@ -15,12 +15,11 @@
     <link rel="stylesheet" type="text/css" media="screen" href="@Url.Content("~/css/font-awesome.min.css")">
     <link rel="stylesheet" type="text/css" media="screen" href="@Url.Content("~/css/smartadmin-production.min.css")">
     <link rel="stylesheet" type="text/css" media="screen" href="@Url.Content("~/css/smartadmin-skins.min.css")">
-
+    <link rel="stylesheet" type="text/css" media="screen" href="@Url.Content("~/css/CustomStyles.css")">
     <link rel="stylesheet" type="text/css" media="screen" href="@Url.Content("~/css/demo.min.css")">
-    <link rel="shortcut icon" href="@Url.Content("~/img/favicon/favicon.ico")" type="image/x-icon">
-    <link rel="icon" href="@Url.Content("~/img/favicon/favicon.ico")" type="image/x-icon">
-    @*<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,300,400,700">
-    Ref: https://developer.apple.com/library/ios/documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html -->*@
+    <link rel="shortcut icon" href="@Url.Content("~/img/favicon.ico")" type="image/x-icon">
+    <link rel="icon" href="@Url.Content("~/img/favicon.ico")" type="image/x-icon">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,300,400,700">
     <link rel="apple-touch-icon" href="@Url.Content("~/img/splash/sptouch-icon-iphone.png")">
     <link rel="apple-touch-icon" sizes="76x76" href="@Url.Content("~/img/splash/touch-icon-ipad.png")">
     <link rel="apple-touch-icon" sizes="120x120" href="@Url.Content("~/img/splash/touch-icon-iphone-retina.png")">
@@ -30,74 +29,45 @@
     <link rel="apple-touch-startup-image" href="@Url.Content("~/img/splash/ipad-landscape.png")" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)">
     <link rel="apple-touch-startup-image" href="@Url.Content("~/img/splash/ipad-portrait.png")" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)">
     <link rel="apple-touch-startup-image" href="@Url.Content("~/img/splash/iphone.png")" media="screen and (max-device-width: 320px)">
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
-    <script> if (!window.jQuery) { document.write('<script src="@Url.Content("~/js/libs/jquery-2.0.2.min.js")"><\/script>'); } </script>
-
-    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-    <script> if (!window.jQuery.ui) { document.write('<script src="@Url.Content("~/js/libs/jquery-ui-1.10.3.min.js")"><\/script>'); } </script>
-
-    <script src="@Url.Content("~/js/plugin/jquery-touch/jquery.ui.touch-punch.min.js")"></script>
-    <script src="@Url.Content("~/js/bootstrap/bootstrap.min.js")"></script>
-
-    <script src="@Url.Content("~/js/plugin/jquery-validate/jquery.validate.min.js")"></script>
-
-    <script src="@Url.Content("~/js/plugin/masked-input/jquery.maskedinput.min.js")"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            document.title = "Đăng nhập";
-
-            var headerH = $('#header').height();
-            //: 80px 60px;
-            var teamp = $('#content .row:eq(0)');
-            $('#content .row:eq(0)').css({
-                'height': $(window).height() - headerH - 100
-                , 'background-size': '100% 100%'
-            });
-            //css header
-            $('#header').css({ 'background-size': '100% 100%' });
-        });
-        //runAllForms();
-
-        $(function () {
-            $("#UserName").focus();
-
-            // Validation
-            $("#login-form").validate({
-                // Rules for form validation
-                rules: {
-                    UserName: {
-                        required: true
-                    },
-                    Password: {
-                        required: true
-                    }
-                },
-
-                // Messages for form validation
-                messages: {
-                    UserName: {
-                        required: 'Please enter your username'
-                    },
-                    Password: {
-                        required: 'Please enter your password'
-                    }
-                },
-
-                // Do not change code below
-                errorPlacement: function (error, element) {
-                    $(error).css('color', 'red');
-                    error.insertAfter(element.parent());
-                },
-
-                submitHandler: function (form) {
-                    form.submit();
-                }
-            });
-        });
+    <script src="@Url.Content("~/Scripts/kendo/2015.1.429/jquery.min.js")"></script>
+    <script>
+        if (!window.jQuery) {
+            document.write('<script src="@Url.Content("~/js/libs/jquery-2.0.2.min.js")"><\/script>');
+        }
     </script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script>
+        if (!window.jQuery.ui) {
+            document.write('<script src="@Url.Content("~/js/libs/jquery-ui-1.10.3.min.js")"><\/script>');
+        }
+    </script>
+    <link href="@Url.Content("~/Content/kendo/2015.1.429/kendo.common.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2015.1.429/kendo.mobile.all.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2015.1.429/kendo.dataviz.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/customkendo.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/chosen.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/daterangepicker.css")" rel="stylesheet" />
+    <script>
+        var ROOT = '@Url.Content("~/")';
+        var r = ROOT.substring(0, ROOT.length - 1);
+        var rootUrl = r;
+    </script>
+    <script src="@Url.Content("~/Scripts/kendo.modernizr.custom.js")"></script>
+    @Scripts.Render("~/Scripts/app/Logon.js")
+    @Scripts.Render("~/Scripts/bootstrap.js")
+    @Scripts.Render("~/Scripts/respond.js")
+    
+
     <style>
         #extr-page #header {
             height: 49px;
+        }
+
+        .smart-form .checkbox input, .smart-form .radio input {
+            position: absolute;
+            left: 25px;
         }
     </style>
 
@@ -126,7 +96,26 @@
 
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-5 col-lg-4">
+                    <div class="smart-form">
+                        <fieldset>
+                            <section>
+                                <div class="row">
+                                    <section style=" margin-left: 52px;margin-top: -25px;">
+                                        <label class="radio">
+                                            <input type="radio" name="radio" id="radioLogin" value="1" checked="checked">
+                                            <i></i>Tôi đã có tài khoản SES
+                                        </label>
+                                        <label class="radio">
+                                            <input type="radio" name="radio" id="radioRegistry" value="2">
+                                            <i></i>Tôi là thành viên mới
+                                        </label>
+                                    </section>
+                                </div>
+                            </section>
+                        </fieldset>
+                    </div>
                     <div class="well no-padding">
+
                         @using (Html.BeginForm("logon", "account", new { ReturnUrl = Request.QueryString["ReturnUrl"] }, FormMethod.Post, new { id = "login-form", @class = "smart-form client-form" }))
                         {
                             <header>
@@ -171,29 +160,138 @@
                                 </button>
                             </footer>
                         }
+                        @using (Html.BeginForm("Registry", "account", new { ReturnUrl = Request.QueryString["ReturnUrl"] }, FormMethod.Post, new { id = "registry-form", @class = "smart-form", enctype = "multipart/form-data" }))
+                        {
+                            <header>
+                                Đănng ký
+                            </header>
+                            <fieldset>
+                                <section>
+                                    <label class="label">Tên đăng nhập</label>
+                                    <label class="input">
+                                        <i class="icon-append fa fa-user"></i>
+                                        <input type="text" name="Username" placeholder="Tên đăng nhập">
+                                        <b class="tooltip tooltip-bottom-right">Nhập tên đăng nhập</b>
+                                    </label>
+                                </section>
+                                <section>
+                                    <label class="label">Email</label>
+                                    <label class="input">
+                                        <i class="icon-append fa fa-envelope-o"></i>
+                                        <input type="email" name="Email" placeholder="Email address">
+                                        <b class="tooltip tooltip-bottom-right">Nhập Email</b>
+                                    </label>
+                                </section>
+                                <section>
+                                    <label class="label">Số điện thoại</label>
+                                    <label class="input">
+                                        <i class="icon-append fa fa-phone"></i>
+                                        <input type="tel" name="Phone" placeholder="Số điện thoại" data-mask="(999) 999-9999">
+                                        <b class="tooltip tooltip-bottom-right">Nhập SĐT</b>
+                                    </label>
+                                </section>
+                                <section>
+                                    <label class="label">Mật khẩu</label>
+                                    <label class="input">
+                                        <i class="icon-append fa fa-lock"></i>
+                                        <input type="password" name="Password" placeholder="Mật khẩu" id="password">
+                                        <b class="tooltip tooltip-bottom-right">Nhập mật khẩu</b>
+                                    </label>
+                                </section>
+
+                                <section>
+                                    <label class="label">Xác nhận mật khẩu</label>
+                                    <label class="input">
+                                        <i class="icon-append fa fa-lock"></i>
+                                        <input type="password" name="PasswordConfirm" placeholder="Xác nhận mật khẩu">
+                                        <b class="tooltip tooltip-bottom-right">Xác nhận mật khẩu</b>
+                                    </label>
+                                </section>
+                            </fieldset>
+                            <footer>
+                                <button type="submit" class="btn btn-primary">
+                                    Đăng ký
+                                </button>
+                            </footer>
+                        }
                     </div>
-
-                    @*<h5 class="text-center"> - Or sign in using -</h5>
-
-                        <ul class="list-inline text-center">
-                            <li>
-                                <a href="javascript:void(0);" class="btn btn-primary btn-circle"><i class="fa fa-facebook"></i></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0);" class="btn btn-info btn-circle"><i class="fa fa-twitter"></i></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0);" class="btn btn-warning btn-circle"><i class="fa fa-linkedin"></i></a>
-                            </li>
-                        </ul>*@
-
                 </div>
             </div>
         </div>
 
     </div>
 
+    <script src="@Url.Content("~/js/app.config.js")"></script>
 
+    <script src="@Url.Content("~/js/plugin/jquery-touch/jquery.ui.touch-punch.min.js")"></script>
+
+    <script src="@Url.Content("~/js/bootstrap/bootstrap.min.js")"></script>
+
+    <script src="@Url.Content("~/js/notification/SmartNotification.min.js")"></script>
+
+    <script src="@Url.Content("~/js/smartwidgets/jarvis.widget.min.js")"></script>
+
+    <script src="@Url.Content("~/js/plugin/easy-pie-chart/jquery.easy-pie-chart.min.js")"></script>
+
+    <script src="@Url.Content("~/js/plugin/sparkline/jquery.sparkline.min.js")"></script>
+
+    <script src="@Url.Content("~/js/plugin/jquery-validate/jquery.validate.min.js")"></script>
+
+    <!-- JQUERY MASKED INPUT -->
+    <script src="@Url.Content("~/js/plugin/masked-input/jquery.maskedinput.min.js")"></script>
+
+    <!-- JQUERY SELECT2 INPUT -->
+    <script src="@Url.Content("~/js/plugin/select2/select2.min.js")"></script>
+
+
+    <!-- JQUERY UI + Bootstrap Slider -->
+    <script src="@Url.Content("~/js/plugin/bootstrap-slider/bootstrap-slider.min.js")"></script>
+
+    <!-- browser msie issue fix -->
+    <script src="@Url.Content("~/js/plugin/msie-fix/jquery.mb.browser.min.js")"></script>
+
+    <!-- FastClick: For mobile devices -->
+    <script src="@Url.Content("~/js/plugin/fastclick/fastclick.min.js")"></script>
+
+    <!--[if IE 8]>
+
+    <h1>Your browser is out of date, please update your browser by going to www.microsoft.com/download</h1>
+
+    <![endif]-->
+    <!-- Demo purpose only -->
+    <script src="@Url.Content("~/js/demo.min.js")"></script>
+
+    <!-- MAIN APP JS FILE -->
+    <script src="@Url.Content("~/js/app.min.js")"></script>
+
+    <!-- ENHANCEMENT PLUGINS : NOT A REQUIREMENT -->
+    <!-- Voice command : plugin -->
+    <script src="@Url.Content("~/js/speech/voicecommand.min.js")"></script>
+
+    <!-- PAGE RELATED PLUGIN(S) -->
+    <!-- Flot Chart Plugin: Flot Engine, Flot Resizer, Flot Tooltip -->
+    <script src="@Url.Content("~/js/plugin/flot/jquery.flot.cust.min.js")"></script>
+    <script src="@Url.Content("~/js/plugin/flot/jquery.flot.resize.min.js")"></script>
+    <script src="@Url.Content("~/js/plugin/flot/jquery.flot.tooltip.min.js")"></script>
+
+    <!-- Vector Maps Plugin: Vectormap engine, Vectormap language -->
+    <script src="@Url.Content("~/js/plugin/vectormap/jquery-jvectormap-1.2.2.min.js")"></script>
+    <script src="@Url.Content("~/js/plugin/vectormap/jquery-jvectormap-world-mill-en.js")"></script>
+
+    <!-- Full Calendar -->
+    <script src="@Url.Content("~/js/plugin/fullcalendar/jquery.fullcalendar.min.js")"></script>
+
+    <script src="@Url.Content("~/Scripts/kendo/2015.1.429/jszip.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/kendo/2015.1.429/kendo.all.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/kendo/2015.1.429/kendo.aspnetmvc.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/jquery.form.js")"></script>
+    <script src="@Url.Content("~/Scripts/chosen.jquery.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/app/page.js")"></script>
+    <script src="@Url.Content("~/Scripts/daterangepicker.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/moment.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/autoNumeric.js")"></script>
+    <script src="@Url.Content("~/Scripts/jquery.number.js")"></script>
 
 </body>
 </html>
+

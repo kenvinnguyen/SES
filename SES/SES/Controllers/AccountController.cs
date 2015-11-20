@@ -56,7 +56,7 @@ namespace SES.Controllers
         {
             try
             {
-                if(new ChangePasswordModel().GetUserByUserIDAndPassword(item.UserIDChange,SqlHelper.GetMd5Hash(item.OldPass)))
+                if (new ChangePasswordModel().GetUserByUserIDAndPassword(item.UserIDChange, SqlHelper.GetMd5Hash(item.OldPass)))
                 {
                     item.RepeatNewPass = SqlHelper.GetMd5Hash(item.RepeatNewPass);
                     item.ChangePassword();
@@ -69,5 +69,43 @@ namespace SES.Controllers
                 return Json(new { success = false, message = e.Message });
             }
         }
-	}
+        public ActionResult Registry(RegistryModel item)
+        {
+            IDbConnection db = new OrmliteConnection().openConn();
+            try
+            {
+                    var isExist = db.FirstOrDefault<Auth_User>(p => p.UserID == item.UserName);
+                    item.Phone = !string.IsNullOrEmpty(item.Phone) ? item.Phone : "";
+                    item.Email = !string.IsNullOrEmpty(item.Email) ? item.Email : "";
+                    item.UserName = !string.IsNullOrEmpty(item.UserName) ? item.UserName : "";
+                    if (isExist != null)
+                        return Json(new { success = false, message = "Người dùng đã tồn tại" });
+                    var user = new Auth_User();
+                    user.UserID = item.UserName;
+                    user.DisplayName = item.UserName;
+                    user.Phone = item.Phone;
+                    user.Email = item.Email;
+                    user.IsActive = true;
+                    user.FullName = item.UserName;
+                    user.Password = SqlHelper.GetMd5Hash(item.Password);
+                    user.RowCreatedAt = DateTime.Now;
+                    user.RowCreatedBy = "CustomerRegistry";
+                    user.Note = "";
+                    db.Insert<Auth_User>(user);
+                    var detail = new Auth_UserInRole();
+                    detail.UserID = item.UserName;
+                    detail.RoleID = 3;
+                    detail.RowCreatedAt = DateTime.Now;
+                    detail.RowCreatedBy = "CustomerRegistry";
+                    db.Insert<Auth_UserInRole>(detail);
+                    return Json(new { success = true, message = "Đăng ký thành công" });
+
+            }
+            catch (Exception e)
+            {
+                return Json(new { success = false, message = e.Message });
+            }
+            finally { db.Close(); }
+        }
+    }
 }
