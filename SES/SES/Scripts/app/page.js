@@ -35,84 +35,84 @@ $(document).ready(function () {
     //Đơn bán hàng
     $('#menu_OP_SalesOrder').click(function () {
         onLoadPage(r + "/OP_SalesOrder/PartialDetail");
-    //2.Kho
-    $("#menu_IN_WareHouse").click(function () {
-        //debugger;
-        onLoadPage(r + "/IN_WareHouse/PartialWH");
-    });
-    //3.Vi Tri Kho
-    $("#menu_IN_WareHouseLocation").click(function () {
-        //debugger;
-        onLoadPage(r + "/IN_WareHouseLocation/PartialWHL");
-    });
-    //location
-    $("#menu_Location").click(function () {
-        onLoadPage(r + "/Location/PartialLocation");
-    });
-    //Lịch Nghỉ
-    $("#menu_AdminMasterHoliday").click(function () {
-        onLoadPage(r + "/AdminMasterHoliday/TreeView");
-    });
-    //Lý do
-    $("#menu_Reason").click(function () {
-        onLoadPage(r + "/Reason/PartialReason");
-    });
-    // Phân cấp Vùng miền
-    $("#menu_AdminMasterTerritory").click(function () {
-        onLoadPage(r + "/AdminMasterTerritory/PartialOthersTerritory");
-    });
+        //2.Kho
+        $("#menu_IN_WareHouse").click(function () {
+            //debugger;
+            onLoadPage(r + "/IN_WareHouse/PartialWH");
+        });
+        //3.Vi Tri Kho
+        $("#menu_IN_WareHouseLocation").click(function () {
+            //debugger;
+            onLoadPage(r + "/IN_WareHouseLocation/PartialWHL");
+        });
+        //location
+        $("#menu_Location").click(function () {
+            onLoadPage(r + "/Location/PartialLocation");
+        });
+        //Lịch Nghỉ
+        $("#menu_AdminMasterHoliday").click(function () {
+            onLoadPage(r + "/AdminMasterHoliday/TreeView");
+        });
+        //Lý do
+        $("#menu_Reason").click(function () {
+            onLoadPage(r + "/Reason/PartialReason");
+        });
+        // Phân cấp Vùng miền
+        $("#menu_AdminMasterTerritory").click(function () {
+            onLoadPage(r + "/AdminMasterTerritory/PartialOthersTerritory");
+        });
    
 
-    //Kho ấn phẩm
-    $("#menu_ListPublication").click(function () {
-        onLoadPage(r + "/ListPublication/PartialRole");
-    });
+        //Kho ấn phẩm
+        $("#menu_ListPublication").click(function () {
+            onLoadPage(r + "/ListPublication/PartialRole");
+        });
 
-    //Kho và đơn vị tính
-    $("#menu_WareHouse").click(function () {
-        onLoadPage(r + "/WareHouse/PartialWH");
-    });
-    //Mu hàng
-    $('#menu_SalesOrder').click(function () {
-        onLoadPage(r + "/SalesOrder/PartialRole");
-    })
-    //Đơn vị vận chuyển
-    $("#menu_Transporter").click(function () {
-        onLoadPage(r + "/Transporter/PartialTransporter");
-    });
-    $("#menu_DeliveryFee").click(function () {
-        onLoadPage(r + "/DeliveryFee/PartialDeliveryFee");
-    });
-    $("#menu_DeliveryDiscount").click(function () {
-        onLoadPage(r + "/DeliveryDiscount/PartialDeliveryDiscount");
-    });
-    $("#menu_DeliveryPromotion").click(function () {
-        onLoadPage(r + "/DeliveryPromotion/PartialDeliveryPromotion");
-    });
-    $("#menu_RuleCheck").click(function () {
-        onLoadPage(r + "/RuleCheck/PartialRuleCheck");
-    });
-    $("#menu_Printer").click(function () {
-        onLoadPage(r + "/Printer/PartialPrinter");
-    });
-    $("#menu_Contract").click(function () {
-        onLoadPage(r + "/Contract/PartialContract");
-    });
-    $("#menu_Products").click(function () {
-        onLoadPage(r + "/Products/PartialProducts");
-    });
-    $("#menu_DeliveryFormula").click(function () {
-        onLoadPage(r + "/DeliveryFormula/PartialDeliveryFormula");
-    });
-    $("#menu_Customer").click(function () {
-        onLoadPage(r + "/Customer/PartialCustomer");
-    });
-    $("#menu_PO_VendorInfo").click(function () {
-        onLoadPage(r + "/PO_VendorInfo/PartialVendor");
-    });
-    $("#menu_Promotion").click(function () {
-        onLoadPage(r + "/Promotion/PartialPromotion");
-    });
+        //Kho và đơn vị tính
+        $("#menu_WareHouse").click(function () {
+            onLoadPage(r + "/WareHouse/PartialWH");
+        });
+        //Mu hàng
+        $('#menu_SalesOrder').click(function () {
+            onLoadPage(r + "/SalesOrder/PartialRole");
+        })
+        //Đơn vị vận chuyển
+        $("#menu_Transporter").click(function () {
+            onLoadPage(r + "/Transporter/PartialTransporter");
+        });
+        $("#menu_DeliveryFee").click(function () {
+            onLoadPage(r + "/DeliveryFee/PartialDeliveryFee");
+        });
+        $("#menu_DeliveryDiscount").click(function () {
+            onLoadPage(r + "/DeliveryDiscount/PartialDeliveryDiscount");
+        });
+        $("#menu_DeliveryPromotion").click(function () {
+            onLoadPage(r + "/DeliveryPromotion/PartialDeliveryPromotion");
+        });
+        $("#menu_RuleCheck").click(function () {
+            onLoadPage(r + "/RuleCheck/PartialRuleCheck");
+        });
+        $("#menu_Printer").click(function () {
+            onLoadPage(r + "/Printer/PartialPrinter");
+        });
+        $("#menu_Contract").click(function () {
+            onLoadPage(r + "/Contract/PartialContract");
+        });
+        $("#menu_Products").click(function () {
+            onLoadPage(r + "/Products/PartialProducts");
+        });
+        $("#menu_DeliveryFormula").click(function () {
+            onLoadPage(r + "/DeliveryFormula/PartialDeliveryFormula");
+        });
+        $("#menu_Customer").click(function () {
+            onLoadPage(r + "/Customer/PartialCustomer");
+        });
+        $("#menu_PO_VendorInfo").click(function () {
+            onLoadPage(r + "/PO_VendorInfo/PartialVendor");
+        });
+        $("#menu_Promotion").click(function () {
+            onLoadPage(r + "/Promotion/PartialPromotion");
+        });
         var url = localStorage['urlpage'] || '';
         if (url) {
             onLoadPage(url);
@@ -120,7 +120,7 @@ $(document).ready(function () {
         else {
             onLoadPage(r + "/Home/Partial");
         }
-});
+    });
 
     function onLoadPage(url) {
         $(document).unbind("keypress");
@@ -157,3 +157,4 @@ $(document).ready(function () {
         $(idMask).hide();
         $(idPopup).fadeOut();
     }
+})
