@@ -136,6 +136,7 @@ function resizeGrid() {
     dataArea.height(offsetbottom - otherElementsHeight - 40);
 }
 function onRequestStartDetail(e) {
+    GetDetail();
     blockUI(false);
 }
 
@@ -196,6 +197,8 @@ $("#formHeader").validate({
             success: function (data) {
                 if (data.success) {
                     SONumber = data.SONumber;
+                    $("#CreatedAt").val(dateToString(data.CreatedAt));
+                    $("#CreatedBy").val(data.CreatedBy);
                     $('#grid').data('kendoGrid').saveChanges();
                     //$('#grid').data('kendoGrid').dataSource.hasChanges() == false;
                     //onLoadPage(r + "/AD_CreateOrder/PartialCreate/" + data.SONumber);
@@ -237,6 +240,8 @@ function GetDetail() {
                 $('#WHLID').val(data.WHLID).trigger('change');
                 $("#TotalQty").val((data.TotalQty + "").replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
                 $("#TotalAmt").val((data.TotalAmt + "").replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+                $("#CreatedAt").val(dateToString(data.CreatedAt));
+                $("#CreatedBy").val(data.CreatedBy);
                 $("#SONum").show();
             }
         }

@@ -1,8 +1,11 @@
 ﻿
-<script src="~/Scripts/app/OP_SalesOrder.js"></script>
-<script src="@Url.Content("~/Scripts/jquery.blockUI.js")"></script>
+
+
 @using SES.Models;
 
+@Scripts.Render("~/Scripts/app/app.js")
+@Scripts.Render("~/Scripts/app/OP_SalesOrder.js")
+@Scripts.Render("~/Scripts/jquery.blockUI.js")
 @{
     var dict = Model != null ? (Dictionary<string, object>)Model : new Dictionary<string, object>();
     var asset = dict.ContainsKey("asset") ? (Dictionary<string, bool>)dict["asset"] : new Dictionary<string, bool>();
@@ -10,6 +13,7 @@
     var listWareHouse = dict.ContainsKey("listWH") ? (List<WareHouse>)dict["listWH"] : new List<WareHouse>();
     var listWareHouseLocation = dict.ContainsKey("listWHL") ? (List<WareHouseLocation>)dict["listWHL"] : new List<WareHouseLocation>();
     var listUnit = dict.ContainsKey("listUnit") ? (List<INUnit>)dict["listUnit"] : new List<INUnit>();
+    var listVendor = dict.ContainsKey("listVendor") ? (List<Vendor>)dict["listVendor"] : new List<Vendor>();
     //var listMerchant = dict.ContainsKey("SONumber") ? dict["SONumber"].ToString() : "";
     var listSONumber = dict["SONumber"] != null ? dict["SONumber"].ToString() : "";
 }
@@ -40,10 +44,14 @@
                                 <div style="float: left; width: 100%; margin-bottom: 15px;">
                                     <section>
                                         <label class="label" style="float: left; width: 23%; color: #9D9D9D">Nhà cung cấp</label>
-                                        <label class="input" style="float: left; width: 65%; ">
-                                            <input style="background: #f0fff0;" type="hidden" class="input-xs" name="VendorID" id="VendorID" readonly="readonly" value="@VendorID">
-                                            <input style="background: #f0fff0;" type="text" class="input-xs" name="@VendorName" id="@VendorID" readonly="readonly" value="@VendorName">
-                                        </label>
+                                        <div>
+                                            <label class="select" style="float: left; width: 65%;">
+                                                @*<input style="background: #f0fff0;" type="hidden" class="input-xs" name="VendorID" id="VendorID" readonly="readonly" value="@VendorID">
+                                                    <input style="background: #f0fff0;" type="text" class="input-xs" name="@VendorName" id="@VendorID" readonly="readonly" value="@VendorName">*@
+                                                @Html.DropDownList("VendorID", new SelectList(listVendor, "VendorID", "VendorName"), new { placeholder = "-- Chọn nhà cung cấp --" })
+                                            </label>
+                                            <div style="clear:both"></div>
+                                        </div>
                                     </section>
                                 </div>
                             </div>
@@ -164,7 +172,7 @@
                     })
                     .Events(events => { events.DataBound("onDataboundDetail"); })
                     .Pageable(pager => pager.PageSizes(new[] { 20, 100, 200, 300 }))
-                            .Editable(editable => editable.Mode(GridEditMode.InCell))
+                    .Editable(editable => editable.Mode(GridEditMode.InCell))
                     .Resizable(r => r.Columns(true))
                     .Navigatable()
                     .Scrollable()
@@ -193,7 +201,7 @@
                         .Events(e => { e.RequestEnd("onRequestEndDetail"); e.RequestStart("onRequestStartDetail"); e.Error("error_handlerDetail"); })
                         .Read(read => read.Action("ReadDetail", "OP_SalesOrder").Data("GetSONumberDetail"))
                         .Update(read => read.Action("UpdateDetail", "OP_SalesOrder").Data("GetSONumber"))
-                                //.Create(read => read.Action("Update", "AD_CreateOrder"))
+                        //.Create(read => read.Action("Update", "AD_CreateOrder"))
                          )
                         )
                     </div>
