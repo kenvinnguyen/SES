@@ -1,7 +1,4 @@
-﻿
-
-
-@using SES.Models;
+﻿@using SES.Models;
 
 @Scripts.Render("~/Scripts/app/app.js")
 @Scripts.Render("~/Scripts/app/OP_SalesOrder.js")
@@ -16,6 +13,8 @@
     var listVendor = dict.ContainsKey("listVendor") ? (List<Vendor>)dict["listVendor"] : new List<Vendor>();
     //var listMerchant = dict.ContainsKey("SONumber") ? dict["SONumber"].ToString() : "";
     var listSONumber = dict["SONumber"] != null ? dict["SONumber"].ToString() : "";
+    var VendorSO = dict.ContainsKey("VendorSO") ? (Vendor)dict["VendorSO"] : new Vendor();
+    var VendorName = VendorSO != null ? @VendorSO.VendorName : "";
 }
 <style>
     .k-autocomplete.k-state-default, .k-picker-wrap.k-state-default, .k-numeric-wrap.k-state-default, .k-dropdown-wrap.k-state-default {
@@ -44,14 +43,16 @@
                                 <div style="float: left; width: 100%; margin-bottom: 15px;">
                                     <section>
                                         <label class="label" style="float: left; width: 23%; color: #9D9D9D">Nhà cung cấp</label>
-                                        <div>
-                                            <label class="select" style="float: left; width: 65%;">
-                                                @*<input style="background: #f0fff0;" type="hidden" class="input-xs" name="VendorID" id="VendorID" readonly="readonly" value="@VendorID">
-                                                    <input style="background: #f0fff0;" type="text" class="input-xs" name="@VendorName" id="@VendorID" readonly="readonly" value="@VendorName">*@
-                                                @Html.DropDownList("VendorID", new SelectList(listVendor, "VendorID", "VendorName"), new { placeholder = "-- Chọn nhà cung cấp --" })
-                                            </label>
-                                            <div style="clear:both"></div>
-                                        </div>
+                                        @*<div>
+                                                <label class="select" style="float: left; width: 65%;">
+                                                    @Html.DropDownList("VendorID", new SelectList(listVendor, "VendorID", "VendorName"), new { placeholder = "-- Chọn nhà cung cấp --" })
+                                                </label>
+                                                <div style="clear:both"></div>
+                                            </div>*@
+
+                                        <label class="input" style="float: left; width: 65%; ">
+                                            <input style="background: #f0fff0;" type="text" class="input-xs" name="VendorName" id="VendorName" readonly="readonly" value="@VendorName">
+                                        </label>
                                     </section>
                                 </div>
                             </div>
@@ -145,9 +146,10 @@
                         //columns.Bound(p => p.Status).Title("Trạng thái").Width(150);
                         //columns.Bound(p => p.Note).Title("Ghi chú").Width(180);
                         columns.Bound(p => p.CreatedBy).Title("Người tạo").Width(110);
-                        columns.Bound(p => p.CreatedAt).Title("Ngày tạo").Width(110).Format("{0:dd/MM/yyyy}").Width(110).Format("{0:dd/MM/yyyy}").Width(110).ClientTemplate("#if(kendo.toString(CreatedAt,'dd/MM/yyyy') != '01/01/1900'){#" + "#= kendo.toString(CreatedAt,'dd/MM/yyyy') #" + "#}#");
+                        //columns.Bound(p => p.CreatedAt).Title("Ngày tạo").Width(110).Format("{0:dd/MM/yyyy}").Width(110).Format("{0:dd/MM/yyyy}").Width(110).ClientTemplate("#if(kendo.toString(CreatedAt,'dd/MM/yyyy') != '01/01/1900'){#" + "#= kendo.toString(CreatedAt,'dd/MM/yyyy') #" + "#}#");
+                        columns.Bound(p => p.CreatedAt).Title("Ngày tạo").Width(110).Format("{0:dd/MM/yyyy}").Width(110).ClientTemplate("#if(kendo.toString(CreatedAt,'dd/MM/yyyy') != '01/01/1900'){#" + "#= kendo.toString(CreatedAt,'dd/MM/yyyy') #" + "#}#");
                         columns.Bound(p => p.UpdatedBy).Title("Người cập nhật").Width(110);
-                        columns.Bound(o => o.UpdatedAt).Title("Ngày cập nhật").Width(110).Format("{0:dd/MM/yyyy}").Width(110).ClientTemplate("#if(kendo.toString(UpdatedAt,'dd/MM/yyyy') != '01/01/1900'){#" + "#= kendo.toString(UpdatedAt,'dd/MM/yyyy') #" + "#}#");
+                        columns.Bound(p => p.UpdatedAt).Title("Ngày cập nhật").Width(110).Format("{0:dd/MM/yyyy}").Width(110).ClientTemplate("#if(kendo.toString(UpdatedAt,'dd/MM/yyyy') != '01/01/1900'){#" + "#= kendo.toString(UpdatedAt,'dd/MM/yyyy') #" + "#}#");
 
                     })
                     .ToolBar(toolBar =>
@@ -201,7 +203,7 @@
                         .Events(e => { e.RequestEnd("onRequestEndDetail"); e.RequestStart("onRequestStartDetail"); e.Error("error_handlerDetail"); })
                         .Read(read => read.Action("ReadDetail", "OP_SalesOrder").Data("GetSONumberDetail"))
                         .Update(read => read.Action("UpdateDetail", "OP_SalesOrder").Data("GetSONumber"))
-                        //.Create(read => read.Action("Update", "AD_CreateOrder"))
+                                //.Create(read => read.Action("Update", "AD_CreateOrder"))
                          )
                         )
                     </div>

@@ -65,11 +65,13 @@ namespace SES.Controllers
                 dict["asset"] = userAsset;
                 dict["listWH"] = dbConn.Select<WareHouse>(p => p.Status == true);
                 dict["listWHL"] = dbConn.Select<WareHouseLocation>(p => p.Status == true);
-                dict["listVendor"] = dbConn.Select<Vendor>(p => p.Status == true);
+                //dict["listVendor"] = dbConn.Select<Vendor>(p => p.Status == true);
                 dict["listWH"] = dbConn.Select<WareHouse>(p => p.Status == true);
                 dict["listWHL"] = dbConn.Select<WareHouseLocation>(p => p.Status == true);
                 dict["listUnit"] = dbConn.Select<INUnit>(p => p.Status == true);
                 dict["SONumber"] = id;
+                string VendorID = dbConn.Select<SOHeader>(p => p.SONumber == id).FirstOrDefault().VendorID.ToString();
+                dict["VendorSO"] = dbConn.Select<Vendor>(p => p.VendorID == VendorID).FirstOrDefault();
                 dbConn.Close();
                 return PartialView("_OP_CreateOrder", dict);
             }
@@ -325,5 +327,5 @@ namespace SES.Controllers
                 return Json(new { success = false, message = e.Message });
             }
         }
-	}
+    }
 }
