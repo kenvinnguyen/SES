@@ -35,11 +35,13 @@ namespace SES.Controllers
                 dict["asset"] = userAsset;
                 dict["listWH"] = dbConn.Select<WareHouse>(p => p.Status == true);
                 dict["listWHL"] = dbConn.Select<WareHouseLocation>(p => p.Status == true);
-                dict["listVendor"] = dbConn.Select<Vendor>("select VendorID, VendorName from Vendor");
+                dict["listVendor"] = dbConn.Select<Vendor>(p => p.Status == true);
                 dict["listWH"] = dbConn.Select<WareHouse>(p => p.Status == true);
                 dict["listWHL"] = dbConn.Select<WareHouseLocation>(p => p.Status == true);
                 dict["listUnit"] = dbConn.Select<INUnit>(p => p.Status == true);
                 dict["SONumber"] = id;
+                dict["activestatus"] = new CommonLib().GetActiveStatus();
+                dbConn.Close();
                 if (string.IsNullOrEmpty(id))
                 {
                     return PartialView("_OP_CreateOrderIndex", dict);
@@ -63,11 +65,12 @@ namespace SES.Controllers
                 dict["asset"] = userAsset;
                 dict["listWH"] = dbConn.Select<WareHouse>(p => p.Status == true);
                 dict["listWHL"] = dbConn.Select<WareHouseLocation>(p => p.Status == true);
-                dict["listVendor"] = dbConn.Select<Vendor>("select VendorID,VendorName from Vendor");
+                dict["listVendor"] = dbConn.Select<Vendor>(p => p.Status == true);
                 dict["listWH"] = dbConn.Select<WareHouse>(p => p.Status == true);
                 dict["listWHL"] = dbConn.Select<WareHouseLocation>(p => p.Status == true);
                 dict["listUnit"] = dbConn.Select<INUnit>(p => p.Status == true);
                 dict["SONumber"] = id;
+                dbConn.Close();
                 return PartialView("_OP_CreateOrder", dict);
             }
             else
@@ -90,12 +93,14 @@ namespace SES.Controllers
             {
                 data = dbConn.Select<Products>().ToList();
             }
+            dbConn.Close();
             return Json(data.ToDataSourceResult(request));
         }
         public ActionResult ReadDetail([DataSourceRequest] DataSourceRequest request, string SONumber)
         {
             var dbConn = new OrmliteConnection().openConn();
             var data = dbConn.Select<SODetail>("SELECT * FROM SODetail WHERE SONumber = '" + SONumber + "' ");
+            dbConn.Close();
             return Json(data.ToDataSourceResult(request));
         }
         //public ActionResult ReadDetail([DataSourceRequest] DataSourceRequest request, string SONumber)
@@ -158,9 +163,11 @@ namespace SES.Controllers
                         }
                     }
                 }
+                dbConn.Close();
             }
             catch (Exception e)
             {
+                dbConn.Close();
                 ModelState.AddModelError("error", e.Message);
                 return Json(list.ToDataSourceResult(request, ModelState));
             }
@@ -201,7 +208,6 @@ namespace SES.Controllers
                         {
                             return Json(new { message = "Ngày tạo không đúng." });
                         }
-
                     }
                     header.SONumber = SONumber;
                     header.SODate = !string.IsNullOrEmpty(Request["SODate"]) ? DateTime.Parse(DateTime.ParseExact(Request["SODate"], "dd/MM/yyyy", CultureInfo.InvariantCulture).ToString("yyyy-MM-dd")) : DateTime.Now;
@@ -217,6 +223,7 @@ namespace SES.Controllers
                     header.UpdatedBy = "";
                     header.UpdatedAt = DateTime.Parse("1900-01-01");
                     dbConn.Insert<SOHeader>(header);
+                    dbConn.Close();
                     return Json(new { success = true, SONumber = SONumber });
                 }
                 catch (Exception e)
@@ -226,6 +233,7 @@ namespace SES.Controllers
             }
             else
             {
+                dbConn.Close();
                 return Json(new { success = false, message = "Không có quyền tạo." });
             }
         }
@@ -255,10 +263,12 @@ namespace SES.Controllers
                         }
                     }
                 }
+                dbConn.Close();
                 return Json(new { sussess = true });
             }
             else
             {
+                dbConn.Close();
                 ModelState.AddModelError("error", "Bạn không có quyền cập nhật.");
                 return Json(list.ToDataSourceResult(request, ModelState));
             }
@@ -291,10 +301,11 @@ namespace SES.Controllers
                 {
                     return Json(new { success = false, message = e.Message });
                 }
-
+                dbConn.Close();
             }
             else
             {
+                dbConn.Close();
                 return Json(new { success = false, message = "Bạn không có quyền xóa dữ liệu." });
             }
         }
@@ -305,6 +316,7 @@ namespace SES.Controllers
             {
                 var dbConn = new OrmliteConnection().openConn();
                 var data = dbConn.Select<SOHeader>("SELECT * FROM SOHeader WHERE SONumber ='" + id + "'").FirstOrDefault();
+                dbConn.Close();
                 return Json(data, JsonRequestBehavior.AllowGet);
 
             }

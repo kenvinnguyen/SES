@@ -12,8 +12,10 @@
     var listWareHouseLocation = dict.ContainsKey("listWHL") ? (List<WareHouseLocation>)dict["listWHL"] : new List<WareHouseLocation>();
     var listUnit = dict.ContainsKey("listUnit") ? (List<INUnit>)dict["listUnit"] : new List<INUnit>();
     var listSONumber = dict["SONumber"] != null ? dict["SONumber"].ToString() : "";
-    
 
+    var MerchantByUser = dict.ContainsKey("MerchantByUser") ? (Auth_User_Merchant)dict["MerchantByUser"] : new Auth_User_Merchant();
+    var VendorID = MerchantByUser != null ? @MerchantByUser.MerchantID : "";
+    var VendorName = MerchantByUser != null ? @MerchantByUser.MerchantName : "";
 }
 <style>
     .k-autocomplete.k-state-default, .k-picker-wrap.k-state-default, .k-numeric-wrap.k-state-default, .k-dropdown-wrap.k-state-default {

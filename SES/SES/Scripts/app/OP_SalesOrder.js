@@ -1,4 +1,4 @@
-﻿resetMenu();
+﻿//resetMenu();
 $("ul#menuLeft").find('#ul_root_3').addClass('open');
 $("ul#menuLeft").find('#ul_root_3').css('display', 'block');
 $("ul#menuLeft").find('#ul_root_3 ul#ul_item_1').css('display', 'block');
