@@ -1,11 +1,21 @@
-﻿//resetMenu();
-$("ul#menuLeft").find('#ul_root_3').addClass('open');
-$("ul#menuLeft").find('#ul_root_3').css('display', 'block');
-$("ul#menuLeft").find('#ul_root_3 ul#ul_item_1').css('display', 'block');
-$("#menu_OP_SalesOrder").parent().addClass('active');
-var SONumber = "";
-document.title = "Tạo yêu cầu";
-$("a.k-grid-cancel-changes").css({ 'background-color': '#a0a0a0', 'color': 'white' });
+﻿
+$(document).ready(function () {
+    resetMenu();
+
+    $("ul#menuLeft").find('#ul_root_3').addClass('open');
+    $("ul#menuLeft").find('#ul_root_3').css('display', 'block');
+    $("ul#menuLeft").find('#ul_root_3 ul#ul_item_1').css('display', 'block');
+    $("#menu_OP_SalesOrder").parent().addClass('active');
+
+    var SONumber = "";
+
+    $("a.k-grid-cancel-changes").css({ 'background-color': '#a0a0a0', 'color': 'white' });
+    document.title = "Tạo yêu cầu";
+
+    $("#VendorID option").removeAttr('selected');
+    generateSelect2("VendorID");
+});
+
 function onRequestStart(e) {
     blockUI(false);
 }
