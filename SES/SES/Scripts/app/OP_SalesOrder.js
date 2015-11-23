@@ -239,8 +239,8 @@ function GetDetail() {
                 $('#WHLID').val(data.WHLID).trigger('change');
                 $("#TotalQty").val((data.TotalQty + "").replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
                 $("#TotalAmt").val((data.TotalAmt + "").replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
-                //$("#CreatedAt").val(dateToString(data.CreatedAt));
-                //$("#CreatedBy").val(data.CreatedBy);
+                $("#CreatedAt").val(dateToString(data.CreatedAt));
+                $("#CreatedBy").val(data.CreatedBy);
                 $("#SONum").show();
             }
         }

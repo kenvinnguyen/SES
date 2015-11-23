@@ -146,8 +146,9 @@
                         //columns.Bound(p => p.Status).Title("Trạng thái").Width(150);
                         //columns.Bound(p => p.Note).Title("Ghi chú").Width(180);
                         columns.Bound(p => p.CreatedBy).Title("Người tạo").Width(110);
-                        //columns.Bound(p => p.CreatedAt).Title("Ngày tạo").Width(110).Format("{0:dd/MM/yyyy}").Width(110).Format("{0:dd/MM/yyyy}").Width(110).ClientTemplate("#if(kendo.toString(CreatedAt,'dd/MM/yyyy') != '01/01/1900'){#" + "#= kendo.toString(CreatedAt,'dd/MM/yyyy') #" + "#}#");
-                        columns.Bound(p => p.CreatedAt).Title("Ngày tạo").Width(110).Format("{0:dd/MM/yyyy}").Width(110).ClientTemplate("#if(kendo.toString(CreatedAt,'dd/MM/yyyy') != '01/01/1900'){#" + "#= kendo.toString(CreatedAt,'dd/MM/yyyy') #" + "#}#");
+                        columns.Bound(p => p.CreatedAt).Title("Ngày tạo").Width(110).Format("{0:dd/MM/yyyy}").Width(110).Format("{0:dd/MM/yyyy}").Width(110).ClientTemplate("#if(kendo.toString(CreatedAt,'dd/MM/yyyy') != '01/01/1900'){#" + "#= kendo.toString(CreatedAt,'dd/MM/yyyy') #" + "#}#");
+                        //columns.Bound(p => p.CreatedAt).Title("Ngày tạo").Width(110).Format("{0:dd/MM/yyyy HH:mm:ss}").Width(110).ClientTemplate("#if(kendo.toString(CreatedAt,'dd/MM/yyyy') != '01/01/1900'){#" + "#= kendo.toString(CreatedAt,'dd/MM/yyyy HH:mm:ss') #" + "#}#");
+                        //columns.Bound(p => p.CreatedAt).Title("Ngày tạo").Width(110);
                         columns.Bound(p => p.UpdatedBy).Title("Người cập nhật").Width(110);
                         columns.Bound(p => p.UpdatedAt).Title("Ngày cập nhật").Width(110).Format("{0:dd/MM/yyyy}").Width(110).ClientTemplate("#if(kendo.toString(UpdatedAt,'dd/MM/yyyy') != '01/01/1900'){#" + "#= kendo.toString(UpdatedAt,'dd/MM/yyyy') #" + "#}#");
 
@@ -161,8 +162,8 @@
                                    .Text("Cập nhật")
                                    .HtmlAttributes(new { id = "btnInsertHeader", @class = "btn btn-success", @style = "background-color:#ffb751; color:white;", onclick = "UpdateDetail()", @href = "javascript:void(0)" });
                             toolBar.Custom()
-                                       .Text("Hủy thay đổi")
-                                       .HtmlAttributes(new { id = "btnInsertHeader", @class = "btn btn-success", @style = "background-color:#a0a0a0; color:white;", onclick = "CancelDetail()", @href = "javascript:void(0)" });
+                                    .Text("Hủy thay đổi")
+                                    .HtmlAttributes(new { id = "btnInsertHeader", @class = "btn btn-success", @style = "background-color:#a0a0a0; color:white;", onclick = "CancelDetail()", @href = "javascript:void(0)" });
                         }
                         if (asset.ContainsKey("Delete") && asset["Delete"])
                         {

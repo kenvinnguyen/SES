@@ -150,7 +150,8 @@ namespace SES.Controllers
                                 data.Status = "";
                                 data.CreatedAt = DateTime.Now;
                                 data.CreatedBy = currentUser.UserID;
-                                data.UpdatedAt = DateTime.Parse("1900-01-01");
+                                //data.UpdatedAt = DateTime.Parse("1900-01-01");
+                                data.UpdatedAt = DateTime.Now;
                                 data.UpdatedBy = "";
                                 dbConn.Insert<SODetail>(data);
                             }
@@ -223,7 +224,8 @@ namespace SES.Controllers
                     header.CreatedBy = currentUser.UserID;
                     header.CreatedAt = DateTime.Now;
                     header.UpdatedBy = "";
-                    header.UpdatedAt = DateTime.Parse("1900-01-01");
+                    header.UpdatedAt = DateTime.Now;
+                    //header.UpdatedAt = DateTime.Parse("1900-01-01");
                     dbConn.Insert<SOHeader>(header);
                     dbConn.Close();
                     return Json(new { success = true, SONumber = SONumber });
@@ -245,7 +247,7 @@ namespace SES.Controllers
             if (userAsset.ContainsKey("Update") && userAsset["Update"])
             {
 
-                if (list != null && ModelState.IsValid)
+                if (list != null)//&& ModelState.IsValid)
                 {
                     foreach (var item in list)
                     {
@@ -255,8 +257,30 @@ namespace SES.Controllers
                         }
                         else if (item.Qty > 0)
                         {
-                            dbConn.Update<SODetail>(set: "Qty = '" + item.Qty + "', TotalAmt = '" + item.Qty * item.Price + "',UpdatedAt = '" + DateTime.Now + "', UpdatedBy ='" + currentUser.UserID + "'", where: "SONumber = '" + item.SONumber + "' AND ItemCode ='" + item.ItemCode + "'");
-                            dbConn.Update<SOHeader>(set: "TotalQty ='" + dbConn.Select<SODetail>(s => s.SONumber == item.SONumber).Sum(s => s.Qty) + "', TotalAmt = '" + +dbConn.Select<SODetail>(s => s.SONumber == item.SONumber).Sum(s => s.TotalAmt) + "'", where: "SONumber ='" + item.SONumber + "'");
+                            var isExist = dbConn.SingleOrDefault<SODetail>("SONumber = {0} AND ItemCode = {1}", item.SONumber, item.ItemCode);
+                            if (isExist != null)
+                            {
+                                try
+                                {
+                                    isExist.Qty = item.Qty;
+                                    isExist.TotalAmt = item.Qty * item.Price;
+                                    isExist.UpdatedAt = DateTime.Now;
+                                    isExist.UpdatedBy = currentUser.UserID;
+                                    dbConn.Update<SODetail>(isExist);
+                                    //dbConn.Update<SODetail>(set: "Qty = '" + item.Qty + "', TotalAmt = '" + item.Qty * item.Price + "',UpdatedAt = '" + DateTime.Now + "', UpdatedBy ='" + currentUser.UserID + "'", where: "SONumber = '" + item.SONumber + "' AND ItemCode ='" + item.ItemCode + "'");
+                                    dbConn.Update<SOHeader>(set: "UpdatedBy='" + currentUser.UserID + "',TotalQty ='" + dbConn.Select<SODetail>(s => s.SONumber == item.SONumber).Sum(s => s.Qty) + "', TotalAmt = '" + dbConn.Select<SODetail>(s => s.SONumber == item.SONumber).Sum(s => s.TotalAmt) + "'", where: "SONumber ='" + item.SONumber + "'");
+                                    var success = dbConn.Execute(@"UPDATE SOHeader Set UpdatedAt = @UpdatedAt WHERE SONumber = '" + item.SONumber + "'", 
+                                                        new
+                                                        {
+                                                            UpdatedAt = DateTime.Now,
+                                                        }) == 1;
+                                }
+                                catch (Exception ex)
+                                {
+                                    ModelState.AddModelError("error", ex.Message);
+                                    return Json(list.ToDataSourceResult(request, ModelState));
+                                }
+                            }
                         }
                         else
                         {
